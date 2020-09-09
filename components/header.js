@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/client";
 import styles from "./header.module.css";
-import ThemeToggle from "./theme-toggle";
 
 // The approach used in this component shows how to built a sign in and sign out
 // component that works on pages which support both client and server side
@@ -14,8 +13,6 @@ export default function Header() {
       <noscript>
         <style>{`.nojs-show { opacity: 1; top: 0; }`}</style>
       </noscript>
-
-      <ThemeToggle />
 
       <div className={styles.signedInStatus}>
         <p
