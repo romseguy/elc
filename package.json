@@ -1,0 +1,23 @@
+{
+  "name": "elc",
+  "version": "0.0.1",
+  "description": "Ecole Libre de Cerdagne (ELC)",
+  "repository": "https://github.com/romseguy/elc.git",
+  "homepage": "https://elc.vercel.app",
+  "main": "",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "author": "Romain Séguy <rom.seguy@lilo.org>",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^3.6.1",
+    "next": "^9.5.0",
+    "next-auth": "^3.1.0",
+    "next-connect": "^0.9.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  }
+}
