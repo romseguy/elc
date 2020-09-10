@@ -2,6 +2,7 @@ import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/client";
 import styles from "./header.module.css";
 import { Button } from "evergreen-ui";
+import md5 from "blueimp-md5";
 
 // The approach used in this component shows how to built a sign in and sign out
 // component that works on pages which support both client and server side
@@ -42,12 +43,18 @@ export default function Header() {
           )}
           {session && (
             <>
-              {session.user.image && (
-                <span
-                  style={{ backgroundImage: `url(${session.user.image})` }}
-                  className={styles.avatar}
-                />
-              )}
+              <span
+                style={{
+                  backgroundImage: `url(${
+                    session.user.image
+                      ? session.user.image
+                      : `https://www.gravatar.com/avatar/${md5(
+                          session.user.email
+                        )}?d=identicon`
+                  })`,
+                }}
+                className={styles.avatar}
+              />
               <span className={styles.signedInText}>
                 <small>Bienvenue,</small>
                 <br />
