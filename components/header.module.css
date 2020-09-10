@@ -8,12 +8,12 @@
 .loading,
 .loaded {
   position: relative;
-  top: 0;
-  opacity: 1;
+  min-height: 3rem;
+  margin: 0;
   overflow: hidden;
   border-radius: 0 0 0.6rem 0.6rem;
-  margin: 0;
   background-color: rgba(0, 0, 0, 0.05);
+  opacity: 1;
   transition: all 0.2s ease-in;
 }
 
@@ -22,10 +22,20 @@
   opacity: 0;
 }
 
+.avatar {
+  float: left;
+  height: 2.8rem;
+  width: 2.8rem;
+  margin-left: 0.5rem;
+  border-radius: 2rem;
+  background-color: white;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
 .signedInText,
 .notSignedInText {
   position: absolute;
-  left: 1rem;
   right: 6.5rem;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -40,29 +50,23 @@
   left: 4.6rem;
 }
 
-.avatar {
-  border-radius: 2rem;
-  float: left;
-  height: 2.8rem;
-  width: 2.8rem;
-  background-color: white;
-  background-size: cover;
-  background-repeat: no-repeat;
+.notSignedInText {
+  top: 0.8rem;
+  left: 1rem;
 }
 
 .button,
 .buttonPrimary {
   float: right;
-  margin-right: -0.4rem;
   font-weight: 500;
   border-radius: 0.3rem;
   cursor: pointer;
   font-size: 1rem;
-  line-height: 1.4rem;
-  position: relative;
   z-index: 10;
   background-color: transparent;
   color: #555;
+  margin-top: 0.4rem !important;
+  margin-right: 0.5rem !important;
 }
 
 .buttonPrimary {
