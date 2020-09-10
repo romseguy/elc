@@ -31,6 +31,7 @@ export default function Header() {
               <Link href={`/api/auth/signin`}>
                 <Button
                   className={styles.buttonPrimary}
+                  appearance="primary"
                   onClick={(e) => {
                     e.preventDefault();
                     signIn();
@@ -85,6 +86,11 @@ export default function Header() {
           <li className={styles.navItem}>
             <Link href="/protected">
               <a>Protected</a>
+            </Link>
+          </li>
+          <li className={styles.navItem}>
+            <Link href="/fiches">
+              <a>Fiches</a>
             </Link>
           </li>
         </ul>

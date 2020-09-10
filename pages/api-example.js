@@ -1,5 +1,5 @@
-import React, { Suspense } from "react";
-import { atom, useAtom } from "jotai";
+import React from "react";
+import { atom, useAtom, Provider as Jotai } from "jotai";
 import Layout from "../components/layout";
 import { isServer } from "utils/isServer";
 
@@ -38,14 +38,12 @@ const PostTitle = () => {
 export default function Page() {
   return (
     <Layout>
-      {!isServer && (
+      <Jotai>
         <>
           <PostId />
-          <Suspense fallback="Loading...">
-            <PostTitle />
-          </Suspense>
+          <PostTitle />
         </>
-      )}
+      </Jotai>
 
       <br />
 
