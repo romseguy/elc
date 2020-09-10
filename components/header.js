@@ -72,7 +72,7 @@ export default function Header() {
         <ul className={styles.navItems}>
           <li className={styles.navItem}>
             <Link href="/">
-              <a>Tableau de bord</a>
+              <a>Public</a>
             </Link>
           </li>
           <li className={styles.navItem}>

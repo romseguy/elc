@@ -3,6 +3,7 @@ import { Provider as Jotai } from "jotai";
 import "./styles.css";
 import { description } from "../package.json";
 import { Helmet } from "react-helmet";
+import { isServer } from "utils/isServer";
 
 // Use the <Provider> to improve performance and allow components that call
 // `useSession()` anywhere in your application to access the `session` object.
@@ -28,10 +29,17 @@ export default function App({ Component, pageProps }) {
       }}
       session={pageProps.session}
     >
-      <Jotai>
-        <Helmet defaultTitle={description} titleTemplate="%s" />
-        <Component {...pageProps} />
-      </Jotai>
+      {!isServer ? (
+        <Jotai>
+          <Helmet defaultTitle={description} titleTemplate="%s" />
+          <Component {...pageProps} />
+        </Jotai>
+      ) : (
+        <>
+          <Helmet defaultTitle={description} titleTemplate="%s" />
+          <Component {...pageProps} />
+        </>
+      )}
     </Provider>
   );
 }

@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { atom, useAtom } from "jotai";
 import Layout from "../components/layout";
+import { isServer } from "utils/isServer";
 
 const postId = atom(1);
 
@@ -37,7 +38,7 @@ const PostTitle = () => {
 export default function Page() {
   return (
     <Layout>
-      {typeof window !== undefined && (
+      {!isServer && (
         <>
           <PostId />
           <Suspense fallback="Loading...">
