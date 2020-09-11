@@ -7,7 +7,7 @@ handler.use(middleware);
 
 handler.get(async (req, res) => {
   let doc = await req.db.collection("users").findOne();
-  res.json(doc);
+  res.json({ content: doc });
 });
 
 export default handler;

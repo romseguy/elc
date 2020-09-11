@@ -1,4 +1,5 @@
 import { Provider } from "next-auth/client";
+import { ThemeProvider, ColorModeProvider } from "@chakra-ui/core";
 import { Provider as Jotai } from "jotai";
 import "./styles.css";
 import { description } from "../package.json";
@@ -29,17 +30,19 @@ export default function App({ Component, pageProps }) {
       }}
       session={pageProps.session}
     >
-      {!isServer ? (
-        <Jotai>
-          <Helmet defaultTitle={description} titleTemplate="%s" />
-          <Component {...pageProps} />
-        </Jotai>
-      ) : (
-        <>
-          <Helmet defaultTitle={description} titleTemplate="%s" />
-          <Component {...pageProps} />
-        </>
-      )}
+      <ThemeProvider>
+        {!isServer ? (
+          <Jotai>
+            <Helmet defaultTitle={description} titleTemplate="%s" />
+            <Component {...pageProps} />
+          </Jotai>
+        ) : (
+          <>
+            <Helmet defaultTitle={description} titleTemplate="%s" />
+            <Component {...pageProps} />
+          </>
+        )}
+      </ThemeProvider>
     </Provider>
   );
 }

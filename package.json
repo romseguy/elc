@@ -13,7 +13,13 @@
   "author": "Romain Séguy <rom.seguy@lilo.org>",
   "license": "ISC",
   "dependencies": {
+    "@chakra-ui/core": "^0.8.0",
+    "@emotion/babel-preset-css-prop": "^10.0.27",
+    "@emotion/core": "^10.0.35",
+    "@emotion/styled": "^10.0.27",
     "blueimp-md5": "^2.18.0",
+    "date-fns": "^2.16.1",
+    "emotion-theming": "^10.0.27",
     "evergreen-ui": "^5.0.6",
     "jotai": "^0.3.1",
     "mongodb": "^3.6.1",
@@ -24,9 +30,19 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-helmet": "^6.1.0",
-    "tailwindcss": "^1.8.6"
+    "tailwindcss": "^1.8.6",
+    "twin.macro": "^1.8.1"
   },
   "devDependencies": {
     "cssnano": "^4.1.10"
+  },
+  "babelMacros": {
+    "twin": {
+      "config": "tailwind.config.js",
+      "preset": "emotion",
+      "debugProp": true,
+      "debugPlugins": false,
+      "debug": false
+    }
   }
 }
