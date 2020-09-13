@@ -4,15 +4,22 @@
 
 @tailwind utilities;
 
-body {
+html,
+body,
+#__next {
+  height: 100%;
+}
+
+body,
+#__next {
+  display: flex;
+  flex-direction: column;
+}
+
+/* body {
   font-family: -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans,
     sans-serif, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  padding: 0 1rem 1rem 1rem;
-  max-width: 680px;
-  margin: 0 auto;
-  background: #fff;
-  color: #333;
 }
 
 li,
@@ -24,9 +31,6 @@ a {
   font-weight: 500;
 }
 
-hr {
-  border: 1px solid #ddd;
-}
 
 iframe {
   background: #ccc;
@@ -35,4 +39,4 @@ iframe {
   width: 100%;
   border-radius: 0.5rem;
   filter: invert(1);
-}
+} */

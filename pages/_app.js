@@ -1,48 +1,42 @@
-import { Provider } from "next-auth/client";
-import { ThemeProvider, ColorModeProvider } from "@chakra-ui/core";
-import { Provider as Jotai } from "jotai";
 import "./styles.css";
-import { description } from "../package.json";
+import { ThemeProvider, ColorModeProvider, CSSReset } from "@chakra-ui/core";
+import theme from "utils/theme";
+import { Provider } from "next-auth/client";
 import { Helmet } from "react-helmet";
+import { description } from "../package.json";
 import { isServer } from "utils/isServer";
+import { Provider as Jotai } from "jotai";
 
 // Use the <Provider> to improve performance and allow components that call
 // `useSession()` anywhere in your application to access the `session` object.
 export default function App({ Component, pageProps }) {
+  const config = (theme) => ({
+    light: theme.light,
+    dark: theme.dark,
+  });
+
   return (
-    <Provider
-      // Provider options are not required but can be useful in situations where
-      // you have a short session maxAge time. Shown here with default values.
-      options={{
-        // Client Max Age controls how often the useSession in the client should
-        // contact the server to sync the session state. Value in seconds.
-        // e.g.
-        // * 0  - Disabled (always use cache value)
-        // * 60 - Sync session state with server if it's older than 60 seconds
-        clientMaxAge: 0,
-        // Keep Alive tells windows / tabs that are signed in to keep sending
-        // a keep alive request (which extends the current session expiry) to
-        // prevent sessions in open windows from expiring. Value in seconds.
-        //
-        // Note: If a session has expired when keep alive is triggered, all open
-        // windows / tabs will be updated to reflect the user is signed out.
-        keepAlive: 0,
-      }}
-      session={pageProps.session}
-    >
-      <ThemeProvider>
-        {!isServer ? (
-          <Jotai>
-            <Helmet defaultTitle={description} titleTemplate="%s" />
+    <ThemeProvider theme={theme}>
+      <ColorModeProvider value="light">
+        <CSSReset config={config} />
+        <Provider
+          options={{
+            clientMaxAge: 0,
+            keepAlive: 0,
+          }}
+          session={pageProps.session}
+        >
+          <Helmet defaultTitle={description} titleTemplate="%s" />
+
+          {!isServer ? (
+            <Jotai>
+              <Component {...pageProps} />
+            </Jotai>
+          ) : (
             <Component {...pageProps} />
-          </Jotai>
-        ) : (
-          <>
-            <Helmet defaultTitle={description} titleTemplate="%s" />
-            <Component {...pageProps} />
-          </>
-        )}
-      </ThemeProvider>
-    </Provider>
+          )}
+        </Provider>
+      </ColorModeProvider>
+    </ThemeProvider>
   );
 }

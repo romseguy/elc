@@ -1,7 +1,7 @@
 {
   "name": "elc",
   "version": "0.0.1",
-  "description": "Ecole Libre de Cerdagne (ELC)",
+  "description": "Ecole Libre de Cerdagne",
   "repository": "https://github.com/romseguy/elc.git",
   "homepage": "https://elc.vercel.app",
   "main": "",
@@ -30,11 +30,11 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-helmet": "^6.1.0",
-    "tailwindcss": "^1.8.6",
     "twin.macro": "^1.8.1"
   },
   "devDependencies": {
-    "cssnano": "^4.1.10"
+    "cssnano": "^4.1.10",
+    "tailwindcss": "^1.8.6"
   },
   "babelMacros": {
     "twin": {
