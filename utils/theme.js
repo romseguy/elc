@@ -2,6 +2,15 @@ import { theme } from "@chakra-ui/core";
 
 export default {
   ...theme,
+  fonts: {
+    body:
+      '-apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+  },
+  // fonts: {
+  //   body: "system-ui, sans-serif",
+  //   heading: "Georgia, serif",
+  //   mono: "Menlo, monospace",
+  // },
   light: {
     color: theme.colors.gray[700],
     bg: theme.colors.gray[400],

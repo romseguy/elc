@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
-import Layout from "../components/layout";
-import AccessDenied from "../components/access-denied";
+import Layout from "components/layout";
+import AccessDenied from "components/access-denied";
 import { isServer } from "utils/isServer";
 import { Table } from "evergreen-ui";
-import { Heading, Spinner } from "@chakra-ui/core";
+import { Heading, Spinner, Button } from "@chakra-ui/core";
 import tw from "twin.macro";
 import { format, parseISO } from "date-fns";
-
-const Paragraph = tw.p`py-6`;
+import Link from "next/link";
+import { PageTitle } from "components/page-title";
 
 export default function Page() {
   const [session, loading] = useSession();
@@ -41,8 +41,12 @@ export default function Page() {
 
   return (
     <Layout>
-      <Heading>Les fiches des élèves</Heading>
-      <Paragraph>Cliquez sur une fiche pour y accéder.</Paragraph>
+      <PageTitle>Les fiches des élèves</PageTitle>
+      <Link href="/fiches/add">
+        <Button my={5} border="1px">
+          Ajouter une fiche élève
+        </Button>
+      </Link>
       {Array.isArray(profileList) ? (
         <Table>
           <Table.Head>

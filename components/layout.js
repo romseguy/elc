@@ -31,6 +31,8 @@ export default function Layout({ children }) {
         flex="1 0 auto"
         mx={10}
         mb={20}
+        p={5}
+        rounded="lg"
         bg={colorMode === "dark" ? theme.dark.bg : theme.light.bg}
         style={{ filter: "brightness(140%)" }}
       >

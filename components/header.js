@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/client";
 import md5 from "blueimp-md5";
-import { Avatar } from "evergreen-ui";
 
 import {
   Button,
@@ -21,6 +20,7 @@ import {
   MenuItemOption,
   useColorMode,
   Icon,
+  Avatar,
 } from "@chakra-ui/core";
 
 const MenuItems = ({ children }) => (
@@ -78,7 +78,7 @@ export default function Header(props) {
                   session.user.email
                 )}?d=identicon`
               }
-              size={40}
+              size="md"
             />
           </MenuButton>
           <MenuList border={0} p={0}>
