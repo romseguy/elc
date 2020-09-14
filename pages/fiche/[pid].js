@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/client";
+import { getSession } from "next-auth/client";
 import Layout from "components/layout";
 import AccessDenied from "components/access-denied";
 import { isServer } from "utils/isServer";
 import { useRouter } from "next/router";
 import { Heading, Spinner } from "@chakra-ui/core";
 
-export default function Page() {
-  const [session, loading] = useSession();
+export default function Page({ session }) {
   const [profile, setProfile] = useState();
   const router = useRouter();
   const pid = router.query.pid;
@@ -27,7 +26,7 @@ export default function Page() {
   }, [session]);
 
   // When rendering client side don't display anything until loading is complete
-  if (!isServer && loading) return null;
+  // if (!isServer && loading) return null;
 
   // If no session exists, display access denied message
   if (!session) {
@@ -54,4 +53,14 @@ export default function Page() {
       </Heading>
     </Layout>
   );
+}
+
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+
+  return {
+    props: {
+      session,
+    },
+  };
 }

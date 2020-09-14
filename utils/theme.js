@@ -14,7 +14,7 @@ export default {
   light: {
     color: theme.colors.gray[700],
     bg: theme.colors.gray[400],
-    borderColor: theme.colors.gray[200],
+    borderColor: theme.colors.gray[800],
     placeholderColor: theme.colors.gray[500],
   },
   dark: {

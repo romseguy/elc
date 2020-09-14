@@ -10,7 +10,8 @@ export default function Layout({ children }) {
 
   return (
     <>
-      <Button onClick={toggleColorMode}></Button>
+      <Box as={Button} onClick={toggleColorMode}></Box>
+
       <Box
         py={5}
         textAlign="center"

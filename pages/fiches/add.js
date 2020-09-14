@@ -30,7 +30,7 @@ export default function Page({ session }) {
   return (
     <>
       <Layout>
-        <PageTitle>Ajouter une fiche élève</PageTitle>
+        <PageTitle>Ajouter une nouvelle fiche élève</PageTitle>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormControl isRequired p={5}>
