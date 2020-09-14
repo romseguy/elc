@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getSession } from "next-auth/client";
+import { getSession, useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 import Layout from "components/layout";
 import AccessDenied from "components/access-denied";
@@ -10,6 +10,7 @@ import tw, { styled } from "twin.macro";
 import { format, parseISO } from "date-fns";
 import Link from "next/link";
 import { PageTitle } from "components/page-title";
+import api from "utils/api";
 
 const Table = styled.table`
   thead th {
@@ -20,25 +21,10 @@ const Table = styled.table`
   }
 `;
 
-export default function Page({ session }) {
-  const [profileList, setProfileList] = useState();
-  const router = useRouter();
+export default function Page(props) {
+  const [session = props.session, loading] = useSession();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch("/api/profiles");
-      const { data } = await res.json();
-
-      if (data) {
-        setProfileList(data);
-        //setProfileList(data.concat(data));
-      }
-    };
-
-    fetchData();
-  }, [session]);
-
-  // if (loading && !isServer) return null;
+  if (loading && !isServer) return null;
 
   if (!session) {
     return (
@@ -47,6 +33,19 @@ export default function Page({ session }) {
       </Layout>
     );
   }
+
+  const [profileList, setProfileList] = useState();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data } = await api.get("profiles");
+      setProfileList(data);
+    };
+
+    fetchData();
+  }, [session]);
+
+  const router = useRouter();
 
   return (
     <Layout>
@@ -58,7 +57,9 @@ export default function Page({ session }) {
           </Button>
         </Link>
       </Box>
-      {Array.isArray(profileList) ? (
+      {!profileList ? (
+        <Spinner />
+      ) : profileList.length > 0 ? (
         <Table>
           <thead>
             <tr>
@@ -85,33 +86,7 @@ export default function Page({ session }) {
           </tbody>
         </Table>
       ) : (
-        // <Table>
-        //   <Table.Head>
-        //     <Table.SearchHeaderCell
-        //       placeholder="Filtrer..."
-        //       onChange={(value) => console.log(value)}
-        //     />
-        //     <Table.TextHeaderCell>Date de naissance</Table.TextHeaderCell>
-        //   </Table.Head>
-        //   <Table.Body height={240}>
-        //     {profileList.map((atom) => (
-        //       <Table.Row
-        //         key={atom._id}
-        //         isSelectable
-        //         onSelect={() =>
-        //           router.push("/fiche/[pid]", `/fiche/${atom._id}`)
-        //         }
-        //       >
-        //         <Table.TextCell>{atom.firstname}</Table.TextCell>
-        //         <Table.TextCell>{atom.lastname}</Table.TextCell>
-        //         <Table.TextCell>
-        //           {format(parseISO(atom.birthdate), "dd/MM/yyyy")}
-        //         </Table.TextCell>
-        //       </Table.Row>
-        //     ))}
-        //   </Table.Body>
-        // </Table>
-        <Spinner />
+        <></>
       )}
     </Layout>
   );

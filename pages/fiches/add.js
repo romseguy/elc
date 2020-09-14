@@ -1,23 +1,34 @@
-import { getSession } from "next-auth/client";
+import { getSession, useSession } from "next-auth/client";
 import { Controller, useForm } from "react-hook-form";
 // import { DevTool } from "@hookform/devtools";
 import Layout from "components/layout";
 import AccessDenied from "components/access-denied";
 import { isServer } from "utils/isServer";
 import { PageTitle } from "components/page-title";
-import { Input, Button, FormControl, FormLabel } from "@chakra-ui/core";
+import {
+  Input,
+  Button,
+  FormControl,
+  FormLabel,
+  Box,
+  Text,
+  Icon,
+  Stack,
+} from "@chakra-ui/core";
 import { DatePicker } from "components/datepicker";
+import api from "utils/api";
+import { useRouter } from "next/router";
+import { isValid, subYears } from "date-fns";
+import { ErrorMessage } from "@hookform/error-message";
 
 // registerLocale("fr", fr);
 // setDefaultLocale("fr");
 
-export default function Page({ session }) {
-  const { control, register, handleSubmit, watch, errors } = useForm({
-    mode: "onChange",
-  });
-  const onSubmit = (data) => console.log(data);
+export default function Page(props) {
+  const [session = props.session, loading] = useSession();
+  const router = useRouter();
 
-  //if (loading && !isServer) return null;
+  if (loading && !isServer) return null;
 
   if (!session) {
     return (
@@ -27,12 +38,51 @@ export default function Page({ session }) {
     );
   }
 
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    errors,
+    setError,
+    clearErrors,
+  } = useForm({
+    mode: "onChange",
+  });
+
+  const onChange = () => {
+    clearErrors("errorMessage");
+  };
+
+  const onSubmit = async ({ firstname, lastname, birthdate }) => {
+    // if (!isValid(new Date(birthdate))) {
+    //   setError("birthdate", {
+    //     type: "manual",
+    //     message: "Veuillez entrer une date de naissance valide",
+    //   });
+    // }
+
+    const data = await api.create("profiles", {
+      firstname,
+      lastname,
+      birthdate,
+    });
+
+    if (data.status === "error") {
+      setError("errorMessage", { type: "manual", message: data.message });
+    } else {
+      router.push("/fiches");
+    }
+  };
+
+  console.log("errors", errors);
+
   return (
     <>
       <Layout>
         <PageTitle>Ajouter une nouvelle fiche élève</PageTitle>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
           <FormControl isRequired p={5}>
             <FormLabel htmlFor="firstname">Prénom</FormLabel>
             <Input
@@ -54,12 +104,32 @@ export default function Page({ session }) {
           <FormControl isRequired p={5} pt={0}>
             <FormLabel htmlFor="birtdate">Date de naissance</FormLabel>
             <Controller
-              as={DatePicker}
-              name="Datepicker"
+              name="birthdate"
               control={control}
               defaultValue={null}
+              rules={{ required: true }}
+              render={(props) => (
+                <DatePicker
+                  minDate={subYears(new Date(), 11)}
+                  maxDate={subYears(new Date(), 1)}
+                  {...props}
+                />
+              )}
             />
           </FormControl>
+
+          <ErrorMessage
+            errors={errors}
+            name="errorMessage"
+            render={({ message }) => (
+              <Stack isInline p={5} mb={5} shadow="md" color="red.500">
+                <Icon name="warning" size={5} />
+                <Box>
+                  <Text>{message}</Text>
+                </Box>
+              </Stack>
+            )}
+          />
 
           <Button type="submit">Ajouter</Button>
         </form>

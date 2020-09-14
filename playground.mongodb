@@ -10,9 +10,11 @@ use('cerdagne');
 // Make sure you run it against proper database and collection.
 // db.sales.drop();
 
-db.children.insertMany([
-  { '_id' : 1, 'firstname' : 'Romain', 'lastname' : 'Séguy', 'birthdate' : new Date('1990-04-04T00:00:00Z') },
-]);
+db.profiles.remove({})
+//db.children.renameCollection('profiles')
+// db.profiles.insertMany([
+//   { '_id' : 1, 'firstname' : 'Romain', 'lastname' : 'Séguy', 'birthdate' : new Date('1990-04-04T00:00:00Z') },
+// ]);
 
 // Run a find command to view items sold on April 4th, 2014.
 // db.sales.find({ date: { $gte: new Date('2014-04-04'), $lt: new Date('2014-04-05') } });

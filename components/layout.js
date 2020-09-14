@@ -1,31 +1,19 @@
-import { description } from "package.json";
-import { useColorMode, Button, Box, Heading } from "@chakra-ui/core";
-import theme from "utils/theme";
-import Header from "./header";
-import Footer from "./footer";
-import Link from "next/link";
+import { useColorMode, Button, Box, Heading, useTheme } from "@chakra-ui/core";
+import { Header } from "./header";
+import { Nav } from "./nav";
+import { Footer } from "./footer";
 
 export default function Layout({ children }) {
   const { colorMode, toggleColorMode } = useColorMode();
+  const theme = useTheme();
 
   return (
     <>
       <Box as={Button} onClick={toggleColorMode}></Box>
 
-      <Box
-        py={5}
-        textAlign="center"
-        bg={colorMode === "dark" ? theme.dark.bg : theme.light.bg}
-        style={{ filter: "brightness(120%)" }}
-      >
-        <Heading as="h1">
-          <Link href="/">
-            <a>{description}</a>
-          </Link>
-        </Heading>
-      </Box>
-
       <Header />
+
+      <Nav />
 
       <Box
         as="main"

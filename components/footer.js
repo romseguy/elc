@@ -1,23 +1,35 @@
 import Link from "next/link";
-import styles from "./footer.module.css";
 import { version } from "../package.json";
-import { Box, useColorMode } from "@chakra-ui/core";
-import theme from "utils/theme";
+import { Box, useColorMode, useTheme } from "@chakra-ui/core";
+import { styled } from "twin.macro";
 
-export default function Footer() {
+const Menu = styled.ul`
+  padding: 0;
+  list-style: none;
+`;
+
+const MenuItem = styled.li`
+  display: inline-block;
+  margin-right: 1rem;
+`;
+
+export const Footer = (props) => {
   const { colorMode, toggleColorMode } = useColorMode();
+  const theme = useTheme();
+
   return (
     <Box
       as="footer"
       py={5}
       bg={colorMode === "dark" ? theme.dark.bg : theme.light.bg}
       style={{ filter: "brightness(120%)" }}
+      {...props}
     >
-      <ul className={styles.navItems}>
-        <li className={styles.navItem}>
+      <Menu>
+        <MenuItem>
           <em>{version}</em>
-        </li>
-      </ul>
+        </MenuItem>
+      </Menu>
     </Box>
   );
-}
+};

@@ -1,34 +1,17 @@
 import { useState, useEffect } from "react";
-import { getSession } from "next-auth/client";
+import { getSession, useSession } from "next-auth/client";
 import Layout from "components/layout";
 import AccessDenied from "components/access-denied";
 import { isServer } from "utils/isServer";
 import { useRouter } from "next/router";
 import { Heading, Spinner } from "@chakra-ui/core";
+import api from "utils/api";
 
-export default function Page({ session }) {
-  const [profile, setProfile] = useState();
-  const router = useRouter();
-  const pid = router.query.pid;
+export default function Page(props) {
+  const [session = props.session, loading] = useSession();
 
-  // Fetch profile from protected route
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch(`/api/profile/${pid}`);
-      const json = await res.json();
-      if (json.data) {
-        setProfile(json.data);
-      }
-    };
-    if (pid) {
-      fetchData();
-    }
-  }, [session]);
+  if (loading && !isServer) return null;
 
-  // When rendering client side don't display anything until loading is complete
-  // if (!isServer && loading) return null;
-
-  // If no session exists, display access denied message
   if (!session) {
     return (
       <Layout>
@@ -36,6 +19,22 @@ export default function Page({ session }) {
       </Layout>
     );
   }
+
+  const [profile, setProfile] = useState();
+  const router = useRouter();
+  const pid = router.query.pid;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data } = await api.get(`profile/${pid}`);
+      if (data) {
+        setProfile(data);
+      }
+    };
+    if (pid) {
+      fetchData();
+    }
+  }, [session]);
 
   if (!profile) {
     return (
