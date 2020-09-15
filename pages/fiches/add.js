@@ -20,12 +20,14 @@ import api from "utils/api";
 import { useRouter } from "next/router";
 import { isValid, subYears } from "date-fns";
 import { ErrorMessage } from "@hookform/error-message";
+import { useState } from "react";
 
 // registerLocale("fr", fr);
 // setDefaultLocale("fr");
 
 export default function Page(props) {
   const [session = props.session, loading] = useSession();
+  const [isLoading, setIsLoading] = useState();
   const router = useRouter();
 
   if (loading && !isServer) return null;
@@ -55,6 +57,7 @@ export default function Page(props) {
   };
 
   const onSubmit = async ({ firstname, lastname, birthdate }) => {
+    setIsLoading(true);
     // if (!isValid(new Date(birthdate))) {
     //   setError("birthdate", {
     //     type: "manual",
@@ -69,6 +72,7 @@ export default function Page(props) {
     });
 
     if (data.status === "error") {
+      setIsLoading(false);
       setError("errorMessage", { type: "manual", message: data.message });
     } else {
       router.push("/fiches");
@@ -131,7 +135,13 @@ export default function Page(props) {
             )}
           />
 
-          <Button type="submit">Ajouter</Button>
+          <Button
+            type="submit"
+            isLoading={isLoading}
+            isDisabled={Object.keys(errors).length > 0}
+          >
+            Ajouter
+          </Button>
         </form>
       </Layout>
       {/* <DevTool control={control} /> */}

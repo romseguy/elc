@@ -1,13 +1,15 @@
 import "./styles.css";
 import { ThemeProvider, ColorModeProvider, CSSReset } from "@chakra-ui/core";
 import theme from "utils/theme";
-import { Provider } from "next-auth/client";
+import { Provider as AuthProvider } from "next-auth/client";
 import { Helmet } from "react-helmet";
 import { description } from "../package.json";
 import { isServer } from "utils/isServer";
-import { Provider as Jotai } from "jotai";
+import { Provider as StateProvider } from "jotai";
+import cookies from "next-cookies";
 
-export default function App({ Component, pageProps }) {
+const App = ({ Component, pageProps, initialColorMode }) => {
+  const { session } = pageProps;
   const config = (theme) => ({
     light: theme.light,
     dark: theme.dark,
@@ -15,26 +17,40 @@ export default function App({ Component, pageProps }) {
 
   return (
     <ThemeProvider theme={theme}>
-      <ColorModeProvider value="light">
+      <ColorModeProvider value={initialColorMode}>
         <CSSReset config={config} />
-        <Provider
+        <AuthProvider
           options={{
             clientMaxAge: 0,
             keepAlive: 0,
           }}
-          session={pageProps.session}
+          session={session}
         >
           <Helmet defaultTitle={description} titleTemplate="%s" />
 
           {!isServer ? (
-            <Jotai>
+            <StateProvider>
               <Component {...pageProps} />
-            </Jotai>
+            </StateProvider>
           ) : (
             <Component {...pageProps} />
           )}
-        </Provider>
+        </AuthProvider>
       </ColorModeProvider>
     </ThemeProvider>
   );
-}
+};
+
+App.getInitialProps = async ({ Component, ctx }) => {
+  let pageProps = {};
+  if (Component.getInitialProps) {
+    pageProps = await Component.getInitialProps(ctx);
+  }
+  const { isDarkMode = "false" } = cookies(ctx);
+  return {
+    pageProps,
+    initialColorMode: isDarkMode === "true" ? "dark" : "light",
+  };
+};
+
+export default App;

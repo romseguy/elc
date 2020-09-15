@@ -4,12 +4,19 @@ import { Nav } from "./nav";
 import { Footer } from "./footer";
 
 export default function Layout({ children }) {
-  const { colorMode, toggleColorMode } = useColorMode();
   const theme = useTheme();
+
+  // TODO: breaks nextjs static optimization
+  // https://github.com/chakra-ui/chakra-ui/issues/349#issuecomment-607011991
+  const { colorMode, toggleColorMode } = useColorMode();
+  const handleToggleDarkMode = () => {
+    toggleColorMode();
+    document.cookie = `isDarkMode=${colorMode === "light"}`;
+  };
 
   return (
     <>
-      <Box as={Button} onClick={toggleColorMode}></Box>
+      <Box as={Button} onClick={handleToggleDarkMode}></Box>
 
       <Header />
 

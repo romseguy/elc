@@ -1,0 +1,38 @@
+matières
+
+enfants                                   
+compétences acquises en rapport avec le niveau        
+(progression)                                         
+-
+formulaire
+-
+prénom
+nom
+date de naissance
+adresse
+nom, prénom, emails parents
+
+
+                                                                   
+---<> atelier                      
+non validé/en cours/non observé     
+observation (en lien ou pas avec une compétence)
+
+formulaire
+titre/nom de l'atelier
+compétences associées qu'il est possible d'obtenirj
+
+
+---<> compétences
+matière (science, etc)
+niveau
+observé ou pas (acquis)
+
+niveaux
+compétences requises pour atteindre le niveau
+
+
+observations
+date
+texte
+
