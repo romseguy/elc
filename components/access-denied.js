@@ -1,11 +1,12 @@
 import { signIn } from "next-auth/client";
-import { Heading, Text } from "@chakra-ui/core";
+import { Text } from "@chakra-ui/core";
 import { Link } from "components/link";
+import { PageTitle } from "./page-title";
 
 export default function AccessDenied() {
   return (
     <>
-      <Heading>Accès refusé</Heading>
+      <PageTitle>Accès refusé</PageTitle>
       <Text>
         <Link
           href="/api/auth/signin"

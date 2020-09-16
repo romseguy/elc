@@ -1,7 +1,7 @@
 import nextConnect from "next-connect";
 import middleware from "middlewares/database";
 import { getSession } from "next-auth/client";
-import { handleError } from "utils/mongoose";
+import { createServerError } from "utils/mongoose";
 
 const handler = nextConnect();
 
@@ -17,7 +17,7 @@ handler.get(async (req, res) => {
       const profiles = await req.models.Profile.find({});
       res.json({ data: profiles });
     } catch (error) {
-      handleError(error);
+      createServerError(error);
     }
   }
 });
@@ -37,7 +37,7 @@ handler.post(async (req, res) => {
       });
       res.status(200).json(profile);
     } catch (error) {
-      res.status(400).json(handleError(error));
+      res.status(400).json(createServerError(error));
     }
   }
 });

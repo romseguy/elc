@@ -12,6 +12,7 @@ const connection = mongoose.createConnection(process.env.DATABASE_URL, {
   useNewUrlParser: true,
   // bufferCommands: false,
   // bufferMaxEntries: 0,
+  useFindAndModify: false,
   useUnifiedTopology: true,
 });
 

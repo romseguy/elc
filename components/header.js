@@ -1,6 +1,6 @@
 import { description } from "package.json";
 import { Box, Heading, useColorMode, useTheme } from "@chakra-ui/core";
-import Link from "next/link";
+import { Link } from "./link";
 
 export const Header = (props) => {
   const theme = useTheme();
@@ -10,14 +10,12 @@ export const Header = (props) => {
     <Box
       py={5}
       textAlign="center"
-      bg={colorMode === "dark" ? theme.dark.bg : theme.light.bg}
+      bg={theme[colorMode].bg}
       style={{ filter: "brightness(120%)" }}
       {...props}
     >
       <Heading as="h1">
-        <Link href="/">
-          <a>{description}</a>
-        </Link>
+        <Link href="/">{description}</Link>
       </Heading>
     </Box>
   );

@@ -1,6 +1,28 @@
-import { Link as cLink } from "@chakra-ui/core";
-import tw from "twin.macro";
+// https://raw.githubusercontent.com/chakra-ui/chakra-ui/develop/examples/nextjs-typescript/components/NextChakraLink.tsx
+import NextLink from "next/link";
+import { Link as ChakraLink } from "@chakra-ui/core";
 
-export const Link = tw(
-  cLink
-)`border-b border-dotted border-gray-700 hover:border-b hover:border-solid hover:no-underline`;
+export const Link = ({
+  href,
+  as,
+  replace,
+  scroll,
+  shallow,
+  prefetch,
+  children,
+  ...chakraProps
+}) => {
+  return (
+    <NextLink
+      passHref={true}
+      href={href}
+      as={as}
+      replace={replace}
+      scroll={scroll}
+      shallow={shallow}
+      prefetch={prefetch}
+    >
+      <ChakraLink {...chakraProps}>{children}</ChakraLink>
+    </NextLink>
+  );
+};

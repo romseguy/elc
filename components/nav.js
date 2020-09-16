@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/client";
 import md5 from "blueimp-md5";
 
@@ -6,7 +5,6 @@ import {
   Button,
   Box,
   Flex,
-  Link as CLink,
   Text,
   Menu,
   MenuButton,
@@ -20,6 +18,7 @@ import {
   Icon,
   Avatar,
 } from "@chakra-ui/core";
+import { Link } from "./link";
 
 const MenuItems = ({ children }) => (
   <Text mt={{ base: 4, md: 0 }} mr={6} display="block">
@@ -67,9 +66,7 @@ export const Nav = (props) => {
       >
         {session && (
           <MenuItems>
-            <Link href="/fiches">
-              <CLink>Fiches</CLink>
-            </Link>
+            <Link href="/fiches">Fiches</Link>
           </MenuItems>
         )}
       </Box>

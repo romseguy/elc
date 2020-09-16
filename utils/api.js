@@ -1,30 +1,34 @@
-async function request(url, params, method = "GET") {
-  const options = {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
+async function request(endpoint, params, method = "GET") {
+  try {
+    const options = {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
 
-  if (params) {
-    if (method === "GET") {
-      url += "?" + objectToQueryString(params);
-    } else {
-      options.body = JSON.stringify(params);
+    if (params) {
+      if (method === "GET") {
+        endpoint += "?" + objectToQueryString(params);
+      } else {
+        options.body = JSON.stringify(params);
+      }
     }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API}/${endpoint}`,
+      options
+    );
+    const result = await response.json();
+
+    if (response.status !== 200) {
+      return createApiError(result);
+    }
+
+    return result;
+  } catch (error) {
+    return createApiError({ error });
   }
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API}/${url}`,
-    options
-  );
-  const result = await response.json();
-
-  if (response.status !== 200) {
-    return generateErrorResponse(result);
-  }
-
-  return result;
 }
 
 function objectToQueryString(obj) {
@@ -33,32 +37,35 @@ function objectToQueryString(obj) {
     .join("&");
 }
 
-function generateErrorResponse({ error }) {
+function createApiError(error) {
   return {
     status: "error",
-    message: error,
+    message:
+      error.message ||
+      "Le serveur a renvoyé une erreur inconnue, veuillez contacter le développeur",
   };
 }
 
-function get(url, params) {
-  return request(url, params);
+function get(endpoint, params) {
+  return request(endpoint, params);
 }
 
-function create(url, params) {
-  return request(url, params, "POST");
+function post(endpoint, params) {
+  return request(endpoint, params, "POST");
 }
 
-function update(url, params) {
-  return request(url, params, "PUT");
+function update(endpoint, params) {
+  return request(endpoint, params, "PUT");
 }
 
-function remove(url, params) {
-  return request(url, params, "DELETE");
+function remove(endpoint, params) {
+  return request(endpoint, params, "DELETE");
 }
 
 export default {
   get,
-  create,
+  post,
   update,
   remove,
+  createApiError,
 };

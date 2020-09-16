@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { version } from "../package.json";
 import { Box, useColorMode, useTheme } from "@chakra-ui/core";
 import { styled } from "twin.macro";
@@ -21,7 +20,7 @@ export const Footer = (props) => {
     <Box
       as="footer"
       py={5}
-      bg={colorMode === "dark" ? theme.dark.bg : theme.light.bg}
+      bg={theme[colorMode].bg}
       style={{ filter: "brightness(120%)" }}
       {...props}
     >
