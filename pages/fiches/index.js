@@ -8,7 +8,7 @@ import { PageTitle } from "components/page-title";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useStore } from "tree";
-import { Table } from "components/table";
+import { StyledTable as Table } from "components/table";
 import { format } from "date-fns";
 
 export default function Page(props) {
@@ -48,14 +48,14 @@ export default function Page(props) {
 
   return (
     <Layout>
-      <PageTitle>Les fiches des élèves</PageTitle>
-      <Box>
+      <PageTitle>
+        Les fiches des élèves
         <Link href="/fiches/add">
-          <Button my={5} border="1px">
-            Ajouter une nouvelle fiche élève
+          <Button ml={5} border="1px">
+            Ajouter
           </Button>
         </Link>
-      </Box>
+      </PageTitle>
       {!isEmpty && (
         <Table bg={theme[colorMode].hover.bg}>
           <thead>
@@ -72,7 +72,7 @@ export default function Page(props) {
                 <tr
                   key={_id}
                   tabIndex={0}
-                  title={`Cliquez pour ouvrir la fiche de ${profile.firstname}`}
+                  title={`Cliquez pour ouvrir la fiche de ${profile.firstname} ${profile.lastname}`}
                   onClick={() =>
                     router.push("/fiches/[...slug]", `/fiches/${profile.slug}`)
                   }

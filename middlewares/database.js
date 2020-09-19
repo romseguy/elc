@@ -1,7 +1,7 @@
 // import { MongoClient } from "mongodb";
 import nextConnect from "next-connect";
 import mongoose from "mongoose";
-import { ProfileSchema } from "utils/schema";
+import { ProfileSchema } from "utils/mongoose/schemas";
 
 // const client = new MongoClient(process.env.DATABASE_URL, {
 //   useNewUrlParser: true,

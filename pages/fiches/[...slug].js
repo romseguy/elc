@@ -6,10 +6,14 @@ import { useRouter } from "next/router";
 import { ProfileForm } from "components/profile-form";
 import { useEffect, useState } from "react";
 import { useStore } from "tree";
-import { Button, Spinner } from "@chakra-ui/core";
-import { PageTitle } from "components/page-title";
+import { Button, Spinner, useColorMode, useTheme } from "@chakra-ui/core";
+import { PageSubTitle, PageTitle } from "components/page-title";
+import { Table } from "components/table";
+import { format, subDays } from "date-fns";
 
 export default function Page(props) {
+  const theme = useTheme();
+  const { colorMode } = useColorMode();
   const [session = props.session, loading] = useSession();
 
   if (loading && !isServer) return null;
@@ -53,7 +57,7 @@ export default function Page(props) {
       }
     };
     fetchProfiles();
-  }, []);
+  }, [action]);
 
   if (isLoading || profile === undefined)
     return (
@@ -87,13 +91,98 @@ export default function Page(props) {
     <Layout>
       <PageTitle>
         {`Fiche de ${profile.firstname} ${profile.lastname}`}
+        <Button mx={5} border="1px" onClick={editAction}>
+          Modifier
+        </Button>
+        <Button border="1px" onClick={removeAction}>
+          Supprimer
+        </Button>
       </PageTitle>
-      <Button my={5} border="1px" onClick={editAction}>
-        Modifier
-      </Button>
-      <Button my={5} border="1px" onClick={removeAction}>
-        Supprimer
-      </Button>
+      <PageSubTitle>Compétences acquises</PageSubTitle>
+      <Table
+        initialState={{
+          sortBy: [
+            {
+              id: "date",
+              desc: true,
+            },
+            {
+              id: "domain",
+              desc: true,
+            },
+            {
+              id: "workshop",
+              desc: true,
+            },
+          ],
+        }}
+        data={[
+          {
+            date: format(new Date(), "dd/MM/yyyy"),
+            code: "L01",
+            description: "J'écoute et je comprends des consignes",
+            domain: "Français / Langage oral",
+            workshop: "Chiffres",
+          },
+          {
+            date: format(subDays(new Date(), 7), "dd/MM/yyyy"),
+            code: "L02",
+            description: "J'écoute et je comprends des consignes",
+            domain: "Français / Langage oral",
+            workshop: "Chiffres",
+          },
+        ]}
+        columns={
+          // [
+          //   {
+          //     Header: "Compétence",
+          //     columns:
+          [
+            {
+              Header: "Date",
+              accessor: "date",
+              sortType: "basic",
+            },
+            { Header: "Code", accessor: "code" },
+            { Header: "Description", accessor: "description" },
+            { Header: "Matière", accessor: "domain", sortType: "basic" },
+            { Header: "Atelier", accessor: "workshop", sortType: "basic" },
+          ]
+          //   },
+          // ]
+        }
+        bg={theme[colorMode].hover.bg}
+      >
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>L01</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </Table>
+      <PageSubTitle>Ateliers</PageSubTitle>
+      <Table bg={theme[colorMode].hover.bg}>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Description</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>L01</td>
+            <td>J'écoute et je comprends des consignes</td>
+            <td>En cours</td>
+          </tr>
+        </tbody>
+      </Table>
     </Layout>
   );
 }

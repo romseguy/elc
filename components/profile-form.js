@@ -78,7 +78,7 @@ export const ProfileForm = ({ profile }) => {
       </FormControl>
 
       <FormControl isRequired p={5} pt={0}>
-        <FormLabel htmlFor="firstname">Nom</FormLabel>
+        <FormLabel htmlFor="lastname">Nom</FormLabel>
         <Input
           name="lastname"
           placeholder="Nom"
@@ -98,7 +98,7 @@ export const ProfileForm = ({ profile }) => {
           name="birthdate"
           control={control}
           defaultValue={(profile && profile.birthdate) || ""}
-          rules={{ required: true, message: "yolo" }}
+          rules={{ required: true }}
           render={(props) => (
             <DatePicker
               minDate={subYears(new Date(), 11)}
