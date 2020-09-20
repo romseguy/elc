@@ -33,6 +33,11 @@ export const Table = (props) => {
       columns,
       data,
       initialState,
+      sortTypes: {
+        log: (row1, row2, columnName) => {
+          console.log(row1, row2, columnName);
+        },
+      },
     },
     useSortBy
   );
@@ -44,6 +49,7 @@ export const Table = (props) => {
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column) => {
               //console.log(column);
+
               return (
                 <th
                   {...column.getHeaderProps(column.getSortByToggleProps())}
@@ -51,13 +57,13 @@ export const Table = (props) => {
                 >
                   {column.render("Header")}
                   <span>
-                    {
+                    {column.canSort && (
                       /* column.isSorted
                       ?  */ column.isSortedDesc
                         ? " 🔽"
                         : " 🔼"
                       /* : "" */
-                    }
+                    )}
                   </span>
                 </th>
               );

@@ -24,7 +24,7 @@ import { Link } from "./link";
 const MenuItems = ({ children }) => {
   const W = styled(Text)`
     a {
-      ${tw`pr-4`}
+      ${tw`mr-4`}
     }
   `;
   return (

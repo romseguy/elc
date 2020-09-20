@@ -1,3 +1,5 @@
+import { values } from "mobx";
+import { observer } from "mobx-react-lite";
 import { getSession, useSession } from "next-auth/client";
 import { isServer } from "utils/isServer";
 import { Button, useTheme, useColorMode, Spinner } from "@chakra-ui/core";
@@ -6,11 +8,11 @@ import AccessDenied from "components/access-denied";
 import { Link } from "components/link";
 import { PageTitle } from "components/page-title";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useStore } from "tree";
 import { StyledTable as Table } from "components/table";
 
-export default function Page(props) {
+export default observer((props) => {
   const theme = useTheme();
   const { colorMode } = useColorMode();
   const [session = props.session, loading] = useSession();
@@ -24,62 +26,59 @@ export default function Page(props) {
     );
 
   const router = useRouter();
-  const {
-    skill: {
-      store: { fetch, isLoading, isEmpty },
-    },
-  } = useStore();
-  const [skills = {}, setskills] = useState();
+  const { skillType } = useStore();
 
   useEffect(() => {
-    const fetchskills = async () => {
-      setskills(await fetch());
+    const fetchSkills = async () => {
+      await skillType.store.fetch();
     };
-    fetchskills();
+    fetchSkills();
   }, []);
 
-  if (isLoading)
+  if (skillType.store.isLoading)
     return (
       <Layout>
         <Spinner />
       </Layout>
     );
 
+  const onRowClick = (skill) => {
+    router.push("/competences/[...slug]", `/competences/${skill.slug}`);
+  };
+
   return (
     <Layout>
       <PageTitle>
-        Les compétences pouvant être acquises par les élèves
+        Liste des compétences et des observables
         <Link href="/competences/add">
           <Button ml={5} border="1px">
             Ajouter
           </Button>
         </Link>
       </PageTitle>
-      {!isEmpty && (
+      {!skillType.store.isEmpty && (
         <Table bg={theme[colorMode].hover.bg}>
           <thead>
             <tr>
               <th>Code</th>
               <th>Description</th>
+              <th>Matière</th>
+              <th>Niveau</th>
             </tr>
           </thead>
           <tbody>
-            {Object.keys(skills).map((_id) => {
-              const skill = skills[_id];
+            {values(skillType.store.skills).map((skill) => {
               return (
                 <tr
-                  key={_id}
+                  key={skill._id}
                   tabIndex={0}
                   title={`Cliquez pour ouvrir la compétence ${skill.code}`}
-                  onClick={() =>
-                    router.push(
-                      "/competences/[...slug]",
-                      `/competences/${skill.slug}`
-                    )
-                  }
+                  onClick={() => onRowClick(skill)}
                 >
                   <td>{skill.code}</td>
                   <td>{skill.description}</td>
+                  <td>{skill.domain}</td>
+                  <td>{skill.level}</td>
                 </tr>
               );
             })}
@@ -88,7 +87,7 @@ export default function Page(props) {
       )}
     </Layout>
   );
-}
+});
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);

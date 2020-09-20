@@ -1,5 +1,10 @@
 import mongoose from "mongoose";
 
+const SkillRefSchema = new mongoose.Schema({
+  skill: String,
+  date: Date,
+});
+
 export const ProfileSchema = new mongoose.Schema({
   firstname: {
     type: String,
@@ -10,7 +15,10 @@ export const ProfileSchema = new mongoose.Schema({
     required: true,
   },
   birthdate: {
-    type: String,
+    type: Date,
+  },
+  skills: {
+    type: [SkillRefSchema],
   },
 });
 
@@ -31,5 +39,11 @@ export const SkillSchema = new mongoose.Schema({
   description: {
     type: String,
     required: true,
+  },
+  domain: {
+    type: String,
+  },
+  level: {
+    type: String,
   },
 });

@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { applySnapshot, types as t } from "mobx-state-tree";
+import { applySnapshot, onSnapshot, types as t } from "mobx-state-tree";
 import makeInspectable from "mobx-devtools-mst";
 import { Counter } from "./counter";
 import { ProfileType } from "./profile";
@@ -11,8 +11,8 @@ let clientStore;
 export const Tree = t
   .model({
     counter: t.optional(Counter, {}),
-    profile: t.optional(ProfileType, {}),
-    skill: t.optional(SkillType, {}),
+    profileType: t.optional(ProfileType, {}),
+    skillType: t.optional(SkillType, {}),
   })
   .actions((tree) => ({
     reset() {
@@ -23,7 +23,9 @@ export const Tree = t
   }));
 
 export function initializeStore(snapshot = null) {
-  const store = clientStore ?? makeInspectable(Tree.create({}));
+  const root = Tree.create({});
+  onSnapshot(root, (snapshot) => console.log(snapshot));
+  const store = clientStore ?? makeInspectable(root);
 
   // If your page has Next.js data fetching methods that use a Mobx store, it will
   // get hydrated here

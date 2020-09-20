@@ -25,6 +25,7 @@ async function request(endpoint, params, method = "GET") {
       return createApiError(result);
     }
 
+    console.log(`/${endpoint}`, result.data);
     return result;
   } catch (error) {
     return createApiError({ error });

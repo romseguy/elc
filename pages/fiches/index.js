@@ -1,17 +1,19 @@
+import { values } from "mobx";
+import { observer } from "mobx-react-lite";
 import { getSession, useSession } from "next-auth/client";
 import { isServer } from "utils/isServer";
-import { Button, Box, useTheme, useColorMode, Spinner } from "@chakra-ui/core";
+import { Button, useTheme, useColorMode, Spinner } from "@chakra-ui/core";
 import Layout from "components/layout";
 import AccessDenied from "components/access-denied";
 import { Link } from "components/link";
 import { PageTitle } from "components/page-title";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useStore } from "tree";
 import { StyledTable as Table } from "components/table";
 import { format } from "date-fns";
 
-export default function Page(props) {
+export default observer((props) => {
   const theme = useTheme();
   const { colorMode } = useColorMode();
   const [session = props.session, loading] = useSession();
@@ -25,38 +27,37 @@ export default function Page(props) {
     );
 
   const router = useRouter();
-  const {
-    profile: {
-      store: { fetch, isLoading, isEmpty },
-    },
-  } = useStore();
-  const [profiles = {}, setProfiles] = useState();
+  const { profileType } = useStore();
 
   useEffect(() => {
     const fetchProfiles = async () => {
-      setProfiles(await fetch());
+      await profileType.store.fetch();
     };
     fetchProfiles();
   }, []);
 
-  if (isLoading)
+  if (profileType.store.isLoading)
     return (
       <Layout>
         <Spinner />
       </Layout>
     );
 
+  const onRowClick = (profile) => {
+    router.push("/fiches/[...slug]", `/fiches/${profile.slug}`);
+  };
+
   return (
     <Layout>
       <PageTitle>
-        Les fiches des élèves
+        Liste des fiches élèves
         <Link href="/fiches/add">
           <Button ml={5} border="1px">
             Ajouter
           </Button>
         </Link>
       </PageTitle>
-      {!isEmpty && (
+      {!profileType.store.isEmpty && (
         <Table bg={theme[colorMode].hover.bg}>
           <thead>
             <tr>
@@ -66,16 +67,13 @@ export default function Page(props) {
             </tr>
           </thead>
           <tbody>
-            {Object.keys(profiles).map((_id) => {
-              const profile = profiles[_id];
+            {values(profileType.store.profiles).map((profile) => {
               return (
                 <tr
-                  key={_id}
+                  key={profile._id}
                   tabIndex={0}
                   title={`Cliquez pour ouvrir la fiche de ${profile.firstname} ${profile.lastname}`}
-                  onClick={() =>
-                    router.push("/fiches/[...slug]", `/fiches/${profile.slug}`)
-                  }
+                  onClick={() => onRowClick(profile)}
                 >
                   <td>{profile.firstname}</td>
                   <td>{profile.lastname}</td>
@@ -88,7 +86,7 @@ export default function Page(props) {
       )}
     </Layout>
   );
-}
+});
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);

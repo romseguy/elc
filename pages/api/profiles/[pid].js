@@ -7,7 +7,7 @@ const handler = nextConnect();
 
 handler.use(middleware);
 
-handler.get(async (req, res) => {
+handler.get(async function getProfile(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
@@ -26,7 +26,7 @@ handler.get(async (req, res) => {
         res
           .status(400)
           .json(
-            createServerError(new Error("Le profil n'a pas pu être trouvé"))
+            createServerError(new Error("Le document n'a pas pu être trouvé"))
           );
       }
     } catch (error) {
@@ -35,7 +35,7 @@ handler.get(async (req, res) => {
   }
 });
 
-handler.put(async (req, res) => {
+handler.put(async function editProfile(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
@@ -57,7 +57,7 @@ handler.put(async (req, res) => {
         res
           .status(400)
           .json(
-            createServerError(new Error("Le profil n'a pas pu être modifié"))
+            createServerError(new Error("Le document n'a pas pu être modifié"))
           );
       }
     } catch (error) {
@@ -85,7 +85,7 @@ handler.delete(async (req, res) => {
         res
           .status(400)
           .json(
-            createServerError(new Error("Le profil n'a pas pu être supprimé"))
+            createServerError(new Error("Le document n'a pas pu être supprimé"))
           );
       }
     } catch (error) {

@@ -7,7 +7,7 @@ const handler = nextConnect();
 
 handler.use(middleware);
 
-handler.get(async (req, res) => {
+handler.get(async function getProfiles(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
@@ -22,7 +22,7 @@ handler.get(async (req, res) => {
   }
 });
 
-handler.post(async (req, res) => {
+handler.post(async function postProfile(req, res) {
   const session = await getSession({ req });
 
   if (!session) {

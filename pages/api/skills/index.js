@@ -29,11 +29,7 @@ handler.post(async (req, res) => {
     res.send({ error: "Vous devez être identifié pour accéder à ce contenu." });
   } else {
     try {
-      const { code, description } = req.body;
-      const skill = await req.models.Skill.create({
-        code,
-        description,
-      });
+      const skill = await req.models.Skill.create(req.body);
       res.status(200).json(skill);
     } catch (error) {
       res.status(400).json(createServerError(error));

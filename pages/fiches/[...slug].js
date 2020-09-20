@@ -1,3 +1,5 @@
+import { values } from "mobx";
+import { observer } from "mobx-react-lite";
 import { getSession, useSession } from "next-auth/client";
 import { isServer } from "utils/isServer";
 import Layout from "components/layout";
@@ -6,15 +8,18 @@ import { useRouter } from "next/router";
 import { ProfileForm } from "components/profile-form";
 import { useEffect, useState } from "react";
 import { useStore } from "tree";
-import { Button, Spinner, useColorMode, useTheme } from "@chakra-ui/core";
+import { Button, Icon, Spinner, useColorMode, useTheme } from "@chakra-ui/core";
 import { PageSubTitle, PageTitle } from "components/page-title";
 import { Table } from "components/table";
-import { format, subDays } from "date-fns";
+import { format } from "date-fns";
+import { ProfileAddSkillForm } from "components/profile-add-skill-form";
 
-export default function Page(props) {
+export default observer((props) => {
   const theme = useTheme();
   const { colorMode } = useColorMode();
   const [session = props.session, loading] = useSession();
+  const [showSkillForm, setShowSkillForm] = useState(false);
+  const toggleAddSkillForm = () => setShowSkillForm(!showSkillForm);
 
   if (loading && !isServer) return null;
   if (!session)
@@ -33,40 +38,22 @@ export default function Page(props) {
     return null;
   }
 
-  const {
-    profile: {
-      store: { fetch, isLoading, isEmpty },
-    },
-  } = useStore();
-  const [profile, setProfile] = useState();
+  const { profileType, skillType } = useStore();
 
   useEffect(() => {
-    const fetchProfiles = async () => {
-      const profiles = await fetch();
-
-      if (!profiles) router.push("/fiches");
-      else {
-        let found = false;
-        Object.keys(profiles).forEach((_id) => {
-          if (profiles[_id].slug === profileSlug) {
-            found = true;
-            setProfile(profiles[_id]);
-          }
-        });
-        if (!found) setProfile(null);
-      }
+    const selectProfile = async () => {
+      await skillType.store.fetch();
+      await profileType.selectProfile(profileSlug);
     };
-    fetchProfiles();
-  }, [action]);
 
-  if (isLoading || profile === undefined)
-    return (
-      <Layout>
-        <Spinner />
-      </Layout>
-    );
-  if (isEmpty) return <Layout>Aucune fiche trouvée</Layout>;
-  if (profile === null)
+    selectProfile();
+  }, []);
+
+  const selectedProfile = profileType.selectedProfile;
+
+  if (!profileType.store.isLoading && profileType.store.isEmpty)
+    return <Layout>Aucune fiche trouvée</Layout>;
+  if (selectedProfile === null)
     return (
       <Layout>Nous n'avons pas pu trouver de fiche associée à cet élève</Layout>
     );
@@ -74,110 +61,126 @@ export default function Page(props) {
   if (action === "edit") {
     return (
       <Layout>
-        <ProfileForm profile={profile} />
+        {!!selectedProfile ? (
+          <>
+            <PageTitle>
+              {`Modification de la fiche de ${selectedProfile.firstname} ${selectedProfile.lastname}`}
+            </PageTitle>
+            <ProfileForm profile={selectedProfile} />
+          </>
+        ) : (
+          <Spinner />
+        )}
+      </Layout>
+    );
+  } else {
+    const editAction = () => {
+      router.push("/fiches/[...slug]", `/fiches/${selectedProfile.slug}/edit`);
+    };
+    const removeAction = async () => {
+      const removedProfile = await selectedProfile.remove();
+      router.push("/fiches");
+    };
+    const addSkillAction = () => {
+      toggleAddSkillForm();
+    };
+    const removeSkillAction = (skill) => {
+      const p = selectedProfile.removeSkill(skill);
+      const res = p.update();
+
+      if (res.status === "error") {
+        console.error(res.message); // @todo: toast
+      }
+    };
+
+    return (
+      <Layout>
+        {!!selectedProfile ? (
+          <>
+            <PageTitle>
+              {`Fiche de ${selectedProfile.firstname} ${selectedProfile.lastname}`}
+              <Button mx={5} border="1px" onClick={editAction}>
+                Modifier
+              </Button>
+              <Button border="1px" onClick={removeAction}>
+                Supprimer
+              </Button>
+            </PageTitle>
+            <PageSubTitle>
+              Compétences acquises
+              <Button mx={5} border="1px" onClick={addSkillAction}>
+                Ajouter {showSkillForm ? " 🔼" : " 🔽"}
+              </Button>
+            </PageSubTitle>
+            {showSkillForm && (
+              <ProfileAddSkillForm
+                profile={selectedProfile}
+                skills={skillType.store.skills}
+                onSubmit={toggleAddSkillForm}
+              />
+            )}
+            <Table
+              initialState={{
+                sortBy: [
+                  {
+                    id: "date",
+                    desc: true,
+                  },
+                ],
+              }}
+              data={values(selectedProfile.skills).map(({ skill, date }) => {
+                return {
+                  deleteButton: (
+                    <Button onClick={() => removeSkillAction(skill)}>
+                      <Icon name="delete" />
+                    </Button>
+                  ),
+                  code: skill.code,
+                  description: skill.description,
+                  date: format(date, "dd/MM/yyyy"),
+                };
+              })}
+              columns={[
+                {
+                  Header: "Date",
+                  accessor: "date",
+                  sortType: "basic",
+                },
+                { Header: "Code", accessor: "code" },
+                { Header: "Description", accessor: "description" },
+                { Header: "Matière", accessor: "domain", sortType: "basic" },
+                { Header: "Atelier", accessor: "workshop", sortType: "basic" },
+                { Header: "", accessor: "deleteButton", disableSortBy: true },
+              ]}
+              bg={theme[colorMode].hover.bg}
+            />
+            {/*
+            <PageSubTitle>Ateliers</PageSubTitle>
+            <Table bg={theme[colorMode].hover.bg}>
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Description</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>L01</td>
+                  <td>J'écoute et je comprends des consignes</td>
+                  <td>En cours</td>
+                </tr>
+              </tbody>
+            </Table>
+          */}
+          </>
+        ) : (
+          <Spinner />
+        )}
       </Layout>
     );
   }
-
-  const editAction = () => {
-    router.push("/fiches/[...slug]", `/fiches/${profile.slug}/edit`);
-  };
-  const removeAction = async () => {
-    const removedProfile = await profile.remove();
-    router.push("/fiches");
-  };
-
-  return (
-    <Layout>
-      <PageTitle>
-        {`Fiche de ${profile.firstname} ${profile.lastname}`}
-        <Button mx={5} border="1px" onClick={editAction}>
-          Modifier
-        </Button>
-        <Button border="1px" onClick={removeAction}>
-          Supprimer
-        </Button>
-      </PageTitle>
-      <PageSubTitle>Compétences acquises</PageSubTitle>
-      <Table
-        initialState={{
-          sortBy: [
-            {
-              id: "date",
-              desc: true,
-            },
-          ],
-        }}
-        data={[
-          {
-            date: format(new Date(), "dd/MM/yyyy"),
-            code: "L01",
-            description: "J'écoute et je comprends des consignes",
-            domain: "Français / Langage oral",
-            workshop: "Chiffres",
-          },
-          {
-            date: format(subDays(new Date(), 7), "dd/MM/yyyy"),
-            code: "L02",
-            description: "J'écoute et je comprends des consignes",
-            domain: "Français / Langage oral",
-            workshop: "Chiffres",
-          },
-        ]}
-        columns={
-          // [
-          //   {
-          //     Header: "Compétence",
-          //     columns:
-          [
-            {
-              Header: "Date",
-              accessor: "date",
-              sortType: "basic",
-            },
-            { Header: "Code", accessor: "code" },
-            { Header: "Description", accessor: "description" },
-            { Header: "Matière", accessor: "domain", sortType: "basic" },
-            { Header: "Atelier", accessor: "workshop", sortType: "basic" },
-          ]
-          //   },
-          // ]
-        }
-        bg={theme[colorMode].hover.bg}
-      >
-        <thead>
-          <tr>
-            <th>Code</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>L01</td>
-            <td></td>
-          </tr>
-        </tbody>
-      </Table>
-      <PageSubTitle>Ateliers</PageSubTitle>
-      <Table bg={theme[colorMode].hover.bg}>
-        <thead>
-          <tr>
-            <th>Code</th>
-            <th>Description</th>
-            <th>Statut</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>L01</td>
-            <td>J'écoute et je comprends des consignes</td>
-            <td>En cours</td>
-          </tr>
-        </tbody>
-      </Table>
-    </Layout>
-  );
-}
+});
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);

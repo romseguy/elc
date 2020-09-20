@@ -1,4 +1,8 @@
-import { Controller, useForm } from "react-hook-form";
+import { useState } from "react";
+import { isStateTreeNode } from "mobx-state-tree";
+import { useForm } from "react-hook-form";
+import { ErrorMessage } from "@hookform/error-message";
+import { useRouter } from "next/router";
 // import { DevTool } from "@hookform/devtools";
 import {
   Input,
@@ -9,22 +13,24 @@ import {
   Text,
   Icon,
   Stack,
+  useTheme,
+  useColorMode,
 } from "@chakra-ui/core";
-import { DatePicker } from "components/datepicker";
-import { useRouter } from "next/router";
-import { subYears } from "date-fns";
-import { ErrorMessage } from "@hookform/error-message";
-import { useState } from "react";
+import { Select } from "./select";
 import { useStore } from "tree";
+import { domains, levels } from "tree/skill";
 
-export const SkillForm = ({ skill }) => {
+export const SkillForm = (props) => {
+  const theme = useTheme();
+  const { colorMode } = useColorMode();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState();
-  const {
-    skill: {
-      store: { addSkill, setSkill },
-    },
-  } = useStore();
+  const { skillType } = useStore();
+
+  if (props.skill && !isStateTreeNode(props.skill)) {
+    console.error("props.skill must be a model instance");
+    return null;
+  }
 
   const {
     control,
@@ -43,32 +49,41 @@ export const SkillForm = ({ skill }) => {
   };
 
   const onSubmit = async (formData) => {
+    const handleError = () => {
+      setIsLoading(false);
+      setError("apiErrorMessage", { type: "manual", message: res.message });
+    };
+
     setIsLoading(true);
     let res;
 
-    if (skill) {
-      res = await setSkill({ ...formData, _id: skill._id });
-    } else {
-      res = await addSkill(formData);
-    }
+    if (props.skill) {
+      props.skill.merge(formData);
+      res = await props.skill.update();
 
-    if (res.status === "error") {
-      setIsLoading(false);
-      setError("apiErrorMessage", { type: "manual", message: res.message });
+      if (res.status === "error") handleError();
+      else
+        router.push(
+          "/competences/[...slug]",
+          `/competences/${props.skill.slug}`
+        );
     } else {
-      router.push("/fiches");
+      res = await skillType.store.postSkill(formData);
+
+      if (res.status === "error") handleError();
+      else router.push("/competences");
     }
   };
 
   return (
     <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
-      <FormControl isRequired m={5}>
+      <FormControl isRequired m={5} mt={0}>
         <FormLabel htmlFor="code">Code</FormLabel>
         <Input
           name="code"
           placeholder="L01"
           ref={register({ required: true })}
-          defaultValue={(skill && skill.code) || ""}
+          defaultValue={(props.skill && props.skill.code) || ""}
         />
         <ErrorMessage
           errors={errors}
@@ -80,16 +95,54 @@ export const SkillForm = ({ skill }) => {
       <FormControl isRequired m={5} mt={0}>
         <FormLabel htmlFor="description">Description</FormLabel>
         <Input
-          name="code"
+          name="description"
           placeholder="J'écoute et je comprends des consignes"
           ref={register({ required: true })}
-          defaultValue={(skill && skill.description) || ""}
+          defaultValue={(props.skill && props.skill.description) || ""}
         />
         <ErrorMessage
           errors={errors}
           name="description"
           message="Veuillez saisir une description"
         />
+      </FormControl>
+
+      <FormControl m={5} mt={0}>
+        <FormLabel htmlFor="domain">Matière</FormLabel>
+        <Select
+          name="domain"
+          placeholder="Sélectionner une matière"
+          ref={register({ required: true })}
+          defaultValue={
+            props.skill && props.skill.domain !== "-" ? props.skill.domain : "-"
+          }
+          colorMode={colorMode}
+        >
+          {domains.map((domain) => (
+            <option key={domain} value={domain}>
+              {domain}
+            </option>
+          ))}
+        </Select>
+      </FormControl>
+
+      <FormControl m={5} mt={0}>
+        <FormLabel htmlFor="level">Niveau</FormLabel>
+        <Select
+          name="level"
+          placeholder="Sélectionner un niveau"
+          ref={register({ required: true })}
+          defaultValue={
+            props.skill && props.skill.level !== "-" ? props.skill.level : "-"
+          }
+          colorMode={colorMode}
+        >
+          {levels.map((level) => (
+            <option key={level} value={level}>
+              {level}
+            </option>
+          ))}
+        </Select>
       </FormControl>
 
       <ErrorMessage
@@ -109,9 +162,8 @@ export const SkillForm = ({ skill }) => {
         type="submit"
         isLoading={isLoading}
         isDisabled={Object.keys(errors).length > 0}
-        mt={5}
       >
-        {skill ? "Modifier" : "Ajouter"}
+        {props.skill ? "Modifier" : "Ajouter"}
       </Button>
     </form>
   );
