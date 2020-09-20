@@ -3,6 +3,7 @@ import { applySnapshot, types as t } from "mobx-state-tree";
 import makeInspectable from "mobx-devtools-mst";
 import { Counter } from "./counter";
 import { ProfileType } from "./profile";
+import { SkillType } from "./skill";
 
 export { getSnapshot } from "mobx-state-tree";
 let clientStore;
@@ -11,6 +12,7 @@ export const Tree = t
   .model({
     counter: t.optional(Counter, {}),
     profile: t.optional(ProfileType, {}),
+    skill: t.optional(SkillType, {}),
   })
   .actions((tree) => ({
     reset() {

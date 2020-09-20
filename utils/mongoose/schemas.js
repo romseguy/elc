@@ -21,3 +21,15 @@ ProfileSchema.index(
   },
   { unique: true, background: true }
 );
+
+export const SkillSchema = new mongoose.Schema({
+  code: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+});

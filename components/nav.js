@@ -1,6 +1,7 @@
 import { signIn, signOut, useSession } from "next-auth/client";
 import md5 from "blueimp-md5";
 
+import tw, { styled } from "twin.macro";
 import {
   Button,
   Box,
@@ -20,11 +21,18 @@ import {
 } from "@chakra-ui/core";
 import { Link } from "./link";
 
-const MenuItems = ({ children }) => (
-  <Text mt={{ base: 4, md: 0 }} mr={6} display="block">
-    {children}
-  </Text>
-);
+const MenuItems = ({ children }) => {
+  const W = styled(Text)`
+    a {
+      ${tw`pr-4`}
+    }
+  `;
+  return (
+    <W mt={{ base: 4, md: 0 }} mr={6} display="block">
+      {children}
+    </W>
+  );
+};
 
 const LoginButton = (props) => {
   return (
@@ -67,6 +75,7 @@ export const Nav = (props) => {
         {session && (
           <MenuItems>
             <Link href="/fiches">Fiches</Link>
+            <Link href="/competences">Compétences</Link>
           </MenuItems>
         )}
       </Box>

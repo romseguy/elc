@@ -15,32 +15,6 @@ body,
   flex-direction: column;
 }
 
-/*
-body {
-  font-family: -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans,
-    sans-serif, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-}
-
-li,
-p {
-  line-height: 2.5rem !important;
-}
-
-a {
-  font-weight: 500;
-}
-
-
-iframe {
-  background: #ccc;
-  border: 1px solid #ccc;
-  height: 10rem;
-  width: 100%;
-  border-radius: 0.5rem;
-  filter: invert(1);
-} */
-
 .react-datepicker {
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", sans-serif;
@@ -57,22 +31,6 @@ iframe {
   height: 15px;
   border: none;
 }
-
-/* .react-datepicker__navigation--previous {
-  border-right-color: #cbd5e0;
-
-  &:hover {
-    border-right-color: #a0aec0;
-  }
-}
-
-.react-datepicker__navigation--next {
-  border-left-color: #cbd5e0;
-
-  &:hover {
-    border-left-color: #a0aec0;
-  }
-} */
 
 .react-datepicker__navigation--next {
   background: url(../assets/images/arrow-right.png) no-repeat;

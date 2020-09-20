@@ -45,14 +45,19 @@ export const Table = (props) => {
             {headerGroup.headers.map((column) => {
               //console.log(column);
               return (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                <th
+                  {...column.getHeaderProps(column.getSortByToggleProps())}
+                  title="Changer l'ordre d'affichage"
+                >
                   {column.render("Header")}
                   <span>
-                    {column.isSorted
-                      ? column.isSortedDesc
+                    {
+                      /* column.isSorted
+                      ?  */ column.isSortedDesc
                         ? " 🔽"
                         : " 🔼"
-                      : ""}
+                      /* : "" */
+                    }
                   </span>
                 </th>
               );
