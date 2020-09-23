@@ -1,7 +1,11 @@
 // import { MongoClient } from "mongodb";
 import nextConnect from "next-connect";
 import mongoose from "mongoose";
-import { ProfileSchema, SkillSchema } from "utils/mongoose/schemas";
+import {
+  ParentSchema,
+  ProfileSchema,
+  SkillSchema,
+} from "utils/mongoose/schemas";
 
 // const client = new MongoClient(process.env.DATABASE_URL, {
 //   useNewUrlParser: true,
@@ -25,6 +29,7 @@ middleware.use(async (req, res, next) => {
   req.dbClient = client;
   req.db = client.db();
   req.models = {
+    Parent: connection.model("Parent", ParentSchema),
     Profile: connection.model("Profile", ProfileSchema),
     Skill: connection.model("Skill", SkillSchema),
   };

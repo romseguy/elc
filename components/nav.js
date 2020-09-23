@@ -74,8 +74,9 @@ export const Nav = (props) => {
       >
         {session && (
           <MenuItems>
-            <Link href="/fiches">Fiches</Link>
+            <Link href="/fiches">Élèves</Link>
             <Link href="/competences">Compétences</Link>
+            <Link href="/parents">Parents</Link>
           </MenuItems>
         )}
       </Box>

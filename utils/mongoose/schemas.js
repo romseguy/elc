@@ -1,5 +1,27 @@
 import mongoose from "mongoose";
 
+export const ParentSchema = new mongoose.Schema({
+  firstname: {
+    type: String,
+    required: true,
+  },
+  lastname: {
+    type: String,
+    required: true,
+  },
+  birthdate: {
+    type: Date,
+  },
+});
+
+ParentSchema.index(
+  {
+    firstname: 1,
+    lastname: 1,
+  },
+  { unique: true, background: true }
+);
+
 const SkillRefSchema = new mongoose.Schema({
   skill: String,
   date: Date,

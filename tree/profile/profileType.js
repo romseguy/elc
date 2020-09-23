@@ -1,3 +1,4 @@
+import { toDate } from "date-fns";
 import {
   types as t,
   flow,
@@ -90,10 +91,11 @@ const ProfileStore = t
     }),
     updateProfile: flow(function* updateProfile(profile) {
       store.state = "pending";
-      const res = yield api.update(
-        `profiles/${profile._id}`,
-        getSnapshot(profile)
-      );
+      const data = getSnapshot(profile);
+      const res = yield api.update(`profiles/${profile._id}`, {
+        ...data,
+        birthdate: toDate(data.birthdate),
+      });
       store.state = "done";
       return res;
     }),

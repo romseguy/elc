@@ -4,6 +4,7 @@ import makeInspectable from "mobx-devtools-mst";
 import { Counter } from "./counter";
 import { ProfileType } from "./profile";
 import { SkillType } from "./skill";
+import { ParentType } from "./parent";
 
 export { getSnapshot } from "mobx-state-tree";
 let clientStore;
@@ -11,6 +12,7 @@ let clientStore;
 export const Tree = t
   .model({
     counter: t.optional(Counter, {}),
+    parentType: t.optional(ParentType, {}),
     profileType: t.optional(ProfileType, {}),
     skillType: t.optional(SkillType, {}),
   })
