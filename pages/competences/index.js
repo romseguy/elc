@@ -13,8 +13,8 @@ import { useStore } from "tree";
 import { StyledTable as Table } from "components/table";
 
 export default observer((props) => {
-  const theme = useTheme();
   const { colorMode } = useColorMode();
+  const theme = useTheme()[colorMode || "light"];
   const [session = props.session, loading] = useSession();
 
   if (loading && !isServer) return null;
@@ -57,7 +57,7 @@ export default observer((props) => {
         </Link>
       </PageTitle>
       {!skillType.store.isEmpty && (
-        <Table bg={theme[colorMode].hover.bg}>
+        <Table bg={theme.hover.bg}>
           <thead>
             <tr>
               <th>Code</th>

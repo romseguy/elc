@@ -12,8 +12,8 @@ import { Button, Spinner, useColorMode, useTheme } from "@chakra-ui/core";
 import { PageTitle } from "components/page-title";
 
 export default observer((props) => {
-  const theme = useTheme();
   const { colorMode } = useColorMode();
+  const theme = useTheme()[colorMode || "light"];
   const [session = props.session, loading] = useSession();
 
   if (loading && !isServer) return null;

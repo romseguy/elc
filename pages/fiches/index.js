@@ -14,8 +14,8 @@ import { StyledTable as Table } from "components/table";
 import { format } from "date-fns";
 
 export default observer((props) => {
-  const theme = useTheme();
   const { colorMode } = useColorMode();
+  const theme = useTheme()[colorMode || "light"];
   const [session = props.session, loading] = useSession();
 
   if (loading && !isServer) return null;
@@ -58,7 +58,7 @@ export default observer((props) => {
         </Link>
       </PageTitle>
       {!profileType.store.isEmpty && (
-        <Table bg={theme[colorMode].hover.bg}>
+        <Table bg={theme.hover.bg}>
           <thead>
             <tr>
               <th>Prénom </th>

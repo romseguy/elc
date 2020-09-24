@@ -7,11 +7,11 @@ import {
   FormLabel,
   Box,
   Text,
-  Icon,
   Stack,
   useTheme,
   useColorMode,
 } from "@chakra-ui/core";
+import { WarningIcon } from "@chakra-ui/icons";
 import { DatePicker } from "components/datepicker";
 import { useRouter } from "next/router";
 import { subYears } from "date-fns";
@@ -22,8 +22,8 @@ import { values } from "mobx";
 import { Select } from "./select";
 
 export const ProfileAddSkillForm = (props) => {
-  const theme = useTheme();
   const { colorMode } = useColorMode();
+  const theme = useTheme()[colorMode || "light"];
   const router = useRouter();
   const [isLoading, setIsLoading] = useState();
   const { profileType } = useStore();
@@ -116,7 +116,7 @@ export const ProfileAddSkillForm = (props) => {
         name="apiErrorMessage"
         render={({ message }) => (
           <Stack isInline p={5} mb={5} shadow="md" color="red.500">
-            <Icon name="warning" size={5} />
+            <WarningIcon boxSize={5} />
             <Box>
               <Text>{message}</Text>
             </Box>

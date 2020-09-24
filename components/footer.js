@@ -13,14 +13,14 @@ const MenuItem = styled.li`
 `;
 
 export const Footer = (props) => {
-  const { colorMode, toggleColorMode } = useColorMode();
-  const theme = useTheme();
+  const { colorMode } = useColorMode();
+  const theme = useTheme()[colorMode || "light"];
 
   return (
     <Box
       as="footer"
       py={5}
-      bg={theme[colorMode].bg}
+      bg={theme.bg}
       style={{ filter: "brightness(120%)" }}
       {...props}
     >

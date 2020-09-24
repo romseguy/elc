@@ -8,15 +8,17 @@ import { useRouter } from "next/router";
 import { ProfileForm } from "components/profile-form";
 import { useEffect, useState } from "react";
 import { useStore } from "tree";
-import { Button, Icon, Spinner, useColorMode, useTheme } from "@chakra-ui/core";
+import { Button, Spinner, useColorMode, useTheme } from "@chakra-ui/core";
+import { DeleteIcon } from "@chakra-ui/icons";
 import { PageSubTitle, PageTitle } from "components/page-title";
 import { Table } from "components/table";
 import { format } from "date-fns";
 import { ProfileAddSkillForm } from "components/profile-add-skill-form";
+import { isStateTreeNode } from "mobx-state-tree";
 
 export default observer((props) => {
-  const theme = useTheme();
   const { colorMode } = useColorMode();
+  const theme = useTheme()[colorMode || "light"];
   const [session = props.session, loading] = useSession();
   const [showSkillForm, setShowSkillForm] = useState(false);
   const toggleAddSkillForm = () => setShowSkillForm(!showSkillForm);
@@ -51,12 +53,16 @@ export default observer((props) => {
 
   const selectedProfile = profileType.selectedProfile;
 
-  if (!profileType.store.isLoading && profileType.store.isEmpty)
-    return <Layout>Aucune fiche trouvée</Layout>;
-  if (selectedProfile === null)
-    return (
-      <Layout>Nous n'avons pas pu trouver de fiche associée à cet élève</Layout>
-    );
+  if (!profileType.store.isLoading) {
+    if (profileType.store.isEmpty) return <Layout>Aucune fiche trouvée</Layout>;
+
+    if (selectedProfile === null)
+      return (
+        <Layout>
+          Nous n'avons pas pu trouver de fiche associée à cet élève
+        </Layout>
+      );
+  }
 
   if (action === "edit") {
     return (
@@ -98,7 +104,7 @@ export default observer((props) => {
         {!!selectedProfile ? (
           <>
             <PageTitle>
-              {`Fiche de ${selectedProfile.firstname} ${selectedProfile.lastname}`}
+              {`Fiche de l'élève : ${selectedProfile.firstname} ${selectedProfile.lastname}`}
               <Button mx={5} border="1px" onClick={editAction}>
                 Modifier
               </Button>
@@ -132,7 +138,7 @@ export default observer((props) => {
                 return {
                   deleteButton: (
                     <Button onClick={() => removeSkillAction(skill)}>
-                      <Icon name="delete" />
+                      <DeleteIcon boxSize={5} />
                     </Button>
                   ),
                   code: skill.code,
@@ -152,11 +158,11 @@ export default observer((props) => {
                 { Header: "Atelier", accessor: "workshop", sortType: "basic" },
                 { Header: "", accessor: "deleteButton", disableSortBy: true },
               ]}
-              bg={theme[colorMode].hover.bg}
+              bg={theme.hover.bg}
             />
             {/*
             <PageSubTitle>Ateliers</PageSubTitle>
-            <Table bg={theme[colorMode].hover.bg}>
+            <Table bg={theme.hover.bg}>
               <thead>
                 <tr>
                   <th>Code</th>

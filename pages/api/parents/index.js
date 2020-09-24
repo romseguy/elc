@@ -29,10 +29,11 @@ handler.post(async function postParent(req, res) {
     res.send({ error: "Vous devez être identifié pour accéder à ce contenu." });
   } else {
     try {
-      const { firstname, lastname } = req.body;
+      const { firstname, lastname, email } = req.body;
       const parent = await req.models.Parent.create({
         firstname,
         lastname,
+        email,
       });
       res.status(200).json(parent);
     } catch (error) {

@@ -1,32 +1,19 @@
-import { description } from "package.json";
-import Head from "next/head";
-import { useColorMode, Button, Box, useTheme } from "@chakra-ui/core";
+import { useColorMode, Box, useTheme, IconButton } from "@chakra-ui/core";
 import { Header } from "./header";
 import { Nav } from "./nav";
 import { Footer } from "./footer";
+import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 
 export default function Layout({ children }) {
-  const theme = useTheme();
-
-  // TODO: breaks nextjs static optimization
-  // https://github.com/chakra-ui/chakra-ui/issues/349#issuecomment-607011991
   const { colorMode, toggleColorMode } = useColorMode();
-  const handleToggleDarkMode = () => {
-    toggleColorMode();
-    document.cookie = `isDarkMode=${colorMode === "light"}`;
-  };
+  const theme = useTheme()[colorMode || "light"];
 
   return (
     <>
-      <Head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-        <title>{description}</title>
-        {/*npm install -g mobx-devtools*/}
-        <script src="//localhost:8098"></script>
-      </Head>
-
-      <Box as={Button} onClick={handleToggleDarkMode}></Box>
+      {/* <IconButton
+        icon={colorMode === "dark" ? <SunIcon /> : <MoonIcon />}
+        onClick={toggleColorMode}
+      /> */}
 
       <Header />
 
@@ -39,7 +26,7 @@ export default function Layout({ children }) {
         mb={20}
         p={5}
         rounded="lg"
-        bg={theme[colorMode].bg}
+        bg={theme.bg}
         style={{ filter: "brightness(140%)" }}
       >
         {children}

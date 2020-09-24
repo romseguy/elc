@@ -5,6 +5,7 @@ import { Counter } from "./counter";
 import { ProfileType } from "./profile";
 import { SkillType } from "./skill";
 import { ParentType } from "./parent";
+import { isServer } from "utils/isServer";
 
 export { getSnapshot } from "mobx-state-tree";
 let clientStore;
@@ -26,7 +27,11 @@ export const Tree = t
 
 export function initializeStore(snapshot = null) {
   const root = Tree.create({});
-  onSnapshot(root, (snapshot) => console.log(snapshot));
+  onSnapshot(
+    root,
+    (snapshot) => !isServer && console.log(snapshot)
+    //console.log(JSON.stringify(snapshot, null, 2))
+  );
   const store = clientStore ?? makeInspectable(root);
 
   // If your page has Next.js data fetching methods that use a Mobx store, it will

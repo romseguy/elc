@@ -3,14 +3,14 @@ import { Box, Heading, useColorMode, useTheme } from "@chakra-ui/core";
 import { Link } from "./link";
 
 export const Header = (props) => {
-  const theme = useTheme();
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode } = useColorMode();
+  const theme = useTheme()[colorMode || "light"];
 
   return (
     <Box
       py={5}
       textAlign="center"
-      bg={theme[colorMode].bg}
+      bg={theme.bg}
       style={{ filter: "brightness(120%)" }}
       {...props}
     >

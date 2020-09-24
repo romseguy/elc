@@ -8,12 +8,12 @@ import { useRouter } from "next/router";
 import { ParentForm } from "components/parent-form";
 import { useEffect, useState } from "react";
 import { useStore } from "tree";
-import { Button, Icon, Spinner, useColorMode, useTheme } from "@chakra-ui/core";
+import { Button, Spinner, useColorMode, useTheme } from "@chakra-ui/core";
 import { PageSubTitle, PageTitle } from "components/page-title";
 
 export default observer((props) => {
-  const theme = useTheme();
   const { colorMode } = useColorMode();
+  const theme = useTheme()[colorMode || "light"];
   const [session = props.session, loading] = useSession();
 
   if (loading && !isServer) return null;
@@ -45,12 +45,16 @@ export default observer((props) => {
 
   const selectedParent = parentType.selectedParent;
 
-  if (!parentType.store.isLoading && parentType.store.isEmpty)
-    return <Layout>Aucune fiche trouvée</Layout>;
-  if (selectedParent === null)
-    return (
-      <Layout>Nous n'avons pas pu trouver de fiche associée à cet élève</Layout>
-    );
+  if (!parentType.store.isLoading) {
+    if (parentType.store.isEmpty) return <Layout>Aucune fiche trouvée</Layout>;
+
+    if (selectedParent === null)
+      return (
+        <Layout>
+          Nous n'avons pas pu trouver de fiche associée à cet élève
+        </Layout>
+      );
+  }
 
   if (action === "edit") {
     return (
@@ -81,7 +85,7 @@ export default observer((props) => {
         {!!selectedParent ? (
           <>
             <PageTitle>
-              {`Fiche de ${selectedParent.firstname} ${selectedParent.lastname}`}
+              {`Fiche du parent : ${selectedParent.firstname} ${selectedParent.lastname}`}
               <Button mx={5} border="1px" onClick={editAction}>
                 Modifier
               </Button>

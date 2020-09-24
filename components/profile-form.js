@@ -11,11 +11,13 @@ import {
   FormLabel,
   Box,
   Text,
-  Icon,
   Stack,
+  FormErrorMessage,
+  RequiredIndicator,
 } from "@chakra-ui/core";
+import { WarningIcon } from "@chakra-ui/icons";
 import { DatePicker } from "components/datepicker";
-import { subYears } from "date-fns";
+import { format, subYears } from "date-fns";
 import { useStore } from "tree";
 
 export const ProfileForm = (props) => {
@@ -45,13 +47,15 @@ export const ProfileForm = (props) => {
   };
 
   const onSubmit = async (formData) => {
+    setIsLoading(true);
+    let res = {};
+
     const handleError = () => {
       setIsLoading(false);
       setError("apiErrorMessage", { type: "manual", message: res.message });
     };
 
-    setIsLoading(true);
-    let res;
+    if (Object.keys(errors).length > 0) handleError();
 
     if (props.profile) {
       props.profile.merge(formData);
@@ -67,38 +71,63 @@ export const ProfileForm = (props) => {
 
   return (
     <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
-      <FormControl isRequired m={5} mt={0}>
-        <FormLabel htmlFor="firstname">Prénom</FormLabel>
+      <FormControl
+        id="firstname"
+        isRequired
+        isInvalid={!!errors["firstname"]}
+        m={5}
+        mt={0}
+      >
+        <FormLabel>
+          Prénom
+          {/* <RequiredIndicator /> */}
+        </FormLabel>
         <Input
           name="firstname"
           placeholder="Prénom"
           ref={register({ required: true })}
           defaultValue={(props.profile && props.profile.firstname) || ""}
         />
-        <ErrorMessage
-          errors={errors}
-          name="firstname"
-          message="Veuillez saisir un prénom"
-        />
+        <FormErrorMessage>
+          <ErrorMessage
+            errors={errors}
+            name="firstname"
+            message="Veuillez saisir un prénom"
+          />
+        </FormErrorMessage>
       </FormControl>
 
-      <FormControl isRequired m={5} mt={0}>
-        <FormLabel htmlFor="lastname">Nom</FormLabel>
+      <FormControl
+        id="lastname"
+        isRequired
+        isInvalid={!!errors["lastname"]}
+        m={5}
+        mt={0}
+      >
+        <FormLabel>Nom</FormLabel>
         <Input
           name="lastname"
           placeholder="Nom"
           ref={register({ required: true })}
           defaultValue={(props.profile && props.profile.lastname) || ""}
         />
-        <ErrorMessage
-          errors={errors}
-          name="lastname"
-          message="Veuillez saisir un nom de famille"
-        />
+        <FormErrorMessage>
+          <ErrorMessage
+            errors={errors}
+            name="lastname"
+            message="Veuillez saisir un nom de famille"
+          />
+        </FormErrorMessage>
       </FormControl>
 
-      <FormControl isRequired m={5} mt={0}>
-        <FormLabel htmlFor="birthdate">Date de naissance</FormLabel>
+      <FormControl
+        id="birthdate"
+        isRequired
+        isInvalid={!!errors["birthdate"]}
+        m={5}
+        mt={0}
+      >
+        <FormLabel>Date de naissance</FormLabel>
         <Controller
           name="birthdate"
           control={control}
@@ -108,15 +137,18 @@ export const ProfileForm = (props) => {
             <DatePicker
               minDate={subYears(new Date(), 11)}
               maxDate={subYears(new Date(), 1)}
+              placeholderText={format(new Date(), "dd/MM/yyyy")}
               {...props}
             />
           )}
         />
-        <ErrorMessage
-          errors={errors}
-          name="birthdate"
-          message="Veuillez saisir une date de naissance"
-        />
+        <FormErrorMessage>
+          <ErrorMessage
+            errors={errors}
+            name="birthdate"
+            message="Veuillez saisir une date de naissance"
+          />
+        </FormErrorMessage>
       </FormControl>
 
       <ErrorMessage
@@ -124,7 +156,7 @@ export const ProfileForm = (props) => {
         name="apiErrorMessage"
         render={({ message }) => (
           <Stack isInline p={5} mb={5} shadow="md" color="red.500">
-            <Icon name="warning" size={5} />
+            <WarningIcon boxSize={5} />
             <Box>
               <Text>{message}</Text>
             </Box>

@@ -9,8 +9,9 @@ export const ParentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  birthdate: {
-    type: Date,
+  email: {
+    type: String,
+    required: true,
   },
 });
 

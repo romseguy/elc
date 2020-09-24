@@ -11,18 +11,18 @@ import {
   FormLabel,
   Box,
   Text,
-  Icon,
   Stack,
   useTheme,
   useColorMode,
 } from "@chakra-ui/core";
+import { WarningIcon } from "@chakra-ui/icons";
 import { Select } from "./select";
 import { useStore } from "tree";
 import { domains, levels } from "tree/skill";
 
 export const SkillForm = (props) => {
-  const theme = useTheme();
   const { colorMode } = useColorMode();
+  const theme = useTheme()[colorMode || "light"];
   const router = useRouter();
   const [isLoading, setIsLoading] = useState();
   const { skillType } = useStore();
@@ -49,13 +49,15 @@ export const SkillForm = (props) => {
   };
 
   const onSubmit = async (formData) => {
+    setIsLoading(true);
+    let res;
+
     const handleError = () => {
       setIsLoading(false);
       setError("apiErrorMessage", { type: "manual", message: res.message });
     };
 
-    setIsLoading(true);
-    let res;
+    if (Object.keys(errors).length > 0) handleError();
 
     if (props.skill) {
       props.skill.merge(formData);
@@ -150,7 +152,7 @@ export const SkillForm = (props) => {
         name="apiErrorMessage"
         render={({ message }) => (
           <Stack isInline p={5} mb={5} shadow="md" color="red.500">
-            <Icon name="warning" size={5} />
+            <WarningIcon boxSize={5} />
             <Box>
               <Text>{message}</Text>
             </Box>

@@ -10,7 +10,7 @@ use('cerdagne');
 // Make sure you run it against proper database and collection.
 // db.sales.drop();
 
-db.profiles.remove({})
+db.parents.remove({})
 //db.children.renameCollection('profiles')
 // db.profiles.insertMany([
 //   { '_id' : 1, 'firstname' : 'Romain', 'lastname' : 'Séguy', 'birthdate' : new Date('1990-04-04T00:00:00Z') },

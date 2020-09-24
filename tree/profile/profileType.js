@@ -111,7 +111,10 @@ const ProfileStore = t
 export const ProfileType = t
   .model("ProfileType", {
     store: t.optional(ProfileStore, {}),
-    selectedProfile: t.maybeNull(t.safeReference(ProfileModel)),
+    selectedProfile: t.optional(
+      t.maybeNull(t.safeReference(ProfileModel)),
+      undefined
+    ),
   })
   .actions((self) => ({
     selectProfile: flow(function* selectProfile(slug) {
@@ -121,5 +124,8 @@ export const ProfileType = t
           self.selectedProfile = profile;
         }
       });
+      if (self.selectedProfile === undefined) {
+        self.selectedProfile = null;
+      }
     }),
   }));

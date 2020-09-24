@@ -1,18 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "../node_modules/react-datepicker/dist/react-datepicker.min.css";
 
-html,
-body,
-#__next {
-  height: 100%;
+/* library overrides only */
+/* for global styles use customGlobalStyles in utils/theme/index.js
+/* react-datepicker overrides */
+@import "../node_modules/react-datepicker/dist/react-datepicker.min.css";
+.react-datepicker__navigation--next {
+  background: url(../assets/images/arrow-right.png) no-repeat;
 }
 
-body,
-#__next {
-  display: flex;
-  flex-direction: column;
+.react-datepicker__navigation--previous {
+  background: url(../assets/images/arrow-left.png) no-repeat;
 }
 
 .react-datepicker {
@@ -30,14 +29,6 @@ body,
   width: 15px;
   height: 15px;
   border: none;
-}
-
-.react-datepicker__navigation--next {
-  background: url(../assets/images/arrow-right.png) no-repeat;
-}
-
-.react-datepicker__navigation--previous {
-  background: url(../assets/images/arrow-left.png) no-repeat;
 }
 
 .react-datepicker-wrapper,

@@ -5,7 +5,7 @@ import { initializeStore, Tree, useStore } from "tree";
 import { getSession } from "next-auth/client";
 import AccessDenied from "components/access-denied";
 import Layout from "components/layout";
-import { Button } from "@chakra-ui/core";
+import { Button, useColorMode } from "@chakra-ui/core";
 
 const Counter = observer(() => {
   const { counter } = useStore();
@@ -31,7 +31,8 @@ const Counter = observer(() => {
   );
 });
 
-export default function Page({ content, session }) {
+export default function Page(props) {
+  // const { session } = props;
   // // If no session exists, display access denied message
   // if (!session) {
   //   return (

@@ -16,9 +16,9 @@ import {
   MenuOptionGroup,
   MenuItemOption,
   useColorMode,
-  Icon,
   Avatar,
 } from "@chakra-ui/core";
+import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import { Link } from "./link";
 
 const MenuItems = ({ children }) => {
@@ -109,17 +109,15 @@ export const Nav = (props) => {
                   session.user.email
                 )}?d=identicon`
               }
-              size="md"
+              width="48px"
+              height="48px"
             />
           </MenuButton>
-          <MenuList border={0} p={0}>
+          <MenuList border={0} p={0} style={{ zIndex: "99999" }}>
+            {/* should be fixed in chakra-ui 1.0 */}
             <MenuItem>Paramètres</MenuItem>
             <MenuItem onClick={toggleColorMode}>
-              {colorMode === "light" ? (
-                <Icon name="moon" />
-              ) : (
-                <Icon name="sun" />
-              )}
+              {!colorMode || colorMode === "light" ? <MoonIcon /> : <SunIcon />}
             </MenuItem>
             <MenuItem onClick={() => signOut()}>Déconnexion</MenuItem>
           </MenuList>

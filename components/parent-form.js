@@ -11,9 +11,9 @@ import {
   FormLabel,
   Box,
   Text,
-  Icon,
   Stack,
 } from "@chakra-ui/core";
+import { WarningIcon } from "@chakra-ui/icons";
 import { DatePicker } from "components/datepicker";
 import { subYears } from "date-fns";
 import { useStore } from "tree";
@@ -45,13 +45,15 @@ export const ParentForm = (props) => {
   };
 
   const onSubmit = async (formData) => {
+    setIsLoading(true);
+    let res;
+
     const handleError = () => {
       setIsLoading(false);
       setError("apiErrorMessage", { type: "manual", message: res.message });
     };
 
-    setIsLoading(true);
-    let res;
+    if (Object.keys(errors).length > 0) handleError();
 
     if (props.parent) {
       props.parent.merge(formData);
@@ -97,12 +99,33 @@ export const ParentForm = (props) => {
         />
       </FormControl>
 
+      <FormControl isRequired m={5} mt={0}>
+        <FormLabel htmlFor="lastname">Adresse email</FormLabel>
+        <Input
+          name="email"
+          placeholder="david@gmail.com"
+          ref={register({
+            required: true,
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: "Adresse email invalide",
+            },
+          })}
+          defaultValue={(props.parent && props.parent.email) || ""}
+        />
+        <ErrorMessage
+          errors={errors}
+          name="email"
+          message="Veuillez saisir un email"
+        />
+      </FormControl>
+
       <ErrorMessage
         errors={errors}
         name="apiErrorMessage"
         render={({ message }) => (
           <Stack isInline p={5} mb={5} shadow="md" color="red.500">
-            <Icon name="warning" size={5} />
+            <WarningIcon boxSize={5} />
             <Box>
               <Text>{message}</Text>
             </Box>

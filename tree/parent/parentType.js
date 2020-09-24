@@ -12,6 +12,7 @@ const ParentModel = t
     _id: t.identifier,
     firstname: t.string,
     lastname: t.string,
+    email: t.string,
   })
   .views((parent) => ({
     get slug() {
@@ -22,6 +23,7 @@ const ParentModel = t
     merge(formData) {
       parent.firstname = formData.firstname;
       parent.lastname = formData.lastname;
+      parent.email = formDate.email;
     },
     update() {
       return getParent(parent, 2).updateParent(parent);
@@ -47,11 +49,12 @@ const ParentStore = t
   .actions((store) => ({
     setParents(data) {
       const parents = {};
-      data.forEach(({ _id, firstname, lastname }) => {
+      data.forEach(({ _id, firstname, lastname, email }) => {
         parents[_id] = ParentModel.create({
           _id,
           firstname,
           lastname,
+          email,
         });
       });
       store.parents = parents;
@@ -90,7 +93,10 @@ const ParentStore = t
 export const ParentType = t
   .model("ParentType", {
     store: t.optional(ParentStore, {}),
-    selectedParent: t.maybeNull(t.safeReference(ParentModel)),
+    selectedParent: t.optional(
+      t.maybeNull(t.safeReference(ParentModel)),
+      undefined
+    ),
   })
   .actions((self) => ({
     selectParent: flow(function* selectParent(slug) {
@@ -100,5 +106,9 @@ export const ParentType = t
           self.selectedParent = parent;
         }
       });
+
+      if (self.selectedParent === undefined) {
+        self.selectedParent = null;
+      }
     }),
   }));
