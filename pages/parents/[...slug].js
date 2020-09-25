@@ -7,9 +7,19 @@ import AccessDenied from "components/access-denied";
 import { useRouter } from "next/router";
 import { ParentForm } from "components/parent-form";
 import { useEffect, useState } from "react";
-import { useStore } from "tree";
+import { getSnapshot, useStore } from "tree";
 import { Button, Spinner, useColorMode, useTheme } from "@chakra-ui/core";
 import { PageSubTitle, PageTitle } from "components/page-title";
+import tw, { styled } from "twin.macro";
+
+const ChildrenList = styled.ul`
+  ${tw`ml-5`}
+  list-style-type: square;
+  a {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+`;
 
 export default observer((props) => {
   const { colorMode } = useColorMode();
@@ -33,10 +43,11 @@ export default observer((props) => {
     return null;
   }
 
-  const { parentType } = useStore();
+  const { parentType, profileType } = useStore();
 
   useEffect(() => {
     const selectParent = async () => {
+      await profileType.store.fetch();
       await parentType.selectParent(parentSlug);
     };
 
@@ -62,7 +73,7 @@ export default observer((props) => {
         {!!selectedParent ? (
           <>
             <PageTitle>
-              {`Modification de la fiche de ${selectedParent.firstname} ${selectedParent.lastname}`}
+              {`Modification de la fiche parent de ${selectedParent.firstname} ${selectedParent.lastname}`}
             </PageTitle>
             <ParentForm parent={selectedParent} />
           </>
@@ -80,6 +91,10 @@ export default observer((props) => {
       router.push("/parents");
     };
 
+    const onRowClick = (profile) => {
+      router.push("/fiches/[...slug]", `/fiches/${profile.slug}`);
+    };
+
     return (
       <Layout>
         {!!selectedParent ? (
@@ -93,6 +108,18 @@ export default observer((props) => {
                 Supprimer
               </Button>
             </PageTitle>
+
+            <PageSubTitle>Enfants</PageSubTitle>
+
+            <ChildrenList>
+              {values(selectedParent.children).map((profile) => (
+                <li key={profile._id}>
+                  <a onClick={() => onRowClick(profile)}>
+                    {profile.firstname} {profile.lastname}
+                  </a>
+                </li>
+              ))}
+            </ChildrenList>
           </>
         ) : (
           <Spinner />

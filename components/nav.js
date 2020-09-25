@@ -109,8 +109,8 @@ export const Nav = (props) => {
                   session.user.email
                 )}?d=identicon`
               }
-              width="48px"
-              height="48px"
+              w="48px"
+              h="48px"
             />
           </MenuButton>
           <MenuList border={0} p={0} style={{ zIndex: "99999" }}>

@@ -13,6 +13,9 @@ export const ParentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  children: {
+    type: [String],
+  },
 });
 
 ParentSchema.index(

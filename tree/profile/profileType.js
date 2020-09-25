@@ -14,7 +14,7 @@ const SkillRef = t.model("SkillRef", {
   date: t.Date,
 });
 
-const ProfileModel = t
+export const ProfileModel = t
   .model("ProfileModel", {
     _id: t.identifier,
     firstname: t.string,

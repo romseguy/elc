@@ -77,7 +77,7 @@ export default observer((props) => {
         {!!selectedProfile ? (
           <>
             <PageTitle>
-              {`Modification de la fiche de ${selectedProfile.firstname} ${selectedProfile.lastname}`}
+              {`Modification de la fiche de l'élève ${selectedProfile.firstname} ${selectedProfile.lastname}`}
             </PageTitle>
             <ProfileForm profile={selectedProfile} />
           </>

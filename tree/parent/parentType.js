@@ -5,6 +5,7 @@ import {
   destroy,
   getSnapshot,
 } from "mobx-state-tree";
+import { ProfileModel } from "tree/profile";
 import api from "utils/api";
 
 const ParentModel = t
@@ -13,6 +14,11 @@ const ParentModel = t
     firstname: t.string,
     lastname: t.string,
     email: t.string,
+    children: t.optional(
+      t.array(t.reference(ProfileModel)),
+      //t.array(t.safeReference(ProfileModel, { acceptsUndefined: false })),
+      []
+    ),
   })
   .views((parent) => ({
     get slug() {
@@ -23,7 +29,8 @@ const ParentModel = t
     merge(formData) {
       parent.firstname = formData.firstname;
       parent.lastname = formData.lastname;
-      parent.email = formDate.email;
+      parent.email = formData.email;
+      parent.children = formData.profiles === "" ? [] : formData.profiles;
     },
     update() {
       return getParent(parent, 2).updateParent(parent);
@@ -49,12 +56,13 @@ const ParentStore = t
   .actions((store) => ({
     setParents(data) {
       const parents = {};
-      data.forEach(({ _id, firstname, lastname, email }) => {
+      data.forEach(({ _id, firstname, lastname, email, children }) => {
         parents[_id] = ParentModel.create({
           _id,
           firstname,
           lastname,
           email,
+          children,
         });
       });
       store.parents = parents;

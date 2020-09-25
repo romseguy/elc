@@ -5,6 +5,54 @@ import { Button } from "./components";
 
 theme.breakpoints = ["30em", "48em", "62em", "80em"]; // @todo should be fixed by @chakra-ui/theme
 
+const inputStyles = {
+  input: {
+    color: "gray.800",
+    width: "50%",
+    padding: ".5rem",
+    borderRadius: ".3rem",
+  },
+  "input::placeholder": {
+    color: "gray.500",
+  },
+};
+
+const selectStyles = {
+  ".react-select-container": {
+    width: "50%",
+
+    ".react-select__multi-value": {
+      backgroundColor: "gray.600",
+      borderRadius: ".3rem",
+      ".react-select__multi-value__label": {
+        color: "white",
+      },
+      ".react-select__multi-value__remove": {
+        ":hover": {
+          backgroundColor: "gray.600",
+        },
+      },
+    },
+
+    ".react-select__dropdown-indicator": {
+      color: "black",
+    },
+
+    ".react-select__menu": {
+      "*": {
+        padding: 0,
+        color: "black",
+        backgroundColor: "white",
+        ":hover": {
+          cursor: "pointer",
+          backgroundColor: "black",
+          color: "white",
+        },
+      },
+    },
+  },
+};
+
 const customTheme = {
   ...theme,
   components: {
@@ -29,20 +77,13 @@ const customTheme = {
           flexDirection: "column",
         },
         label: {
-          marginBottom: "1rem",
-        },
-        "input, select": {
-          padding: ".5rem",
-          marginLeft: ".5rem",
-          marginBottom: "1rem",
-          color: "gray.900",
-        },
-        "input::placeholder": {
-          color: "gray.600",
+          marginBottom: ".5rem",
         },
         ".chakra-form__error-message": {
           color: "red.600",
         },
+        ...inputStyles,
+        ...selectStyles,
       };
 
       return customGlobalStyles;

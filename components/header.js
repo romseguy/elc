@@ -8,6 +8,7 @@ export const Header = (props) => {
 
   return (
     <Box
+      as="header"
       py={5}
       textAlign="center"
       bg={theme.bg}

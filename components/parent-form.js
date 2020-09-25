@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { isStateTreeNode } from "mobx-state-tree";
 import { Controller, useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
@@ -12,21 +12,32 @@ import {
   Box,
   Text,
   Stack,
+  Spinner,
 } from "@chakra-ui/core";
+import ReactSelect, { components } from "react-select";
 import { WarningIcon } from "@chakra-ui/icons";
 import { DatePicker } from "components/datepicker";
 import { subYears } from "date-fns";
 import { useStore } from "tree";
+import { values } from "mobx";
+import { observer } from "mobx-react-lite";
 
-export const ParentForm = (props) => {
+export const ParentForm = observer((props) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState();
-  const { parentType } = useStore();
+  const { profileType, parentType } = useStore();
 
   if (props.parent && !isStateTreeNode(props.parent)) {
     console.error("props.parent must be a model instance");
     return null;
   }
+
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      await profileType.store.fetch();
+    };
+    fetchProfiles();
+  }, []);
 
   const {
     control,
@@ -69,7 +80,13 @@ export const ParentForm = (props) => {
 
   return (
     <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
-      <FormControl isRequired m={5} mt={0}>
+      <FormControl
+        id="firstname"
+        isRequired
+        isInvalid={!!errors["firstname"]}
+        m={5}
+        mt={0}
+      >
         <FormLabel htmlFor="firstname">Prénom</FormLabel>
         <Input
           name="firstname"
@@ -84,8 +101,14 @@ export const ParentForm = (props) => {
         />
       </FormControl>
 
-      <FormControl isRequired m={5} mt={0}>
-        <FormLabel htmlFor="lastname">Nom</FormLabel>
+      <FormControl
+        id="lastname"
+        isRequired
+        isInvalid={!!errors["lastname"]}
+        m={5}
+        mt={0}
+      >
+        <FormLabel>Nom</FormLabel>
         <Input
           name="lastname"
           placeholder="Nom"
@@ -99,8 +122,14 @@ export const ParentForm = (props) => {
         />
       </FormControl>
 
-      <FormControl isRequired m={5} mt={0}>
-        <FormLabel htmlFor="lastname">Adresse email</FormLabel>
+      <FormControl
+        id="email"
+        isRequired
+        isInvalid={!!errors["email"]}
+        m={5}
+        mt={0}
+      >
+        <FormLabel>Adresse email</FormLabel>
         <Input
           name="email"
           placeholder="david@gmail.com"
@@ -118,6 +147,36 @@ export const ParentForm = (props) => {
           name="email"
           message="Veuillez saisir un email"
         />
+      </FormControl>
+
+      <FormControl m={5} mt={0} id="profiles" isInvalid={!!errors["profiles"]}>
+        <FormLabel>Enfants</FormLabel>
+        {profileType.store.isLoading ? (
+          <Spinner />
+        ) : (
+          <Controller
+            className="react-select-container"
+            classNamePrefix="react-select"
+            as={ReactSelect}
+            name="profiles"
+            control={control}
+            defaultValue=""
+            placeholder="Sélectionner un ou plusieurs enfants"
+            menuPlacement={
+              profileType.store.profiles.size > 7 ? "top" : "bottom"
+            }
+            isClearable
+            isMulti
+            isSearchable
+            closeMenuOnSelect={false}
+            options={values(profileType.store.profiles)}
+            getOptionLabel={(option) =>
+              `${option.firstname} ${option.lastname}`
+            }
+            getOptionValue={(option) => option._id}
+            onChange={([option]) => option._id}
+          />
+        )}
       </FormControl>
 
       <ErrorMessage
@@ -142,4 +201,4 @@ export const ParentForm = (props) => {
       </Button>
     </form>
   );
-};
+});

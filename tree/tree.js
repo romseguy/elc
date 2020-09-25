@@ -26,13 +26,14 @@ export const Tree = t
   }));
 
 export function initializeStore(snapshot = null) {
-  const root = Tree.create({});
+  const root = makeInspectable(Tree.create({}));
   onSnapshot(
     root,
-    (snapshot) => !isServer && console.log(snapshot)
+    (snapshot) => console.log(snapshot)
+    //(snapshot) => !isServer && console.log(snapshot)
     //console.log(JSON.stringify(snapshot, null, 2))
   );
-  const store = clientStore ?? makeInspectable(root);
+  const store = clientStore ?? root;
 
   // If your page has Next.js data fetching methods that use a Mobx store, it will
   // get hydrated here
