@@ -14,7 +14,7 @@ import { StyledTable as Table } from "components/table";
 
 export default observer((props) => {
   const { colorMode } = useColorMode();
-  const theme = useTheme()[colorMode || "light"];
+  const theme = useTheme()[colorMode || "dark"];
   const [session = props.session, loading] = useSession();
 
   if (loading && !isServer) return null;

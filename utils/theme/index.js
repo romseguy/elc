@@ -14,13 +14,15 @@ const customTheme = {
   styles: {
     ...theme.styles,
     global: (props) => {
-      props.colorMode = "light";
+      props.colorMode = "dark";
 
       const customGlobalStyles = {
         ...theme.styles.global(props),
         "html, body, #__next": {
           lineHeight: "normal",
           height: "100%",
+          backgroundColor: mode("whiteAlpha.500", "gray.800")(props),
+          color: mode("black", "white")(props),
         },
         "body, #__next": {
           display: "flex",
@@ -29,10 +31,11 @@ const customTheme = {
         label: {
           marginBottom: "1rem",
         },
-        input: {
+        "input, select": {
           padding: ".5rem",
           marginLeft: ".5rem",
           marginBottom: "1rem",
+          color: "gray.900",
         },
         "input::placeholder": {
           color: "gray.600",

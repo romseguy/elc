@@ -14,7 +14,7 @@ const MenuItem = styled.li`
 
 export const Footer = (props) => {
   const { colorMode } = useColorMode();
-  const theme = useTheme()[colorMode || "light"];
+  const theme = useTheme()[colorMode || "dark"];
 
   return (
     <Box

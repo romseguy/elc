@@ -8,17 +8,24 @@ import { useRouter } from "next/router";
 import { ProfileForm } from "components/profile-form";
 import { useEffect, useState } from "react";
 import { useStore } from "tree";
-import { Button, Spinner, useColorMode, useTheme } from "@chakra-ui/core";
-import { DeleteIcon } from "@chakra-ui/icons";
+import {
+  Button,
+  IconButton,
+  Spinner,
+  useColorMode,
+  useTheme,
+} from "@chakra-ui/core";
+import { DownloadIcon } from "@chakra-ui/icons";
 import { PageSubTitle, PageTitle } from "components/page-title";
 import { Table } from "components/table";
 import { format } from "date-fns";
 import { ProfileAddSkillForm } from "components/profile-add-skill-form";
 import { isStateTreeNode } from "mobx-state-tree";
+import { DeleteIcon } from "evergreen-ui";
 
 export default observer((props) => {
   const { colorMode } = useColorMode();
-  const theme = useTheme()[colorMode || "light"];
+  const theme = useTheme()[colorMode || "dark"];
   const [session = props.session, loading] = useSession();
   const [showSkillForm, setShowSkillForm] = useState(false);
   const toggleAddSkillForm = () => setShowSkillForm(!showSkillForm);
@@ -91,8 +98,8 @@ export default observer((props) => {
       toggleAddSkillForm();
     };
     const removeSkillAction = (skill) => {
-      const p = selectedProfile.removeSkill(skill);
-      const res = p.update();
+      selectedProfile.removeSkill(skill);
+      const res = selectedProfile.update();
 
       if (res.status === "error") {
         console.error(res.message); // @todo: toast
@@ -137,9 +144,10 @@ export default observer((props) => {
               data={values(selectedProfile.skills).map(({ skill, date }) => {
                 return {
                   deleteButton: (
-                    <Button onClick={() => removeSkillAction(skill)}>
-                      <DeleteIcon boxSize={5} />
-                    </Button>
+                    <IconButton
+                      icon={<DeleteIcon />}
+                      onClick={() => removeSkillAction(skill)}
+                    />
                   ),
                   code: skill.code,
                   description: skill.description,

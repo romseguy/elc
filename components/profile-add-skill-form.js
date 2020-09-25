@@ -1,12 +1,12 @@
 import { Controller, useForm } from "react-hook-form";
 // import { DevTool } from "@hookform/devtools";
 import {
-  Input,
   Button,
   FormControl,
   FormLabel,
   Box,
   Text,
+  Select,
   Stack,
   useTheme,
   useColorMode,
@@ -19,11 +19,10 @@ import { ErrorMessage } from "@hookform/error-message";
 import { useState } from "react";
 import { getSnapshot, useStore } from "tree";
 import { values } from "mobx";
-import { Select } from "./select";
 
 export const ProfileAddSkillForm = (props) => {
   const { colorMode } = useColorMode();
-  const theme = useTheme()[colorMode || "light"];
+  const theme = useTheme()[colorMode || "dark"];
   const router = useRouter();
   const [isLoading, setIsLoading] = useState();
   const { profileType } = useStore();
@@ -72,7 +71,6 @@ export const ProfileAddSkillForm = (props) => {
           placeholder="Sélectionner une compétence"
           ref={register({ required: true })}
           defaultValue={"-"}
-          colorMode={colorMode}
         >
           {values(props.skills).map((skill) => {
             return (
@@ -107,7 +105,7 @@ export const ProfileAddSkillForm = (props) => {
         <ErrorMessage
           errors={errors}
           name="date"
-          message="Veuillez saisir une date de naissance"
+          message="Veuillez saisir la date d'obtention de la compétence"
         />
       </FormControl>
 

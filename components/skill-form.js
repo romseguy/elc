@@ -22,7 +22,7 @@ import { domains, levels } from "tree/skill";
 
 export const SkillForm = (props) => {
   const { colorMode } = useColorMode();
-  const theme = useTheme()[colorMode || "light"];
+  const theme = useTheme()[colorMode || "dark"];
   const router = useRouter();
   const [isLoading, setIsLoading] = useState();
   const { skillType } = useStore();

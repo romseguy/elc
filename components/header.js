@@ -4,7 +4,7 @@ import { Link } from "./link";
 
 export const Header = (props) => {
   const { colorMode } = useColorMode();
-  const theme = useTheme()[colorMode || "light"];
+  const theme = useTheme()[colorMode || "dark"];
 
   return (
     <Box

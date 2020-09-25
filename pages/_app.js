@@ -19,6 +19,7 @@ const App = ({ Component, pageProps }) => {
       <Head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <link ref="icon" href="/favicon.ico" />
         <title>{description}</title>
         {/*npm install -g mobx-devtools*/}
         {/* <script src="//localhost:8098"></script> */}
