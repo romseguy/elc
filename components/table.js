@@ -2,19 +2,28 @@ import { useSortBy, useTable } from "react-table";
 import tw, { styled } from "twin.macro";
 
 export const StyledTable = styled.table`
-  thead th {
-    ${tw`pr-5`}
-  }
-  tbody > tr {
-    td {
-      ${tw`pr-5`}
+  thead {
+    th {
+    ${tw`pr-8`}
     }
-    ${tw`border-t cursor-pointer`}
-    &:hover {
-      background-color: ${({ bg }) => bg};
+    tr {
+      ${tw`border-b`}
     }
   }
-`;
+  tbody {
+    tr {
+      ${tw`cursor-pointer`}
+
+      &:hover {
+        ${tw`border-t border-b`}
+      }
+
+      td {
+        ${tw`py-4`}
+      }
+    }
+  }
+`
 
 export const Table = (props) => {
   // extract props for useTable hook config

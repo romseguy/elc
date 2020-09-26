@@ -21,8 +21,6 @@ import { getSnapshot, useStore } from "tree";
 import { values } from "mobx";
 
 export const ProfileAddSkillForm = (props) => {
-  const { colorMode } = useColorMode();
-  const theme = useTheme()[colorMode || "dark"];
   const router = useRouter();
   const [isLoading, setIsLoading] = useState();
   const { profileType } = useStore();

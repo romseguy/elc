@@ -22,8 +22,6 @@ const ChildrenList = styled.ul`
 `;
 
 export default observer((props) => {
-  const { colorMode } = useColorMode();
-  const theme = useTheme()[colorMode || "dark"];
   const [session = props.session, loading] = useSession();
 
   if (loading && !isServer) return null;
@@ -43,10 +41,11 @@ export default observer((props) => {
     return null;
   }
 
-  const { parentType, profileType } = useStore();
+  const { parentType, profileType, skillType } = useStore();
 
   useEffect(() => {
     const selectParent = async () => {
+      await skillType.store.fetch();
       await profileType.store.fetch();
       await parentType.selectParent(parentSlug);
     };
@@ -101,10 +100,10 @@ export default observer((props) => {
           <>
             <PageTitle>
               {`Fiche du parent : ${selectedParent.firstname} ${selectedParent.lastname}`}
-              <Button mx={5} border="1px" onClick={editAction}>
+              <Button variant="outline" mx={5} onClick={editAction}>
                 Modifier
               </Button>
-              <Button border="1px" onClick={removeAction}>
+              <Button variant="outline" onClick={removeAction}>
                 Supprimer
               </Button>
             </PageTitle>

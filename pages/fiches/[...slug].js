@@ -24,8 +24,6 @@ import { isStateTreeNode } from "mobx-state-tree";
 import { DeleteIcon } from "evergreen-ui";
 
 export default observer((props) => {
-  const { colorMode } = useColorMode();
-  const theme = useTheme()[colorMode || "dark"];
   const [session = props.session, loading] = useSession();
   const [showSkillForm, setShowSkillForm] = useState(false);
   const toggleAddSkillForm = () => setShowSkillForm(!showSkillForm);
@@ -112,16 +110,16 @@ export default observer((props) => {
           <>
             <PageTitle>
               {`Fiche de l'élève : ${selectedProfile.firstname} ${selectedProfile.lastname}`}
-              <Button mx={5} border="1px" onClick={editAction}>
+              <Button variant="outline" mx={5} onClick={editAction}>
                 Modifier
               </Button>
-              <Button border="1px" onClick={removeAction}>
+              <Button variant="outline" onClick={removeAction}>
                 Supprimer
               </Button>
             </PageTitle>
             <PageSubTitle>
               Compétences acquises
-              <Button mx={5} border="1px" onClick={addSkillAction}>
+              <Button variant="outline" mx={5} onClick={addSkillAction}>
                 Ajouter {showSkillForm ? " 🔼" : " 🔽"}
               </Button>
             </PageSubTitle>
@@ -166,11 +164,9 @@ export default observer((props) => {
                 { Header: "Atelier", accessor: "workshop", sortType: "basic" },
                 { Header: "", accessor: "deleteButton", disableSortBy: true },
               ]}
-              bg={theme.hover.bg}
             />
             {/*
             <PageSubTitle>Ateliers</PageSubTitle>
-            <Table bg={theme.hover.bg}>
               <thead>
                 <tr>
                   <th>Code</th>

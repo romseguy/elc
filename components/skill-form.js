@@ -11,18 +11,15 @@ import {
   FormLabel,
   Box,
   Text,
+  Select,
   Stack,
-  useTheme,
-  useColorMode,
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
-import { Select } from "./select";
+//import { Select } from "./select";
 import { useStore } from "tree";
 import { domains, levels } from "tree/skill";
 
 export const SkillForm = (props) => {
-  const { colorMode } = useColorMode();
-  const theme = useTheme()[colorMode || "dark"];
   const router = useRouter();
   const [isLoading, setIsLoading] = useState();
   const { skillType } = useStore();
@@ -118,7 +115,6 @@ export const SkillForm = (props) => {
           defaultValue={
             props.skill && props.skill.domain !== "-" ? props.skill.domain : "-"
           }
-          colorMode={colorMode}
         >
           {domains.map((domain) => (
             <option key={domain} value={domain}>
@@ -137,7 +133,6 @@ export const SkillForm = (props) => {
           defaultValue={
             props.skill && props.skill.level !== "-" ? props.skill.level : "-"
           }
-          colorMode={colorMode}
         >
           {levels.map((level) => (
             <option key={level} value={level}>

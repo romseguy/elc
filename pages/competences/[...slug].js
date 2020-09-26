@@ -12,8 +12,6 @@ import { Button, Spinner, useColorMode, useTheme } from "@chakra-ui/core";
 import { PageTitle } from "components/page-title";
 
 export default observer((props) => {
-  const { colorMode } = useColorMode();
-  const theme = useTheme()[colorMode || "dark"];
   const [session = props.session, loading] = useSession();
 
   if (loading && !isServer) return null;
@@ -86,10 +84,10 @@ export default observer((props) => {
           <>
             <PageTitle>
               {`Compétence ${skill.code}`}
-              <Button mx={5} border="1px" onClick={editAction}>
+              <Button variant="outline" mx={5} onClick={editAction}>
                 Modifier
               </Button>
-              <Button border="1px" onClick={removeAction}>
+              <Button variant="outline" onClick={removeAction}>
                 Supprimer
               </Button>
             </PageTitle>

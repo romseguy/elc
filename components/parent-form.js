@@ -14,10 +14,8 @@ import {
   Stack,
   Spinner,
 } from "@chakra-ui/core";
-import ReactSelect, { components } from "react-select";
+import ReactSelect from "react-select";
 import { WarningIcon } from "@chakra-ui/icons";
-import { DatePicker } from "components/datepicker";
-import { subYears } from "date-fns";
 import { useStore } from "tree";
 import { values } from "mobx";
 import { observer } from "mobx-react-lite";
@@ -132,7 +130,7 @@ export const ParentForm = observer((props) => {
         <FormLabel>Adresse email</FormLabel>
         <Input
           name="email"
-          placeholder="david@gmail.com"
+          placeholder="adresse-email-du-parent@gmail.com"
           ref={register({
             required: true,
             pattern: {
@@ -160,15 +158,13 @@ export const ParentForm = observer((props) => {
             as={ReactSelect}
             name="profiles"
             control={control}
-            defaultValue=""
+            defaultValue={props.parent.children}
             placeholder="Sélectionner un ou plusieurs enfants"
-            menuPlacement={
-              profileType.store.profiles.size > 7 ? "top" : "bottom"
-            }
+            menuPlacement="top"
             isClearable
             isMulti
             isSearchable
-            closeMenuOnSelect={false}
+            closeMenuOnSelect
             options={values(profileType.store.profiles)}
             getOptionLabel={(option) =>
               `${option.firstname} ${option.lastname}`

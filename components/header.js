@@ -1,17 +1,22 @@
 import { description } from "package.json";
-import { Box, Heading, useColorMode, useTheme } from "@chakra-ui/core";
+import {
+  Box,
+  Heading,
+  useColorMode,
+  useColorModeValue,
+  useTheme,
+} from "@chakra-ui/core";
 import { Link } from "./link";
 
 export const Header = (props) => {
-  const { colorMode } = useColorMode();
-  const theme = useTheme()[colorMode || "dark"];
+  const bg = useColorModeValue("gray.400", "gray.700");
 
   return (
     <Box
       as="header"
       py={5}
       textAlign="center"
-      bg={theme.bg}
+      bg={bg}
       style={{ filter: "brightness(120%)" }}
       {...props}
     >

@@ -13,8 +13,6 @@ import { useStore } from "tree";
 import { StyledTable as Table } from "components/table";
 
 export default observer((props) => {
-  const { colorMode } = useColorMode();
-  const theme = useTheme()[colorMode || "dark"];
   const [session = props.session, loading] = useSession();
 
   if (loading && !isServer) return null;
@@ -51,13 +49,13 @@ export default observer((props) => {
       <PageTitle>
         Liste des compétences et des observables
         <Link href="/competences/add">
-          <Button ml={5} border="1px">
+          <Button variant="outline" ml={5}>
             Ajouter
           </Button>
         </Link>
       </PageTitle>
       {!skillType.store.isEmpty && (
-        <Table bg={theme.hover.bg}>
+        <Table>
           <thead>
             <tr>
               <th>Code</th>

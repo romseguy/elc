@@ -1,19 +1,23 @@
-import { useColorMode, Box, useTheme, IconButton } from "@chakra-ui/core";
+import {
+  useColorMode,
+  Box,
+  useTheme,
+  IconButton,
+  useColorModeValue,
+} from "@chakra-ui/core";
 import { Header } from "./header";
 import { Nav } from "./nav";
 import { Footer } from "./footer";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 
 export default function Layout({ children }) {
-  const { colorMode, toggleColorMode } = useColorMode();
-  const theme = useTheme()[colorMode || "dark"];
+  const { toggleColorMode } = useColorMode();
+  const bg = useColorModeValue("gray.400", "gray.700");
+  const icon = useColorMode(<MoonIcon />, <SunIcon />);
 
   return (
     <>
-      {/* <IconButton
-        icon={colorMode === "dark" ? <SunIcon /> : <MoonIcon />}
-        onClick={toggleColorMode}
-      /> */}
+      {/* <IconButton icon={icon} onClick={toggleColorMode} /> */}
 
       <Header />
 
@@ -26,7 +30,7 @@ export default function Layout({ children }) {
         mb={20}
         p={5}
         rounded="lg"
-        bg={theme.bg}
+        bg={bg}
         style={{ filter: "brightness(140%)" }}
       >
         {children}

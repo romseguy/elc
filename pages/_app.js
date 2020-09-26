@@ -1,16 +1,23 @@
-import "./styles.css";
+import "theme/styles.css";
 import { description } from "package.json";
 import Head from "next/head";
 import { initializeStore, Provider as StateProvider } from "tree";
 import { Provider as AuthProvider } from "next-auth/client";
-import { ChakraProvider, useColorMode } from "@chakra-ui/core";
-import customTheme from "utils/theme";
+import {
+  ChakraProvider,
+  ColorModeProvider,
+  ThemeProvider,
+  useColorMode,
+} from "@chakra-ui/core";
+import customTheme from "theme";
+import { Chakra } from "components/chakra";
+import { isServer } from "utils/isServer";
 
 const Root = ({ Component, ...pageProps }) => {
   return <Component {...pageProps} />;
 };
 
-const App = ({ Component, pageProps }) => {
+const App = ({ Component, pageProps, cookies }) => {
   const { snapshot, session } = pageProps;
   const store = initializeStore(snapshot);
 
@@ -33,9 +40,15 @@ const App = ({ Component, pageProps }) => {
         session={session}
       >
         <StateProvider value={store}>
+          {/* <Chakra cookies={cookies}> */}
           <ChakraProvider resetCSS theme={customTheme}>
+            {/* <ThemeProvider theme={customTheme}> */}
+            {/* <ColorModeProvider> */}
             <Root Component={Component} {...pageProps} />
+            {/* </ColorModeProvider> */}
+            {/* </ThemeProvider> */}
           </ChakraProvider>
+          {/* </Chakra> */}
         </StateProvider>
       </AuthProvider>
     </>
@@ -51,5 +64,15 @@ const App = ({ Component, pageProps }) => {
 //     pageProps,
 //   };
 // };
+
+// export function getServerSideProps({ req }) {
+//   return {
+//     props: {
+//       // first time users will not have any cookies and you may not return
+//       // undefined here, hence ?? is necessary
+//       cookies: req.headers.cookie ?? "",
+//     },
+//   };
+// }
 
 export default App;

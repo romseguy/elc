@@ -1,5 +1,5 @@
 import { version } from "../package.json";
-import { Box, useColorMode, useTheme } from "@chakra-ui/core";
+import { Box, useColorModeValue, useTheme } from "@chakra-ui/core";
 import { styled } from "twin.macro";
 
 const Menu = styled.ul`
@@ -13,14 +13,13 @@ const MenuItem = styled.li`
 `;
 
 export const Footer = (props) => {
-  const { colorMode } = useColorMode();
-  const theme = useTheme()[colorMode || "dark"];
+  const bg = useColorModeValue("gray.400", "gray.700");
 
   return (
     <Box
       as="footer"
       py={5}
-      bg={theme.bg}
+      bg={bg}
       style={{ filter: "brightness(120%)" }}
       {...props}
     >
