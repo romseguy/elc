@@ -1,5 +1,5 @@
 import { version } from "../package.json";
-import { Box, useColorModeValue, useTheme } from "@chakra-ui/core";
+import { Box, useColorModeValue } from "@chakra-ui/core";
 import { styled } from "twin.macro";
 
 const Menu = styled.ul`

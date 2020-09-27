@@ -3,8 +3,6 @@ import { observer } from "mobx-react-lite";
 import { getSession, useSession } from "next-auth/client";
 import {
   Button,
-  useTheme,
-  useColorMode,
   Spinner,
   Alert,
   AlertIcon,

@@ -8,8 +8,6 @@ import {
   Text,
   Select,
   Stack,
-  useTheme,
-  useColorMode,
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
 import { DatePicker } from "components/datepicker";

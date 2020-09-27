@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { SkillForm } from "components/skill-form";
 import { useEffect, useState } from "react";
 import { useStore } from "tree";
-import { Button, Spinner, useColorMode, useTheme } from "@chakra-ui/core";
+import { Button, Spinner } from "@chakra-ui/core";
 import { PageTitle } from "components/page-title";
 
 export default observer((props) => {

@@ -1,7 +1,6 @@
 import {
   useColorMode,
   Box,
-  useTheme,
   IconButton,
   useColorModeValue,
 } from "@chakra-ui/core";
@@ -13,7 +12,7 @@ import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 export default function Layout({ children }) {
   const { toggleColorMode } = useColorMode();
   const bg = useColorModeValue("gray.400", "gray.700");
-  const icon = useColorMode(<MoonIcon />, <SunIcon />);
+  const icon = useColorModeValue(<MoonIcon />, <SunIcon />);
 
   return (
     <>

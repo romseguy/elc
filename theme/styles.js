@@ -51,13 +51,8 @@ const formStyles = (props) => ({
 
 export default {
   global: (props) => {
-    if (props.colorMode === undefined) {
-      props.colorMode = "light";
-    }
-    console.info("colorMode", props.colorMode);
-
     const customGlobalStyles = {
-      ...theme.styles.global(props),
+      //...theme.styles.global(props),
       "html, body, #__next": {
         lineHeight: "normal",
         height: "100%",

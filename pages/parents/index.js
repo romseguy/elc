@@ -2,7 +2,7 @@ import { values } from "mobx";
 import { observer } from "mobx-react-lite";
 import { getSession, useSession } from "next-auth/client";
 import { isServer } from "utils/isServer";
-import { Button, useTheme, useColorMode, Spinner } from "@chakra-ui/core";
+import { Button, Spinner } from "@chakra-ui/core";
 import Layout from "components/layout";
 import AccessDenied from "components/access-denied";
 import { Link } from "components/link";

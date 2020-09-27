@@ -1,11 +1,5 @@
 import { description } from "package.json";
-import {
-  Box,
-  Heading,
-  useColorMode,
-  useColorModeValue,
-  useTheme,
-} from "@chakra-ui/core";
+import { Box, Heading, useColorModeValue } from "@chakra-ui/core";
 import { Link } from "./link";
 
 export const Header = (props) => {

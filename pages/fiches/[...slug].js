@@ -8,20 +8,13 @@ import { useRouter } from "next/router";
 import { ProfileForm } from "components/profile-form";
 import { useEffect, useState } from "react";
 import { useStore } from "tree";
-import {
-  Button,
-  IconButton,
-  Spinner,
-  useColorMode,
-  useTheme,
-} from "@chakra-ui/core";
-import { DownloadIcon } from "@chakra-ui/icons";
+import { Button, IconButton, Spinner } from "@chakra-ui/core";
+import { DeleteIcon } from "@chakra-ui/icons";
 import { PageSubTitle, PageTitle } from "components/page-title";
 import { Table } from "components/table";
 import { format } from "date-fns";
 import { ProfileAddSkillForm } from "components/profile-add-skill-form";
 import { isStateTreeNode } from "mobx-state-tree";
-import { DeleteIcon } from "evergreen-ui";
 
 export default observer((props) => {
   const [session = props.session] = useSession();

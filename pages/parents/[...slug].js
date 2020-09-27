@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { ParentForm } from "components/parent-form";
 import { useEffect, useState } from "react";
 import { getSnapshot, useStore } from "tree";
-import { Button, Spinner, useColorMode, useTheme } from "@chakra-ui/core";
+import { Button, Spinner } from "@chakra-ui/core";
 import { PageSubTitle, PageTitle } from "components/page-title";
 import tw, { styled } from "twin.macro";
 
