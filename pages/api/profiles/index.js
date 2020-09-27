@@ -1,7 +1,7 @@
 import nextConnect from "next-connect";
 import middleware from "middlewares/database";
 import { getSession } from "next-auth/client";
-import { createServerError } from "utils/mongoose";
+import { createServerError } from "utils/api/errors";
 
 const handler = nextConnect();
 
@@ -9,9 +9,16 @@ handler.use(middleware);
 
 handler.get(async function getProfiles(req, res) {
   const session = await getSession({ req });
+  console.log(session);
 
   if (!session) {
-    res.send({ error: "Vous devez être identifié pour accéder à ce contenu." });
+    res
+      .status(403)
+      .json(
+        createServerError(
+          new Error("Vous devez être identifié pour accéder à ce contenu.")
+        )
+      );
   } else {
     try {
       const profiles = await req.models.Profile.find({});

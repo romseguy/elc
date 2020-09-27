@@ -24,11 +24,10 @@ import { isStateTreeNode } from "mobx-state-tree";
 import { DeleteIcon } from "evergreen-ui";
 
 export default observer((props) => {
-  const [session = props.session, loading] = useSession();
+  const [session = props.session] = useSession();
   const [showSkillForm, setShowSkillForm] = useState(false);
   const toggleAddSkillForm = () => setShowSkillForm(!showSkillForm);
 
-  if (loading && !isServer) return null;
   if (!session)
     return (
       <Layout>

@@ -12,9 +12,8 @@ import { Button, Spinner, useColorMode, useTheme } from "@chakra-ui/core";
 import { PageTitle } from "components/page-title";
 
 export default observer((props) => {
-  const [session = props.session, loading] = useSession();
+  const [session = props.session] = useSession();
 
-  if (loading && !isServer) return null;
   if (!session)
     return (
       <Layout>

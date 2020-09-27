@@ -79,9 +79,14 @@ const ProfileStore = t
     // API
     fetch: flow(function* fetch() {
       store.state = "pending";
-      const { data } = yield api.get("profiles");
-      store.setProfiles(data);
-      store.state = "done";
+      const { status, data } = yield api.get("profiles");
+
+      if (status === api.HTTP_STATUS_ERROR) {
+        store.state = "error";
+      } else {
+        store.setProfiles(data);
+        store.state = "done";
+      }
     }),
     postProfile: flow(function* postProfile(data) {
       store.state = "pending";

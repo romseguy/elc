@@ -10,9 +10,7 @@ import { ParentForm } from "components/parent-form";
 // setDefaultLocale("fr");
 
 export default function Page(props) {
-  const [session = props.session, loading] = useSession();
-
-  if (loading && !isServer) return null;
+  const [session = props.session] = useSession();
 
   if (!session) {
     return (

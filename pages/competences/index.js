@@ -13,9 +13,8 @@ import { useStore } from "tree";
 import { StyledTable as Table } from "components/table";
 
 export default observer((props) => {
-  const [session = props.session, loading] = useSession();
+  const [session = props.session] = useSession();
 
-  if (loading && !isServer) return null;
   if (!session)
     return (
       <Layout>

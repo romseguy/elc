@@ -1,8 +1,17 @@
 import { values } from "mobx";
 import { observer } from "mobx-react-lite";
 import { getSession, useSession } from "next-auth/client";
-import { isServer } from "utils/isServer";
-import { Button, useTheme, useColorMode, Spinner } from "@chakra-ui/core";
+import {
+  Button,
+  useTheme,
+  useColorMode,
+  Spinner,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  CloseButton,
+} from "@chakra-ui/core";
 import Layout from "components/layout";
 import AccessDenied from "components/access-denied";
 import { Link } from "components/link";
@@ -14,9 +23,8 @@ import { StyledTable as Table } from "components/table";
 import { format } from "date-fns";
 
 export default observer((props) => {
-  const [session = props.session, loading] = useSession();
+  const [session = props.session] = useSession();
 
-  if (loading && !isServer) return null;
   if (!session)
     return (
       <Layout>
@@ -55,6 +63,17 @@ export default observer((props) => {
           </Button>
         </Link>
       </PageTitle>
+      {profileType.store.state === "error" && (
+        <Alert status="error">
+          <AlertIcon />
+          <AlertTitle mr={2}>
+            Nous n'avons pas pu charger les fiches !
+          </AlertTitle>
+          <AlertDescription>
+            Veuillez patienter ou contacter le développeur à ce propos
+          </AlertDescription>
+        </Alert>
+      )}
       {!profileType.store.isEmpty && (
         <Table>
           <thead>

@@ -1,3 +1,5 @@
+export const HTTP_STATUS_ERROR = "HTTP_STATUS_ERROR";
+
 async function request(endpoint, params, method = "GET") {
   try {
     const options = {
@@ -40,7 +42,7 @@ function objectToQueryString(obj) {
 
 function createApiError(error) {
   return {
-    status: "error",
+    status: HTTP_STATUS_ERROR,
     message:
       error.message ||
       "Le serveur a renvoyé une erreur inconnue, veuillez contacter le développeur",
@@ -64,6 +66,7 @@ function remove(endpoint, params) {
 }
 
 export default {
+  HTTP_STATUS_ERROR,
   get,
   post,
   update,
