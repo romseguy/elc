@@ -12,6 +12,7 @@ import {
 import customTheme from "theme";
 import { Chakra } from "components/chakra";
 import { isServer } from "utils/isServer";
+import { GlobalStyles } from "twin.macro";
 
 const Root = ({ Component, ...pageProps }) => {
   return <Component {...pageProps} />;
@@ -31,6 +32,8 @@ const App = ({ Component, pageProps, cookies }) => {
         {/*npm install -g mobx-devtools*/}
         {/* <script src="//localhost:8098"></script> */}
       </Head>
+
+      <GlobalStyles />
 
       <AuthProvider
         options={{

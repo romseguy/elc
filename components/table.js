@@ -4,7 +4,7 @@ import tw, { styled } from "twin.macro";
 export const StyledTable = styled.table`
   thead {
     th {
-    ${tw`pr-8`}
+    ${tw`pr-16`}
     }
     tr {
       ${tw`border-b`}

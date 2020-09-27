@@ -1,5 +1,5 @@
-import Moon from "./moon.svg";
-import Sun from "./sun.svg";
+import Moon from "../svg/moon.svg";
+import Sun from "../svg/sun.svg";
 import { UpDownIcon } from "./up-down";
 
 const MoonIcon = () => <Moon />;

@@ -23,7 +23,7 @@ import { observer } from "mobx-react-lite";
 export const ParentForm = observer((props) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState();
-  const { profileType, parentType } = useStore();
+  const { profileType, parentType, skillType } = useStore();
 
   if (props.parent && !isStateTreeNode(props.parent)) {
     console.error("props.parent must be a model instance");
@@ -32,6 +32,7 @@ export const ParentForm = observer((props) => {
 
   useEffect(() => {
     const fetchProfiles = async () => {
+      await skillType.store.fetch();
       await profileType.store.fetch();
     };
     fetchProfiles();
@@ -158,7 +159,7 @@ export const ParentForm = observer((props) => {
             as={ReactSelect}
             name="profiles"
             control={control}
-            defaultValue={props.parent.children}
+            defaultValue={props.parent && props.parent.children}
             placeholder="Sélectionner un ou plusieurs enfants"
             menuPlacement="top"
             isClearable
