@@ -1,4 +1,4 @@
-const databaseErrorCodes = {
+export const databaseErrorCodes = {
   DUPLICATE_KEY: 11000,
 };
 
@@ -12,7 +12,7 @@ const databaseErrorCodes = {
 export const createDatabaseError = (error) => {
   if (error.code) {
     if (error.code === databaseErrorCodes.DUPLICATE_KEY) {
-      return { message: "Une fiche existe déjà pour cet élève" };
+      return { code: error.code };
     }
   }
 };

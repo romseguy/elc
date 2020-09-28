@@ -1,3 +1,4 @@
+import api from "utils/api";
 import { toDate } from "date-fns";
 import {
   types as t,
@@ -5,9 +6,11 @@ import {
   getParent,
   destroy,
   getSnapshot,
+  getRoot,
+  resolveIdentifier,
 } from "mobx-state-tree";
 import { SkillModel } from "tree/skill";
-import api from "utils/api";
+import { values } from "mobx";
 
 const SkillRef = t.model("SkillRef", {
   skill: t.reference(SkillModel),
@@ -21,10 +24,34 @@ export const ProfileModel = t
     lastname: t.string,
     birthdate: t.Date,
     skills: t.array(SkillRef),
+    parentIds: t.optional(t.array(t.string), []),
   })
   .views((profile) => ({
     get slug() {
       return `${profile.firstname}-${profile.lastname}`;
+    },
+    get parents() {
+      const root = getRoot(profile);
+      const parentStore = root.parentType.store;
+      const parents = values(parentStore.parents).filter((parent) => {
+        let found = false;
+        for (const parentId of profile.parentIds) {
+          if (parentId === parent._id) {
+            found = true;
+          }
+        }
+        return found;
+      });
+
+      return parents;
+
+      // console.log("?", l);
+      // const parents = profile.parentIds.map((parentId) => {
+      //   console.log(parentId, values(parentStore.parents));
+      //   return parentStore.parents[parentId];
+      // });
+      // console.log(parents);
+      // return observable([]);
     },
   }))
   .actions((profile) => ({
@@ -63,17 +90,20 @@ const ProfileStore = t
   .actions((store) => ({
     setProfiles(data) {
       const profiles = {};
-      data.forEach(({ _id, firstname, lastname, birthdate, skills }) => {
-        profiles[_id] = ProfileModel.create({
-          _id,
-          firstname,
-          lastname,
-          birthdate: new Date(birthdate),
-          skills: skills.map(({ skill, date }) => {
-            return SkillRef.create({ skill, date: new Date(date) });
-          }),
-        });
-      });
+      data.forEach(
+        ({ _id, firstname, lastname, birthdate, skills, parents }) => {
+          profiles[_id] = ProfileModel.create({
+            _id,
+            firstname,
+            lastname,
+            birthdate: new Date(birthdate),
+            skills: skills.map(({ skill, date }) => {
+              return SkillRef.create({ skill, date: new Date(date) });
+            }),
+            parentIds: parents,
+          });
+        }
+      );
       store.profiles = profiles;
     },
     // API

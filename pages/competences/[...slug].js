@@ -25,7 +25,7 @@ export default observer((props) => {
   const skillSlug = router.query.slug[0];
   const action = router.query.slug[1];
 
-  if (!isServer && action && action !== "edit") {
+  if (!isServer() && action && action !== "edit") {
     router.push("/competences/[...slug]", `/competences/${skillSlug}`);
     return null;
   }

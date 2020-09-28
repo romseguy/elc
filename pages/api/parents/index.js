@@ -15,9 +15,9 @@ handler.get(async function getParents(req, res) {
   } else {
     try {
       const parents = await req.models.Parent.find({});
-      res.json({ data: parents });
+      res.status(200).json({ data: parents });
     } catch (error) {
-      createServerError(error);
+      res.status(400).json(createServerError(error));
     }
   }
 });
@@ -36,7 +36,14 @@ handler.post(async function postParent(req, res) {
         email,
         children,
       });
-      res.status(200).json(parent);
+      if (Array.isArray(children)) {
+        for (const _id of children) {
+          const childProfile = await req.models.Profile.findOne({ _id });
+          childProfile.parents = childProfile.parents.concat([parent._id]);
+          await childProfile.save();
+        }
+      }
+      res.status(200).json({ data: parent });
     } catch (error) {
       res.status(400).json(createServerError(error));
     }

@@ -1,4 +1,5 @@
-export const HTTP_STATUS_ERROR = "HTTP_STATUS_ERROR";
+import { databaseErrorCodes } from "./errors";
+const HTTP_STATUS_ERROR = "HTTP_STATUS_ERROR";
 
 async function request(endpoint, params, method = "GET") {
   try {
@@ -43,9 +44,12 @@ function objectToQueryString(obj) {
 function createApiError(error) {
   return {
     status: HTTP_STATUS_ERROR,
-    message:
-      error.message ||
-      "Le serveur a renvoyé une erreur inconnue, veuillez contacter le développeur",
+    code: error.code,
+    message: error.message
+      ? error.message
+      : error.code
+      ? ""
+      : "Le serveur a renvoyé une erreur inconnue, veuillez contacter le développeur",
   };
 }
 
@@ -67,6 +71,7 @@ function remove(endpoint, params) {
 
 export default {
   HTTP_STATUS_ERROR,
+  databaseErrorCodes,
   get,
   post,
   update,

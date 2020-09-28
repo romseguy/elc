@@ -12,19 +12,12 @@ export const ParentSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
   },
   children: {
     type: [String],
   },
 });
-
-ParentSchema.index(
-  {
-    firstname: 1,
-    lastname: 1,
-  },
-  { unique: true, background: true }
-);
 
 const SkillRefSchema = new mongoose.Schema({
   skill: String,
@@ -45,6 +38,9 @@ export const ProfileSchema = new mongoose.Schema({
   },
   skills: {
     type: [SkillRefSchema],
+  },
+  parents: {
+    type: [String],
   },
 });
 

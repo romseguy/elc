@@ -1,11 +1,11 @@
 // This is an example of how to protect content using server rendering
 import { useObserver, observer } from "mobx-react-lite";
-import { getSnapshot } from "mobx-state-tree";
 import { initializeStore, Tree, useStore } from "tree";
 import { getSession } from "next-auth/client";
 import AccessDenied from "components/access-denied";
 import Layout from "components/layout";
 import { Button, useColorMode } from "@chakra-ui/core";
+import { getSnapshot } from "mobx-state-tree";
 
 const Counter = observer(() => {
   const { counter } = useStore();

@@ -15,14 +15,13 @@ import { useRouter } from "next/router";
 import { subYears } from "date-fns";
 import { ErrorMessage } from "@hookform/error-message";
 import { useState } from "react";
-import { getSnapshot, useStore } from "tree";
+import { useStore } from "tree";
 import { values } from "mobx";
 
 export const ProfileAddSkillForm = (props) => {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState();
   const { profileType } = useStore();
-
+  const [isLoading, setIsLoading] = useState();
   const {
     control,
     register,
@@ -40,15 +39,16 @@ export const ProfileAddSkillForm = (props) => {
   };
 
   const onSubmit = async ({ skill: _id, date }) => {
+    let res;
+    setIsLoading(true);
+
     const handleError = () => {
       setIsLoading(false);
       setError("apiErrorMessage", { type: "manual", message: res.message });
     };
 
-    setIsLoading(true);
-
     await props.profile.addSkill({ _id, date });
-    const res = props.profile.update();
+    res = props.profile.update();
 
     if (res.status === "error") handleError();
     else props.onSubmit();

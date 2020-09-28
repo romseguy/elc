@@ -6,8 +6,9 @@ import { ProfileType } from "./profile";
 import { SkillType } from "./skill";
 import { ParentType } from "./parent";
 import { isServer } from "utils/isServer";
+import { useStaticRendering } from "mobx-react-lite";
 
-export { getSnapshot } from "mobx-state-tree";
+useStaticRendering(isServer());
 let clientStore;
 
 export const Tree = t
@@ -30,7 +31,7 @@ export function initializeStore(snapshot = null) {
   onSnapshot(
     root,
     (snapshot) => console.log(snapshot)
-    //(snapshot) => !isServer && console.log(snapshot)
+    //(snapshot) => !isServer() && console.log(snapshot)
     //console.log(JSON.stringify(snapshot, null, 2))
   );
   const store = clientStore ?? root;

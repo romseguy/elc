@@ -16,7 +16,8 @@ const ParentModel = t
     email: t.string,
     children: t.optional(
       t.array(t.reference(ProfileModel)),
-      //t.array(t.safeReference(ProfileModel, { acceptsUndefined: false })),
+      // t.array(t.maybe(t.reference(t.late(() => ProfileModel)))),
+      // t.array(t.safeReference(ProfileModel, { acceptsUndefined: false })),
       []
     ),
   })

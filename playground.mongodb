@@ -10,6 +10,7 @@ use('cerdagne');
 // Make sure you run it against proper database and collection.
 // db.sales.drop();
 
+db.profiles.remove({})
 db.parents.remove({})
 //db.children.renameCollection('profiles')
 // db.profiles.insertMany([

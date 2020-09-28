@@ -6,7 +6,7 @@ import Layout from "components/layout";
 import AccessDenied from "components/access-denied";
 import { useRouter } from "next/router";
 import { ParentForm } from "components/parent-form";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { getSnapshot, useStore } from "tree";
 import { Button, Spinner } from "@chakra-ui/core";
 import { PageSubTitle, PageTitle } from "components/page-title";
@@ -23,25 +23,8 @@ const ChildrenList = styled.ul`
 
 export default observer((props) => {
   const [session = props.session] = useSession();
-
-  if (!session)
-    return (
-      <Layout>
-        <AccessDenied />
-      </Layout>
-    );
-
   const router = useRouter();
-  const parentSlug = router.query.slug[0];
-  const action = router.query.slug[1];
-
-  if (!isServer && action && action !== "edit") {
-    router.push("/parents/[...slug]", `/parents/${parentSlug}`);
-    return null;
-  }
-
   const { parentType, profileType, skillType } = useStore();
-
   useEffect(() => {
     const selectParent = async () => {
       await skillType.store.fetch();
@@ -52,79 +35,88 @@ export default observer((props) => {
     selectParent();
   }, []);
 
+  if (!session)
+    return (
+      <Layout>
+        <AccessDenied />
+      </Layout>
+    );
+
+  const parentSlug = router.query.slug[0];
+  const action = router.query.slug[1];
+
+  if (!isServer() && action && action !== "edit") {
+    router.push("/parents/[...slug]", `/parents/${parentSlug}`);
+    return null;
+  }
+
   const selectedParent = parentType.selectedParent;
 
-  if (!parentType.store.isLoading) {
-    if (parentType.store.isEmpty) return <Layout>Aucune fiche trouvée</Layout>;
-
-    if (selectedParent === null)
-      return (
-        <Layout>
-          Nous n'avons pas pu trouver de fiche associée à cet élève
-        </Layout>
-      );
-  }
+  if (profileType.store.isLoading)
+    return (
+      <Layout>
+        <Spinner />
+      </Layout>
+    );
+  if (parentType.store.isEmpty) return <Layout>Aucune fiche trouvée</Layout>;
+  if (selectedParent === null)
+    return (
+      <Layout>Nous n'avons pas pu trouver de fiche associée à cet élève</Layout>
+    );
+  if (!selectedParent)
+    return (
+      <Layout>
+        <Spinner />
+      </Layout>
+    );
 
   if (action === "edit") {
     return (
       <Layout>
-        {!!selectedParent ? (
-          <>
-            <PageTitle>
-              {`Modification de la fiche parent de ${selectedParent.firstname} ${selectedParent.lastname}`}
-            </PageTitle>
-            <ParentForm parent={selectedParent} />
-          </>
-        ) : (
-          <Spinner />
-        )}
-      </Layout>
-    );
-  } else {
-    const editAction = () => {
-      router.push("/parents/[...slug]", `/parents/${selectedParent.slug}/edit`);
-    };
-    const removeAction = async () => {
-      const removedParent = await selectedParent.remove();
-      router.push("/parents");
-    };
-
-    const onRowClick = (profile) => {
-      router.push("/fiches/[...slug]", `/fiches/${profile.slug}`);
-    };
-
-    return (
-      <Layout>
-        {!!selectedParent ? (
-          <>
-            <PageTitle>
-              {`Fiche du parent : ${selectedParent.firstname} ${selectedParent.lastname}`}
-              <Button variant="outline" mx={5} onClick={editAction}>
-                Modifier
-              </Button>
-              <Button variant="outline" onClick={removeAction}>
-                Supprimer
-              </Button>
-            </PageTitle>
-
-            <PageSubTitle>Enfants</PageSubTitle>
-
-            <ChildrenList>
-              {values(selectedParent.children).map((profile) => (
-                <li key={profile._id}>
-                  <a onClick={() => onRowClick(profile)}>
-                    {profile.firstname} {profile.lastname}
-                  </a>
-                </li>
-              ))}
-            </ChildrenList>
-          </>
-        ) : (
-          <Spinner />
-        )}
+        <PageTitle>
+          {`Modification de la fiche parent de ${selectedParent.firstname} ${selectedParent.lastname}`}
+        </PageTitle>
+        <ParentForm parent={selectedParent} />
       </Layout>
     );
   }
+  const editAction = () => {
+    router.push("/parents/[...slug]", `/parents/${selectedParent.slug}/edit`);
+  };
+  const removeAction = async () => {
+    const removedParent = await selectedParent.remove();
+    router.push("/parents");
+  };
+
+  const onRowClick = (profile) => {
+    router.push("/fiches/[...slug]", `/fiches/${profile.slug}`);
+  };
+
+  return (
+    <Layout>
+      <PageTitle>
+        {`Fiche du parent : ${selectedParent.firstname} ${selectedParent.lastname}`}
+        <Button variant="outline" mx={5} onClick={editAction}>
+          Modifier
+        </Button>
+        <Button variant="outline" onClick={removeAction}>
+          Supprimer
+        </Button>
+      </PageTitle>
+
+      <PageSubTitle>Enfants</PageSubTitle>
+
+      <ChildrenList>
+        {values(selectedParent.children).map((profile) => (
+          <li key={profile._id}>
+            <a onClick={() => onRowClick(profile)}>
+              {profile.firstname} {profile.lastname}
+            </a>
+          </li>
+        ))}
+      </ChildrenList>
+    </Layout>
+  );
 });
 
 export async function getServerSideProps(context) {

@@ -9,7 +9,6 @@ handler.use(middleware);
 
 handler.get(async function getProfiles(req, res) {
   const session = await getSession({ req });
-  console.log(session);
 
   if (!session) {
     res
