@@ -5,17 +5,17 @@ import {
   destroy,
   getSnapshot,
 } from "mobx-state-tree";
-import { ProfileModel } from "tree/profile";
+import { ProfileModel } from "tree";
 import api from "utils/api";
 
-const ParentModel = t
+export const ParentModel = t
   .model("ParentModel", {
     _id: t.identifier,
     firstname: t.string,
     lastname: t.string,
     email: t.string,
     children: t.optional(
-      t.array(t.reference(ProfileModel)),
+      t.array(t.reference(t.late(() => ProfileModel))),
       // t.array(t.maybe(t.reference(t.late(() => ProfileModel)))),
       // t.array(t.safeReference(ProfileModel, { acceptsUndefined: false })),
       []
@@ -58,13 +58,13 @@ const ParentStore = t
     setParents(data) {
       const parents = {};
       data.forEach(({ _id, firstname, lastname, email, children }) => {
-        parents[_id] = ParentModel.create({
+        parents[_id] = {
           _id,
           firstname,
           lastname,
           email,
           children,
-        });
+        };
       });
       store.parents = parents;
     },

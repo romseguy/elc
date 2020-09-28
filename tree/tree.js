@@ -1,12 +1,10 @@
 import { createContext, useContext } from "react";
+import { useStaticRendering } from "mobx-react-lite";
 import { applySnapshot, onSnapshot, types as t } from "mobx-state-tree";
 import makeInspectable from "mobx-devtools-mst";
-import { Counter } from "./counter";
-import { ProfileType } from "./profile";
-import { SkillType } from "./skill";
-import { ParentType } from "./parent";
 import { isServer } from "utils/isServer";
-import { useStaticRendering } from "mobx-react-lite";
+import { Counter } from "./counter";
+import { SkillType, ProfileType, ParentType } from "./";
 
 useStaticRendering(isServer());
 let clientStore;
@@ -32,7 +30,7 @@ export function initializeStore(snapshot = null) {
     root,
     (snapshot) => console.log(snapshot)
     //(snapshot) => !isServer() && console.log(snapshot)
-    //console.log(JSON.stringify(snapshot, null, 2))
+    //(snapshot) => console.log(JSON.stringify(snapshot, null, 2))
   );
   const store = clientStore ?? root;
 
