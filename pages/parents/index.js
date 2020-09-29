@@ -1,17 +1,17 @@
+import { useEffect } from "react";
+import { getSession, useSession } from "next-auth/client";
+import { useRouter } from "next/router";
 import { values } from "mobx";
 import { observer } from "mobx-react-lite";
-import { getSession, useSession } from "next-auth/client";
-import { isServer } from "utils/isServer";
-import { Button, Spinner } from "@chakra-ui/core";
-import Layout from "components/layout";
-import AccessDenied from "components/access-denied";
-import { Link } from "components/link";
-import { PageTitle } from "components/page-title";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
 import { useStore } from "tree";
-import { StyledTable as Table } from "components/table";
-import { format } from "date-fns";
+import { Button, Spinner } from "@chakra-ui/core";
+import {
+  AccessDenied,
+  Layout,
+  Link,
+  PageTitle,
+  StyledTable as Table,
+} from "components";
 
 export default observer((props) => {
   const [session = props.session] = useSession();

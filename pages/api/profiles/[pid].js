@@ -11,7 +11,13 @@ handler.get(async function getProfile(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
-    res.send({ error: "Vous devez être identifié pour accéder à ce contenu." });
+    res
+      .status(403)
+      .json(
+        createServerError(
+          new Error("Vous devez être identifié pour accéder à ce contenu.")
+        )
+      );
   } else {
     const {
       query: { pid },
@@ -21,7 +27,7 @@ handler.get(async function getProfile(req, res) {
       const profile = await req.models.Profile.findOne({ _id: pid });
 
       if (profile) {
-        res.json({ data: profile });
+        res.status(200).json({ data: profile });
       } else {
         res
           .status(400)
@@ -39,7 +45,13 @@ handler.put(async function editProfile(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
-    res.send({ error: "Vous devez être identifié pour accéder à ce contenu." });
+    res
+      .status(403)
+      .json(
+        createServerError(
+          new Error("Vous devez être identifié pour accéder à ce contenu.")
+        )
+      );
   } else {
     const {
       query: { pid },
@@ -70,7 +82,13 @@ handler.delete(async (req, res) => {
   const session = await getSession({ req });
 
   if (!session) {
-    res.send({ error: "Vous devez être identifié pour accéder à ce contenu." });
+    res
+      .status(403)
+      .json(
+        createServerError(
+          new Error("Vous devez être identifié pour accéder à ce contenu.")
+        )
+      );
   } else {
     const {
       query: { pid },

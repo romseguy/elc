@@ -9,12 +9,15 @@ import { format } from "date-fns";
 import { isServer } from "utils/isServer";
 import { Button, IconButton, Spinner } from "@chakra-ui/core";
 import { DeleteIcon } from "@chakra-ui/icons";
-import AccessDenied from "components/access-denied";
-import Layout from "components/layout";
-import { PageSubTitle, PageTitle } from "components/page-title";
-import { ProfileAddSkillForm } from "components/profile-add-skill-form";
-import { ProfileForm } from "components/profile-form";
-import { Table } from "components/table";
+import {
+  AccessDenied,
+  Layout,
+  PageTitle,
+  PageSubTitle,
+  ProfileAddSkillForm,
+  ProfileForm,
+  Table,
+} from "components";
 
 const ParentList = styled.ul`
   ${tw`ml-5`}
@@ -63,7 +66,8 @@ export default observer((props) => {
         <Spinner />
       </Layout>
     );
-  if (profileType.store.isEmpty) return <Layout>Aucune fiche trouvée</Layout>;
+  if (profileType.store.isEmpty)
+    return <Layout>Aucune fiche n'a été ajoutée à l'application</Layout>;
   if (selectedProfile === null)
     return (
       <Layout>Nous n'avons pas pu trouver de fiche associée à cet élève</Layout>

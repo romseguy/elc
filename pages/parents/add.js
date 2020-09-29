@@ -1,10 +1,6 @@
 import { getSession, useSession } from "next-auth/client";
 // import { DevTool } from "@hookform/devtools";
-import Layout from "components/layout";
-import AccessDenied from "components/access-denied";
-import { isServer } from "utils/isServer";
-import { PageTitle } from "components/page-title";
-import { ParentForm } from "components/parent-form";
+import { AccessDenied, Layout, PageTitle, ParentForm } from "components";
 
 // registerLocale("fr", fr);
 // setDefaultLocale("fr");

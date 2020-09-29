@@ -1,5 +1,11 @@
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // import { DevTool } from "@hookform/devtools";
+import { ErrorMessage } from "@hookform/error-message";
+import { useRouter } from "next/router";
+import { values } from "mobx";
+import { useStore } from "tree";
+import { subYears } from "date-fns";
 import {
   Button,
   FormControl,
@@ -10,13 +16,7 @@ import {
   Stack,
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
-import { DatePicker } from "components/datepicker";
-import { useRouter } from "next/router";
-import { subYears } from "date-fns";
-import { ErrorMessage } from "@hookform/error-message";
-import { useState } from "react";
-import { useStore } from "tree";
-import { values } from "mobx";
+import { DatePicker } from "components";
 
 export const ProfileAddSkillForm = (props) => {
   const router = useRouter();

@@ -5,6 +5,7 @@ import {
   ParentSchema,
   ProfileSchema,
   SkillSchema,
+  WorkshopSchema,
 } from "utils/mongoose/schemas";
 
 // const client = new MongoClient(process.env.DATABASE_URL, {
@@ -32,6 +33,7 @@ middleware.use(async (req, res, next) => {
     Parent: connection.model("Parent", ParentSchema),
     Profile: connection.model("Profile", ProfileSchema),
     Skill: connection.model("Skill", SkillSchema),
+    Workshop: connection.model("Workshop", WorkshopSchema),
   };
 
   return next();

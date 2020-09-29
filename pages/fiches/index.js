@@ -1,6 +1,10 @@
+import { useEffect } from "react";
+import { getSession, useSession } from "next-auth/client";
+import { useRouter } from "next/router";
 import { values } from "mobx";
 import { observer } from "mobx-react-lite";
-import { getSession, useSession } from "next-auth/client";
+import { useStore } from "tree";
+import { format } from "date-fns";
 import {
   Button,
   Spinner,
@@ -8,20 +12,25 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
-  CloseButton,
 } from "@chakra-ui/core";
-import Layout from "components/layout";
-import AccessDenied from "components/access-denied";
-import { Link } from "components/link";
-import { PageTitle } from "components/page-title";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { useStore } from "tree";
-import { StyledTable as Table } from "components/table";
-import { format } from "date-fns";
+import {
+  AccessDenied,
+  Layout,
+  Link,
+  PageTitle,
+  StyledTable as Table,
+} from "components";
 
 export default observer((props) => {
   const [session = props.session] = useSession();
+  const router = useRouter();
+  const { profileType } = useStore();
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      await profileType.store.fetch();
+    };
+    fetchProfiles();
+  }, []);
 
   if (!session)
     return (
@@ -29,16 +38,6 @@ export default observer((props) => {
         <AccessDenied />
       </Layout>
     );
-
-  const router = useRouter();
-  const { profileType } = useStore();
-
-  useEffect(() => {
-    const fetchProfiles = async () => {
-      await profileType.store.fetch();
-    };
-    fetchProfiles();
-  }, []);
 
   if (profileType.store.isLoading)
     return (
@@ -65,7 +64,7 @@ export default observer((props) => {
         <Alert status="error">
           <AlertIcon />
           <AlertTitle mr={2}>
-            Nous n'avons pas pu charger les fiches !
+            Nous n'avons pas pu charger les fiches élèves !
           </AlertTitle>
           <AlertDescription>
             Veuillez patienter ou contacter le développeur à ce propos

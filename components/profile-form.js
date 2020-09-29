@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { isStateTreeNode } from "mobx-state-tree";
 import { Controller, useForm } from "react-hook-form";
+// import { DevTool } from "@hookform/devtools";
 import { ErrorMessage } from "@hookform/error-message";
 import { useRouter } from "next/router";
-// import { DevTool } from "@hookform/devtools";
+import { isStateTreeNode } from "mobx-state-tree";
+import { useStore } from "tree";
+import { format, subYears } from "date-fns";
 import {
   Input,
   Button,
@@ -16,9 +18,7 @@ import {
   RequiredIndicator,
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
-import { DatePicker } from "components/datepicker";
-import { format, subYears } from "date-fns";
-import { useStore } from "tree";
+import { DatePicker } from "components";
 
 export const ProfileForm = (props) => {
   const router = useRouter();
@@ -47,23 +47,23 @@ export const ProfileForm = (props) => {
   };
 
   const onSubmit = async (formData) => {
+    let res;
     setIsLoading(true);
-    let res = {};
 
     const handleError = () => {
       setIsLoading(false);
       setError("apiErrorMessage", { type: "manual", message: res.message });
     };
 
-    if (Object.keys(errors).length > 0) handleError();
-
     if (props.profile) {
       props.profile.merge(formData);
       res = await props.profile.update();
+
       if (res.status === "error") handleError();
       else router.push("/fiches/[...slug]", `/fiches/${props.profile.slug}`);
     } else {
       res = await profileType.store.postProfile(formData);
+
       if (res.status === "error") handleError();
       else router.push("/fiches");
     }

@@ -1,16 +1,19 @@
+import { useEffect } from "react";
+import { getSession, useSession } from "next-auth/client";
+import { useRouter } from "next/router";
 import { values } from "mobx";
 import { observer } from "mobx-react-lite";
-import { getSession, useSession } from "next-auth/client";
-import { isServer } from "utils/isServer";
-import Layout from "components/layout";
-import AccessDenied from "components/access-denied";
-import { useRouter } from "next/router";
-import { ParentForm } from "components/parent-form";
-import { useEffect } from "react";
-import { getSnapshot, useStore } from "tree";
-import { Button, Spinner } from "@chakra-ui/core";
-import { PageSubTitle, PageTitle } from "components/page-title";
+import { useStore } from "tree";
 import tw, { styled } from "twin.macro";
+import { isServer } from "utils/isServer";
+import { Button, Spinner } from "@chakra-ui/core";
+import {
+  AccessDenied,
+  Layout,
+  PageTitle,
+  PageSubTitle,
+  ParentForm,
+} from "components";
 
 const ChildrenList = styled.ul`
   ${tw`ml-5`}

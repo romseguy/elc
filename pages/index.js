@@ -1,5 +1,5 @@
 import { getSession } from "next-auth/client";
-import Layout from "components/layout";
+import { Layout } from "components";
 
 export default function Page({ session }) {
   if (!session) {

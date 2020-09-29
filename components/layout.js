@@ -9,7 +9,7 @@ import { Nav } from "./nav";
 import { Footer } from "./footer";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 
-export default function Layout({ children }) {
+export const Layout = ({ children }) => {
   const { toggleColorMode } = useColorMode();
   const bg = useColorModeValue("gray.400", "gray.700");
   const icon = useColorModeValue(<MoonIcon />, <SunIcon />);
@@ -38,4 +38,4 @@ export default function Layout({ children }) {
       <Footer />
     </>
   );
-}
+};

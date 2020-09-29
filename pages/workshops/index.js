@@ -16,12 +16,12 @@ import {
 export default observer((props) => {
   const [session = props.session] = useSession();
   const router = useRouter();
-  const { skillType } = useStore();
+  const { workshopType } = useStore();
   useEffect(() => {
-    const fetchSkills = async () => {
-      await skillType.store.fetch();
+    const fetchWorkshops = async () => {
+      await workshopType.store.fetch();
     };
-    fetchSkills();
+    fetchWorkshops();
   }, []);
 
   if (!session)
@@ -31,15 +31,15 @@ export default observer((props) => {
       </Layout>
     );
 
-  if (skillType.store.isLoading)
+  if (workshopType.store.isLoading)
     return (
       <Layout>
         <Spinner />
       </Layout>
     );
 
-  const onRowClick = (skill) => {
-    router.push("/competences/[...slug]", `/competences/${skill.slug}`);
+  const onRowClick = (workshop) => {
+    router.push("/competences/[...slug]", `/competences/${workshop.slug}`);
   };
 
   return (
@@ -63,7 +63,7 @@ export default observer((props) => {
           </AlertDescription>
         </Alert>
       )}
-      {!skillType.store.isEmpty && (
+      {!workshopType.store.isEmpty && (
         <Table>
           <thead>
             <tr>
@@ -74,18 +74,18 @@ export default observer((props) => {
             </tr>
           </thead>
           <tbody>
-            {values(skillType.store.skills).map((skill) => {
+            {values(workshopType.store.workshops).map((workshop) => {
               return (
                 <tr
-                  key={skill._id}
+                  key={workshop._id}
                   tabIndex={0}
-                  title={`Cliquez pour ouvrir la compétence ${skill.code}`}
-                  onClick={() => onRowClick(skill)}
+                  title={`Cliquez pour ouvrir la compétence ${workshop.code}`}
+                  onClick={() => onRowClick(workshop)}
                 >
-                  <td>{skill.code}</td>
-                  <td>{skill.description}</td>
-                  <td>{skill.domain}</td>
-                  <td>{skill.level}</td>
+                  <td>{workshop.code}</td>
+                  <td>{workshop.description}</td>
+                  <td>{workshop.domain}</td>
+                  <td>{workshop.level}</td>
                 </tr>
               );
             })}

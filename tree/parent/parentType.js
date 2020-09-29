@@ -55,24 +55,27 @@ const ParentStore = t
     },
   }))
   .actions((store) => ({
-    setParents(data) {
-      const parents = {};
-      data.forEach(({ _id, firstname, lastname, email, children }) => {
-        parents[_id] = {
-          _id,
-          firstname,
-          lastname,
-          email,
-          children,
-        };
+    setParents: async function setParents(data) {
+      return new Promise((resolve, reject) => {
+        const parents = {};
+        data.forEach(({ _id, firstname, lastname, email, children }) => {
+          parents[_id] = {
+            _id,
+            firstname,
+            lastname,
+            email,
+            children,
+          };
+        });
+        store.parents = parents;
+        resolve(parents);
       });
-      store.parents = parents;
     },
     // API
     fetch: flow(function* fetch() {
       store.state = "pending";
       const { data } = yield api.get("parents");
-      store.setParents(data);
+      yield store.setParents(data);
       store.state = "done";
     }),
     postParent: flow(function* postParent(data) {

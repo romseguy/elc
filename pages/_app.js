@@ -1,18 +1,18 @@
 import "theme/styles.css";
 import { description } from "package.json";
 import Head from "next/head";
-import { initializeStore, Provider as StateProvider } from "tree";
 import { Provider as AuthProvider } from "next-auth/client";
+import { initializeStore, Provider as StateProvider } from "tree";
+import { GlobalStyles } from "twin.macro";
+import customTheme from "theme";
+import { isServer } from "utils/isServer";
 import {
   ChakraProvider,
   ColorModeProvider,
   ThemeProvider,
   useColorMode,
 } from "@chakra-ui/core";
-import customTheme from "theme";
-import { Chakra } from "components/chakra";
-import { isServer } from "utils/isServer";
-import { GlobalStyles } from "twin.macro";
+import { Chakra } from "components";
 
 const Root = ({ Component, ...pageProps }) => {
   return <Component {...pageProps} />;

@@ -5,7 +5,7 @@ import { ErrorMessage } from "@hookform/error-message";
 import { useRouter } from "next/router";
 import { isStateTreeNode } from "mobx-state-tree";
 import { useStore } from "tree";
-import { domains, levels } from "tree/skill/skillType";
+import { domains, levels } from "tree/workshop/workshopType";
 import {
   Input,
   Button,
@@ -18,13 +18,13 @@ import {
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
 
-export const SkillForm = (props) => {
+export const WorkshopForm = (props) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState();
-  const { skillType } = useStore();
+  const { workshopType } = useStore();
 
-  if (props.skill && !isStateTreeNode(props.skill)) {
-    console.error("props.skill must be a model instance");
+  if (props.workshop && !isStateTreeNode(props.workshop)) {
+    console.error("props.workshop must be a model instance");
     return null;
   }
 
@@ -53,18 +53,18 @@ export const SkillForm = (props) => {
       setError("apiErrorMessage", { type: "manual", message: res.message });
     };
 
-    if (props.skill) {
-      props.skill.merge(formData);
-      res = await props.skill.update();
+    if (props.workshop) {
+      props.workshop.merge(formData);
+      res = await props.workshop.update();
 
       if (res.status === "error") handleError();
       else
         router.push(
           "/competences/[...slug]",
-          `/competences/${props.skill.slug}`
+          `/competences/${props.workshop.slug}`
         );
     } else {
-      res = await skillType.store.postSkill(formData);
+      res = await workshopType.store.postWorkshop(formData);
 
       if (res.status === "error") handleError();
       else router.push("/competences");
@@ -79,7 +79,7 @@ export const SkillForm = (props) => {
           name="code"
           placeholder="L01"
           ref={register({ required: true })}
-          defaultValue={(props.skill && props.skill.code) || ""}
+          defaultValue={(props.workshop && props.workshop.code) || ""}
         />
         <ErrorMessage
           errors={errors}
@@ -94,7 +94,7 @@ export const SkillForm = (props) => {
           name="description"
           placeholder="J'écoute et je comprends des consignes"
           ref={register({ required: true })}
-          defaultValue={(props.skill && props.skill.description) || ""}
+          defaultValue={(props.workshop && props.workshop.description) || ""}
         />
         <ErrorMessage
           errors={errors}
@@ -110,7 +110,9 @@ export const SkillForm = (props) => {
           placeholder="Sélectionner une matière"
           ref={register({ required: true })}
           defaultValue={
-            props.skill && props.skill.domain !== "-" ? props.skill.domain : "-"
+            props.workshop && props.workshop.domain !== "-"
+              ? props.workshop.domain
+              : "-"
           }
         >
           {domains.map((domain) => (
@@ -128,7 +130,9 @@ export const SkillForm = (props) => {
           placeholder="Sélectionner un niveau"
           ref={register({ required: true })}
           defaultValue={
-            props.skill && props.skill.level !== "-" ? props.skill.level : "-"
+            props.workshop && props.workshop.level !== "-"
+              ? props.workshop.level
+              : "-"
           }
         >
           {levels.map((level) => (
@@ -157,7 +161,7 @@ export const SkillForm = (props) => {
         isLoading={isLoading}
         isDisabled={Object.keys(errors).length > 0}
       >
-        {props.skill ? "Modifier" : "Ajouter"}
+        {props.workshop ? "Modifier" : "Ajouter"}
       </Button>
     </form>
   );

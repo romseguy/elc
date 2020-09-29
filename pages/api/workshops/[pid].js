@@ -7,7 +7,7 @@ const handler = nextConnect();
 
 handler.use(middleware);
 
-handler.get(async function getSkill(req, res) {
+handler.get(async function getWorkshop(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
@@ -24,10 +24,10 @@ handler.get(async function getSkill(req, res) {
     } = req;
 
     try {
-      const skill = await req.models.Skill.findOne({ _id: pid });
+      const workshop = await req.models.Workshop.findOne({ _id: pid });
 
-      if (skill) {
-        res.status(200).json({ data: skill });
+      if (workshop) {
+        res.status(200).json({ data: workshop });
       } else {
         res
           .status(400)
@@ -41,7 +41,7 @@ handler.get(async function getSkill(req, res) {
   }
 });
 
-handler.put(async function editSkill(req, res) {
+handler.put(async function editWorkshop(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
@@ -58,7 +58,7 @@ handler.put(async function editSkill(req, res) {
     } = req;
 
     try {
-      const { n, nModified } = await req.models.Skill.updateOne(
+      const { n, nModified } = await req.models.Workshop.updateOne(
         { _id: pid },
         req.body
       );
@@ -95,7 +95,9 @@ handler.delete(async (req, res) => {
     } = req;
 
     try {
-      const { deletedCount } = await req.models.Skill.deleteOne({ _id: pid });
+      const { deletedCount } = await req.models.Workshop.deleteOne({
+        _id: pid,
+      });
 
       if (deletedCount === 1) {
         res.status(200);

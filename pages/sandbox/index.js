@@ -1,11 +1,9 @@
-// This is an example of how to protect content using server rendering
-import { useObserver, observer } from "mobx-react-lite";
-import { initializeStore, Tree, useStore } from "tree";
 import { getSession } from "next-auth/client";
-import AccessDenied from "components/access-denied";
-import Layout from "components/layout";
-import { Button, useColorMode } from "@chakra-ui/core";
+import { useObserver, observer } from "mobx-react-lite";
 import { getSnapshot } from "mobx-state-tree";
+import { initializeStore, useStore } from "tree";
+import { AccessDenied, Layout } from "components";
+import { Button, useColorMode } from "@chakra-ui/core";
 
 const Counter = observer(() => {
   const { counter } = useStore();
@@ -31,6 +29,7 @@ const Counter = observer(() => {
   );
 });
 
+// This is an example of how to protect content using server rendering
 export default function Page(props) {
   // const { session } = props;
   // // If no session exists, display access denied message

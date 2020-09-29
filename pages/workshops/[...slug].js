@@ -6,28 +6,28 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "tree";
 import { isServer } from "utils/isServer";
 import { Button, Spinner } from "@chakra-ui/core";
-import { AccessDenied, Layout, PageTitle, SkillForm } from "components";
+import { AccessDenied, Layout, PageTitle, WorkshopForm } from "components";
 
 export default observer((props) => {
   const [session = props.session] = useSession();
   const router = useRouter();
-  const { skillType } = useStore();
-  const [selectedSkill, setSkill] = useState();
+  const { workshopType } = useStore();
+  const [selectedWorkshop, setWorkshop] = useState();
   useEffect(() => {
-    const fetchSkills = async () => {
-      await skillType.store.fetch();
+    const fetchWorkshops = async () => {
+      await workshopType.store.fetch();
 
       let found = false;
-      values(skillType.store.skills).forEach((skill) => {
-        if (skill.code === skillSlug) {
+      values(workshopType.store.workshops).forEach((workshop) => {
+        if (workshop.code === workshopSlug) {
           found = true;
-          setSkill(skill);
+          setWorkshop(workshop);
         }
       });
-      if (!found) setSkill(null);
+      if (!found) setWorkshop(null);
     };
 
-    fetchSkills();
+    fetchWorkshops();
   }, []);
 
   if (!session)
@@ -37,25 +37,25 @@ export default observer((props) => {
       </Layout>
     );
 
-  const skillSlug = router.query.slug[0];
+  const workshopSlug = router.query.slug[0];
   const action = router.query.slug[1];
 
   if (!isServer() && action && action !== "edit") {
-    router.push("/competences/[...slug]", `/competences/${skillSlug}`);
+    router.push("/competences/[...slug]", `/competences/${workshopSlug}`);
     return null;
   }
 
-  if (skillType.store.isLoading)
+  if (workshopType.store.isLoading)
     return (
       <Layout>
         <Spinner />
       </Layout>
     );
-  if (skillType.store.isEmpty)
+  if (workshopType.store.isEmpty)
     return <Layout>Aucune compétence n'a été ajoutée à l'application</Layout>;
-  if (selectedSkill === null)
+  if (selectedWorkshop === null)
     return <Layout>Nous n'avons pas pu trouver cette compétence</Layout>;
-  if (!selectedSkill)
+  if (!selectedWorkshop)
     return (
       <Layout>
         <Spinner />
@@ -65,8 +65,8 @@ export default observer((props) => {
   if (action === "edit") {
     return (
       <Layout>
-        <PageTitle>{`Modification de la compétence ${selectedSkill.code}`}</PageTitle>
-        <SkillForm skill={selectedSkill} />
+        <PageTitle>{`Modification de la compétence ${selectedWorkshop.code}`}</PageTitle>
+        <WorkshopForm workshop={selectedWorkshop} />
       </Layout>
     );
   }
@@ -74,18 +74,18 @@ export default observer((props) => {
   const editAction = () => {
     router.push(
       "/competences/[...slug]",
-      `/competences/${selectedSkill.slug}/edit`
+      `/competences/${selectedWorkshop.slug}/edit`
     );
   };
   const removeAction = async () => {
-    const removedSkill = await selectedSkill.remove();
+    const removedWorkshop = await selectedWorkshop.remove();
     router.push("/competences");
   };
 
   return (
     <Layout>
       <PageTitle>
-        {`Compétence ${selectedSkill.code}`}
+        {`Compétence ${selectedWorkshop.code}`}
         <Button variant="outline" mx={5} onClick={editAction}>
           Modifier
         </Button>

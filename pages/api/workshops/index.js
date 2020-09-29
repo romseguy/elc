@@ -7,7 +7,7 @@ const handler = nextConnect();
 
 handler.use(middleware);
 
-handler.get(async function getSkills(req, res) {
+handler.get(async function getWorkshops(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
@@ -20,15 +20,15 @@ handler.get(async function getSkills(req, res) {
       );
   } else {
     try {
-      const skills = await req.models.Skill.find({});
-      res.json({ data: skills });
+      const workshops = await req.models.Workshop.find({});
+      res.json({ data: workshops });
     } catch (error) {
       createServerError(error);
     }
   }
 });
 
-handler.post(async function postSkill(req, res) {
+handler.post(async function postWorkshop(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
@@ -41,8 +41,8 @@ handler.post(async function postSkill(req, res) {
       );
   } else {
     try {
-      const skill = await req.models.Skill.create(req.body);
-      res.status(200).json({ data: skill });
+      const workshop = await req.models.Workshop.create(req.body);
+      res.status(200).json({ data: workshop });
     } catch (error) {
       res.status(400).json(createServerError(error));
     }

@@ -1,6 +1,6 @@
 import { getSession, useSession } from "next-auth/client";
 // import { DevTool } from "@hookform/devtools";
-import { AccessDenied, Layout, PageTitle, ProfileForm } from "components";
+import { AccessDenied, Layout, PageTitle, WorkshopForm } from "components";
 
 // registerLocale("fr", fr);
 // setDefaultLocale("fr");
@@ -19,8 +19,8 @@ export default function Page(props) {
   return (
     <>
       <Layout>
-        <PageTitle>Ajouter une nouvelle fiche élève</PageTitle>
-        <ProfileForm />
+        <PageTitle>Ajouter une nouvelle compétence</PageTitle>
+        <WorkshopForm />
       </Layout>
       {/* <DevTool control={control} /> */}
     </>

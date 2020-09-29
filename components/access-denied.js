@@ -1,9 +1,8 @@
 import { signIn } from "next-auth/client";
 import { Text } from "@chakra-ui/core";
-import { Link } from "components/link";
-import { PageTitle } from "./page-title";
+import { Link, PageTitle } from "components";
 
-export default function AccessDenied() {
+export const AccessDenied = () => {
   return (
     <>
       <PageTitle>Accès refusé</PageTitle>
@@ -20,4 +19,4 @@ export default function AccessDenied() {
       </Text>
     </>
   );
-}
+};

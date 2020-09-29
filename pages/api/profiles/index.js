@@ -21,9 +21,9 @@ handler.get(async function getProfiles(req, res) {
   } else {
     try {
       const profiles = await req.models.Profile.find({});
-      res.json({ data: profiles });
+      res.status(200).json({ data: profiles });
     } catch (error) {
-      createServerError(error);
+      res.status(400).json(createServerError(error));
     }
   }
 });
@@ -32,7 +32,13 @@ handler.post(async function postProfile(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
-    res.send({ error: "Vous devez être identifié pour accéder à ce contenu." });
+    res
+      .status(403)
+      .json(
+        createServerError(
+          new Error("Vous devez être identifié pour accéder à ce contenu.")
+        )
+      );
   } else {
     try {
       const { firstname, lastname, birthdate } = req.body;
@@ -41,7 +47,7 @@ handler.post(async function postProfile(req, res) {
         lastname,
         birthdate,
       });
-      res.status(200).json(profile);
+      res.status(200).json({ data: profile });
     } catch (error) {
       res.status(400).json(createServerError(error));
     }
