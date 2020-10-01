@@ -19,7 +19,7 @@ export default observer((props) => {
   const { skillType } = useStore();
   useEffect(() => {
     const fetchSkills = async () => {
-      await skillType.store.fetch();
+      await skillType.store.getSkills();
     };
     fetchSkills();
   }, []);
@@ -52,7 +52,7 @@ export default observer((props) => {
           </Button>
         </Link>
       </PageTitle>
-      {profileType.store.state === "error" && (
+      {skillType.store.state === "error" && (
         <Alert status="error">
           <AlertIcon />
           <AlertTitle mr={2}>

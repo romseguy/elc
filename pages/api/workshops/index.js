@@ -1,7 +1,7 @@
 import nextConnect from "next-connect";
 import middleware from "middlewares/database";
 import { getSession } from "next-auth/client";
-import { createServerError } from "utils/api/errors";
+import { createServerError, databaseErrorCodes } from "middlewares/errors";
 
 const handler = nextConnect();
 
@@ -44,7 +44,11 @@ handler.post(async function postWorkshop(req, res) {
       const workshop = await req.models.Workshop.create(req.body);
       res.status(200).json({ data: workshop });
     } catch (error) {
-      res.status(400).json(createServerError(error));
+      if (error.code && error.code === databaseErrorCodes.DUPLICATE_KEY) {
+        res.status(400).json({ name: "Un atelier avec ce nom existe déjà" });
+      } else {
+        res.status(400).json(createServerError(error));
+      }
     }
   }
 });

@@ -6,8 +6,6 @@ import {
   getParent,
   destroy,
   getSnapshot,
-  getRoot,
-  resolveIdentifier,
 } from "mobx-state-tree";
 import { ParentModel, SkillModel } from "tree";
 
@@ -36,10 +34,10 @@ export const ProfileModel = t
     },
   }))
   .actions((profile) => ({
-    merge(formData) {
-      profile.firstname = formData.firstname;
-      profile.lastname = formData.lastname;
-      profile.birthdate = formData.birthdate;
+    fromUi(data) {
+      profile.firstname = data.firstname;
+      profile.lastname = data.lastname;
+      profile.birthdate = data.birthdate;
     },
     update() {
       return getParent(profile, 2).updateProfile(profile);
@@ -86,44 +84,61 @@ const ProfileStore = t
             };
           }
         );
-        store.profiles = profiles;
         resolve(profiles);
       });
     },
     // API
-    fetch: flow(function* fetch() {
+    getProfiles: flow(function* getProfiles() {
       store.state = "pending";
-      const { status, data } = yield api.get("profiles");
+      const { error, data } = yield api.get("profiles");
 
-      if (status === api.HTTP_STATUS_ERROR) {
+      if (status === api.HTTP_ERROR) {
         store.state = "error";
+        return { error };
       } else {
-        yield store.setProfiles(data);
+        store.profiles = yield store.setProfiles(data);
         store.state = "done";
       }
     }),
-    postProfile: flow(function* postProfile(data) {
+    postProfile: flow(function* postProfile(formData) {
       store.state = "pending";
-      const res = yield api.post("profiles", data);
+      const { error, data } = yield api.post("profiles", formData);
+
+      if (error) {
+        store.state = "error";
+        return { error };
+      }
+
       store.state = "done";
-      return res;
+      return { data: ProfileModel.create(data) };
     }),
     updateProfile: flow(function* updateProfile(profile) {
       store.state = "pending";
-      const data = getSnapshot(profile);
-      const res = yield api.update(`profiles/${profile._id}`, {
-        ...data,
-        birthdate: toDate(data.birthdate),
+      const { error, data } = yield api.update(`profiles/${profile._id}`, {
+        ...getSnapshot(profile),
+        birthdate: toDate(profile.birthdate),
       });
+
+      if (error) {
+        store.state = "error";
+        return { error };
+      }
+
       store.state = "done";
-      return res;
+      return { data };
     }),
     removeProfile: flow(function* removeProfile(profile) {
       // destroy(profile);
       store.state = "pending";
-      const res = yield api.remove(`profiles/${profile._id}`);
+      const { error, data } = yield api.remove(`profiles/${profile._id}`);
+
+      if (error) {
+        store.state = "error";
+        return { error };
+      }
+
       store.state = "done";
-      return res;
+      return data;
     }),
   }));
 
@@ -137,7 +152,7 @@ export const ProfileType = t
   })
   .actions((self) => ({
     selectProfile: flow(function* selectProfile(slug) {
-      yield self.store.fetch();
+      yield self.store.getProfiles();
       self.store.profiles.forEach((profile) => {
         if (slug === profile.slug) {
           self.selectedProfile = profile;

@@ -73,15 +73,16 @@ export const SkillSchema = new mongoose.Schema({
 export const WorkshopSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
     unique: true,
+    required: [true, "Le nom de l'atelier est obligatoire"],
+    minlength: [3, "Le nom de l'atelier est trop court"],
   },
   skills: {
     type: [String],
   },
-  state: {
-    type: String,
-    enum: ["idle", "ongoing", "done"],
-    default: "idle",
-  },
+  // state: {
+  //   type: String,
+  //   enum: ["idle", "ongoing", "done"],
+  //   default: "idle",
+  // },
 });

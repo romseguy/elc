@@ -35,8 +35,8 @@ export default observer((props) => {
   const [showSkillForm, setShowSkillForm] = useState(false);
   useEffect(() => {
     const selectProfile = async () => {
-      await skillType.store.fetch();
-      await parentType.store.fetch();
+      await skillType.store.getSkills();
+      await parentType.store.getParents();
       await profileType.selectProfile(profileSlug);
     };
 
@@ -99,9 +99,9 @@ export default observer((props) => {
   };
   const removeSkillAction = (skill) => {
     selectedProfile.removeSkill(skill);
-    const res = selectedProfile.update();
+    const { error, data } = selectedProfile.update();
 
-    if (res.status === "error") {
+    if (error) {
       console.error(res.message); // @todo: toast
     }
   };

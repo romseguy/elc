@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
 import { DatePicker } from "components";
+import { handleError } from "utils/form";
 
 export const ProfileForm = (props) => {
   const router = useRouter();
@@ -43,29 +44,25 @@ export const ProfileForm = (props) => {
   });
 
   const onChange = () => {
-    clearErrors("apiErrorMessage");
+    clearErrors("formErrorMessage");
   };
 
   const onSubmit = async (formData) => {
-    let res;
     setIsLoading(true);
 
-    const handleError = () => {
-      setIsLoading(false);
-      setError("apiErrorMessage", { type: "manual", message: res.message });
-    };
-
     if (props.profile) {
-      props.profile.merge(formData);
-      res = await props.profile.update();
+      props.profile.fromUi(formData);
+      const { error } = await props.profile.update();
+      setIsLoading(false);
 
-      if (res.status === "error") handleError();
+      if (error) handleError(error, setError);
       else router.push("/fiches/[...slug]", `/fiches/${props.profile.slug}`);
     } else {
-      res = await profileType.store.postProfile(formData);
+      const { data, error } = await profileType.store.postProfile(formData);
+      setIsLoading(false);
 
-      if (res.status === "error") handleError();
-      else router.push("/fiches");
+      if (data) router.push("/fiches");
+      else handleError(error, setError);
     }
   };
 
@@ -153,7 +150,7 @@ export const ProfileForm = (props) => {
 
       <ErrorMessage
         errors={errors}
-        name="apiErrorMessage"
+        name="formErrorMessage"
         render={({ message }) => (
           <Stack isInline p={5} mb={5} shadow="md" color="red.500">
             <WarningIcon boxSize={5} />

@@ -27,7 +27,7 @@ export default observer((props) => {
   const { profileType } = useStore();
   useEffect(() => {
     const fetchProfiles = async () => {
-      await profileType.store.fetch();
+      await profileType.store.getProfiles();
     };
     fetchProfiles();
   }, []);

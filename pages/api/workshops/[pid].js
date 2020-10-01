@@ -1,7 +1,7 @@
 import nextConnect from "next-connect";
 import middleware from "middlewares/database";
 import { getSession } from "next-auth/client";
-import { createServerError } from "utils/api/errors";
+import { createServerError } from "middlewares/errors";
 
 const handler = nextConnect();
 
@@ -41,7 +41,7 @@ handler.get(async function getWorkshop(req, res) {
   }
 });
 
-handler.put(async function editWorkshop(req, res) {
+handler.put(async function updateWorkshop(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
@@ -64,7 +64,7 @@ handler.put(async function editWorkshop(req, res) {
       );
 
       if (nModified === 1) {
-        res.status(200).json({});
+        res.status(200).json({ data: {} });
       } else {
         res
           .status(400)

@@ -1,7 +1,7 @@
 import nextConnect from "next-connect";
 import middleware from "middlewares/database";
 import { getSession } from "next-auth/client";
-import { createServerError } from "utils/api/errors";
+import { createServerError } from "middlewares/errors";
 
 const handler = nextConnect();
 
@@ -49,7 +49,13 @@ handler.post(async function postProfile(req, res) {
       });
       res.status(200).json({ data: profile });
     } catch (error) {
-      res.status(400).json(createServerError(error));
+      if (error.code && error.code === databaseErrorCodes.DUPLICATE_KEY) {
+        res
+          .status(400)
+          .json({ name: "Une fiche élève avec ce nom/prénom existe déjà" });
+      } else {
+        res.status(400).json(createServerError(error));
+      }
     }
   }
 });

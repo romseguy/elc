@@ -41,33 +41,29 @@ export const SkillForm = (props) => {
   });
 
   const onChange = () => {
-    clearErrors("apiErrorMessage");
+    clearErrors("formErrorMessage");
   };
 
   const onSubmit = async (formData) => {
-    let res;
     setIsLoading(true);
 
-    const handleError = () => {
-      setIsLoading(false);
-      setError("apiErrorMessage", { type: "manual", message: res.message });
-    };
-
     if (props.skill) {
-      props.skill.merge(formData);
+      props.skill.fromUi(formData);
       res = await props.skill.update();
+      setIsLoading(false);
 
-      if (res.status === "error") handleError();
+      if (error) handleError(error, setError);
       else
         router.push(
           "/competences/[...slug]",
           `/competences/${props.skill.slug}`
         );
     } else {
-      res = await skillType.store.postSkill(formData);
+      const { data, error } = await skillType.store.postSkill(formData);
+      setIsLoading(false);
 
-      if (res.status === "error") handleError();
-      else router.push("/competences");
+      if (data) router.push("/competences");
+      else handleError(error, setError);
     }
   };
 
@@ -141,7 +137,7 @@ export const SkillForm = (props) => {
 
       <ErrorMessage
         errors={errors}
-        name="apiErrorMessage"
+        name="formErrorMessage"
         render={({ message }) => (
           <Stack isInline p={5} mb={5} shadow="md" color="red.500">
             <WarningIcon boxSize={5} />

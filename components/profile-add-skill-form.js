@@ -35,22 +35,15 @@ export const ProfileAddSkillForm = (props) => {
   });
 
   const onChange = () => {
-    clearErrors("apiErrorMessage");
+    clearErrors("formErrorMessage");
   };
 
   const onSubmit = async ({ skill: _id, date }) => {
-    let res;
     setIsLoading(true);
-
-    const handleError = () => {
-      setIsLoading(false);
-      setError("apiErrorMessage", { type: "manual", message: res.message });
-    };
-
-    await props.profile.addSkill({ _id, date });
-    res = props.profile.update();
-
-    if (res.status === "error") handleError();
+    props.profile.addSkill({ _id, date });
+    const { data, error } = await props.profile.update();
+    setIsLoading(false);
+    if (error) handleError(error, setError);
     else props.onSubmit();
   };
 
@@ -107,7 +100,7 @@ export const ProfileAddSkillForm = (props) => {
 
       <ErrorMessage
         errors={errors}
-        name="apiErrorMessage"
+        name="formErrorMessage"
         render={({ message }) => (
           <Stack isInline p={5} mb={5} shadow="md" color="red.500">
             <WarningIcon boxSize={5} />
@@ -122,6 +115,7 @@ export const ProfileAddSkillForm = (props) => {
         type="submit"
         isLoading={isLoading}
         isDisabled={Object.keys(errors).length > 0}
+        mb={5}
       >
         Ajouter
       </Button>

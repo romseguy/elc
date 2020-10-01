@@ -24,11 +24,11 @@ export const SkillModel = t
     },
   }))
   .actions((skill) => ({
-    merge(formData) {
-      skill.code = formData.code;
-      skill.description = formData.description;
-      skill.domain = formData.domain;
-      skill.level = formData.level;
+    fromUi(data) {
+      skill.code = data.code;
+      skill.description = data.description;
+      skill.domain = data.domain;
+      skill.level = data.level;
     },
     update() {
       return getParent(skill, 2).updateSkill(skill);
@@ -52,56 +52,73 @@ const SkillStore = t
     },
   }))
   .actions((store) => ({
-    setSkills(data) {
-      const skills = {};
-      data.forEach(({ _id, code, ...attrs }) => {
-        skills[_id] = SkillModel.create({
-          _id,
-          code,
-          ...attrs,
+    setSkills: async function setSkills(data) {
+      return new Promise((resolve, reject) => {
+        const skills = {};
+        data.forEach(({ _id, code, ...attrs }) => {
+          skills[_id] = {
+            _id,
+            code,
+            ...attrs,
+          };
         });
+        resolve(skills);
       });
-      store.skills = skills;
     },
     // API
-    fetch: flow(function* fetch() {
+    getSkills: flow(function* getSkills() {
       store.state = "pending";
-      const { data } = yield api.get("skills");
-      store.setSkills(data);
+      const { error, data } = yield api.get("skills");
+
+      if (error) {
+        store.state = "error";
+        return { error };
+      }
+      store.skills = yield store.setSkills(data);
       store.state = "done";
     }),
-    postSkill: flow(function* postSkill(data) {
+    postSkill: flow(function* postSkill(formData) {
       store.state = "pending";
-      const res = yield api.post("skills", data);
+      const { error, data } = yield api.post("skills", formData);
+
+      if (error) {
+        store.state = "error";
+        return { error };
+      }
+
       store.state = "done";
-      return res;
+      return { data: SkillModel.create(data) };
     }),
     updateSkill: flow(function* updateSkill(skill) {
       store.state = "pending";
-      const res = yield api.update(`skills/${skill._id}`, getSnapshot(skill));
+      const { error, data } = yield api.update(
+        `skills/${skill._id}`,
+        getSnapshot(skill)
+      );
+
+      if (error) {
+        store.state = "error";
+        return { error };
+      }
+
       store.state = "done";
-      return res;
+      return data;
     }),
     removeSkill: flow(function* removeSkill(skill) {
       // destroy(skill);
       store.state = "pending";
-      const res = yield api.remove(`skills/${skill._id}`);
+      const { error, data } = yield api.remove(`skills/${skill._id}`);
+
+      if (error) {
+        store.state = "error";
+        return { error };
+      }
+
       store.state = "done";
-      return res;
+      return data;
     }),
   }));
 
 export const SkillType = t.model("SkillType", {
   store: t.optional(SkillStore, {}),
-  //selectedSkill: t.maybeNull(t.safeReference(SkillModel)),
 });
-// .actions((self) => ({
-//   selectSkill: flow(function* selectSkill(slug) {
-//     yield self.store.fetch();
-//     self.store.skills.forEach((skill) => {
-//       if (slug === skill.slug) {
-//         self.selectedSkill = skill;
-//       }
-//     });
-//   }),
-// }));

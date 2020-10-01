@@ -30,8 +30,8 @@ export default observer((props) => {
   const { parentType, profileType, skillType } = useStore();
   useEffect(() => {
     const selectParent = async () => {
-      await skillType.store.fetch();
-      await profileType.store.fetch();
+      await skillType.store.getSkills();
+      await profileType.store.getProfiles();
       await parentType.selectParent(parentSlug);
     };
 

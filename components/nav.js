@@ -68,7 +68,7 @@ export const Nav = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: false });
 
   const onChange = (e) => {
-    clearErrors("apiErrorMessage");
+    clearErrors("formErrorMessage");
   };
 
   const onSubmit = async (formData) => {
@@ -82,7 +82,7 @@ export const Nav = (props) => {
         await signIn("email", { email });
       }
     } catch (error) {
-      setError("apiErrorMessage", error);
+      setError("formErrorMessage", error);
     }
   };
 
@@ -100,6 +100,7 @@ export const Nav = (props) => {
           <>
             <Link href="/fiches">Élèves</Link>
             <Link href="/competences">Compétences</Link>
+            <Link href="/ateliers">Ateliers</Link>
             <Link href="/parents">Parents</Link>
           </>
         ) : (
@@ -224,7 +225,7 @@ export const Nav = (props) => {
 
                 <ErrorMessage
                   errors={errors}
-                  name="apiErrorMessage"
+                  name="formErrorMessage"
                   render={({ message }) => (
                     <Stack isInline p={5} mb={5} shadow="md" color="red.500">
                       <WarningIcon boxSize={5} />

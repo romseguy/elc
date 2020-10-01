@@ -4,7 +4,7 @@ import { applySnapshot, onSnapshot, types as t } from "mobx-state-tree";
 import makeInspectable from "mobx-devtools-mst";
 import { isServer } from "utils/isServer";
 import { Counter } from "./counter";
-import { SkillType, ProfileType, ParentType } from "./";
+import { SkillType, ProfileType, ParentType, WorkshopType } from "./";
 
 useStaticRendering(isServer());
 let clientStore;
@@ -15,6 +15,7 @@ export const Tree = t
     parentType: t.optional(ParentType, {}),
     profileType: t.optional(ProfileType, {}),
     skillType: t.optional(SkillType, {}),
+    workshopType: t.optional(WorkshopType, {}),
   })
   .actions((tree) => ({
     reset() {

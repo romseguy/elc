@@ -15,7 +15,7 @@ export default observer((props) => {
   const [selectedSkill, setSkill] = useState();
   useEffect(() => {
     const fetchSkills = async () => {
-      await skillType.store.fetch();
+      await skillType.store.getSkills();
 
       let found = false;
       values(skillType.store.skills).forEach((skill) => {

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { isStateTreeNode } from "mobx-state-tree";
 import { Controller, useForm } from "react-hook-form";
-import { ErrorMessage } from "@hookform/error-message";
-import { useRouter } from "next/router";
 // import { DevTool } from "@hookform/devtools";
+import { ErrorMessage } from "@hookform/error-message";
+import ReactSelect from "react-select";
+import { useRouter } from "next/router";
 import {
   Input,
   Button,
@@ -14,12 +15,12 @@ import {
   Stack,
   Spinner,
 } from "@chakra-ui/core";
-import ReactSelect from "react-select";
 import { WarningIcon } from "@chakra-ui/icons";
 import { useStore } from "tree";
 import { values } from "mobx";
 import { observer } from "mobx-react-lite";
 import api from "utils/api";
+import { handleError } from "utils/form";
 
 export const ParentForm = observer((props) => {
   const router = useRouter();
@@ -39,8 +40,8 @@ export const ParentForm = observer((props) => {
 
   useEffect(() => {
     const fetchProfiles = async () => {
-      await skillType.store.fetch();
-      await profileType.store.fetch();
+      await skillType.store.getSkills();
+      await profileType.store.getProfiles();
     };
     fetchProfiles();
   }, []);
@@ -51,42 +52,32 @@ export const ParentForm = observer((props) => {
   }
 
   const onChange = () => {
-    clearErrors("apiErrorMessage");
+    clearErrors("formErrorMessage");
   };
 
   const onSubmit = async (formData) => {
-    let res;
     setIsLoading(true);
 
-    const handleApiError = () => {
-      setIsLoading(false);
-      setError("apiErrorMessage", {
-        type: "manual",
-        message:
-          res.code === api.databaseErrorCodes.DUPLICATE_KEY
-            ? "Cette adresse email est déjà utilisée par un parent"
-            : res.message,
-      });
-    };
-
     if (props.parent) {
-      props.parent.merge(formData);
-      res = await props.parent.update();
+      props.parent.fromUi(formData);
+      const { error } = await props.parent.update();
+      setIsLoading(false);
 
-      if (res.status === api.HTTP_STATUS_ERROR) return handleApiError();
-      return router.push("/parents/[...slug]", `/parents/${props.parent.slug}`);
+      if (error) handleError(error, setError);
+      router.push("/parents/[...slug]", `/parents/${props.parent.slug}`);
+    } else {
+      const parent = { ...formData };
+
+      if (formData.profiles) {
+        parent.children = formData.profiles.map((profile) => profile._id);
+      }
+
+      const { data, error } = await parentType.store.postParent(parent);
+      setIsLoading(false);
+
+      if (data) router.push("/parents");
+      else handleError(error, setError);
     }
-
-    const parent = { ...formData };
-
-    if (formData.profiles) {
-      parent.children = formData.profiles.map((profile) => profile._id);
-    }
-
-    res = await parentType.store.postParent(parent);
-
-    if (res.status === api.HTTP_STATUS_ERROR) return handleApiError();
-    return router.push("/parents");
   };
 
   return (
@@ -171,7 +162,7 @@ export const ParentForm = observer((props) => {
             as={ReactSelect}
             name="profiles"
             control={control}
-            defaultValue={(props.parent && props.parent.children) || ""}
+            defaultValue={(props.parent && props.parent.children) || null}
             placeholder="Sélectionner un ou plusieurs enfants"
             menuPlacement="top"
             isClearable
@@ -190,7 +181,7 @@ export const ParentForm = observer((props) => {
 
       <ErrorMessage
         errors={errors}
-        name="apiErrorMessage"
+        name="formErrorMessage"
         render={({ message }) => (
           <Stack isInline p={5} mb={5} shadow="md" color="red.500">
             <WarningIcon boxSize={5} />

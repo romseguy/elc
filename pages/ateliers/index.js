@@ -4,7 +4,14 @@ import { useRouter } from "next/router";
 import { values } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useStore } from "tree";
-import { Button, Spinner } from "@chakra-ui/core";
+import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  Button,
+  Spinner,
+} from "@chakra-ui/core";
 import {
   AccessDenied,
   Layout,
@@ -19,7 +26,7 @@ export default observer((props) => {
   const { workshopType } = useStore();
   useEffect(() => {
     const fetchWorkshops = async () => {
-      await workshopType.store.fetch();
+      await workshopType.store.getWorkshops();
     };
     fetchWorkshops();
   }, []);
@@ -39,24 +46,24 @@ export default observer((props) => {
     );
 
   const onRowClick = (workshop) => {
-    router.push("/competences/[...slug]", `/competences/${workshop.slug}`);
+    router.push("/ateliers/[...slug]", `/ateliers/${workshop.slug}`);
   };
 
   return (
     <Layout>
       <PageTitle>
-        Liste des compétences et des observables
-        <Link href="/competences/add">
+        Liste des ateliers
+        <Link href="/ateliers/add">
           <Button variant="outline" ml={5}>
             Ajouter
           </Button>
         </Link>
       </PageTitle>
-      {profileType.store.state === "error" && (
+      {workshopType.store.state === "error" && (
         <Alert status="error">
           <AlertIcon />
           <AlertTitle mr={2}>
-            Nous n'avons pas pu charger les compétences !
+            Nous n'avons pas pu charger les ateliers !
           </AlertTitle>
           <AlertDescription>
             Veuillez patienter ou contacter le développeur à ce propos
@@ -67,10 +74,8 @@ export default observer((props) => {
         <Table>
           <thead>
             <tr>
-              <th>Code</th>
-              <th>Description</th>
-              <th>Matière</th>
-              <th>Niveau</th>
+              <th>Nom</th>
+              <th>Compétences</th>
             </tr>
           </thead>
           <tbody>
@@ -79,13 +84,11 @@ export default observer((props) => {
                 <tr
                   key={workshop._id}
                   tabIndex={0}
-                  title={`Cliquez pour ouvrir la compétence ${workshop.code}`}
+                  title={`Cliquez pour ouvrir l'atelier ${workshop.code}`}
                   onClick={() => onRowClick(workshop)}
                 >
-                  <td>{workshop.code}</td>
-                  <td>{workshop.description}</td>
-                  <td>{workshop.domain}</td>
-                  <td>{workshop.level}</td>
+                  <td>{workshop.name}</td>
+                  <td>{/* {workshop.domain} */}</td>
                 </tr>
               );
             })}

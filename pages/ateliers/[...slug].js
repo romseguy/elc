@@ -12,22 +12,12 @@ export default observer((props) => {
   const [session = props.session] = useSession();
   const router = useRouter();
   const { workshopType } = useStore();
-  const [selectedWorkshop, setWorkshop] = useState();
   useEffect(() => {
-    const fetchWorkshops = async () => {
-      await workshopType.store.fetch();
-
-      let found = false;
-      values(workshopType.store.workshops).forEach((workshop) => {
-        if (workshop.code === workshopSlug) {
-          found = true;
-          setWorkshop(workshop);
-        }
-      });
-      if (!found) setWorkshop(null);
+    const selectWorkshop = async () => {
+      await workshopType.selectWorkshop(workshopSlug);
     };
 
-    fetchWorkshops();
+    selectWorkshop();
   }, []);
 
   if (!session)
@@ -41,9 +31,11 @@ export default observer((props) => {
   const action = router.query.slug[1];
 
   if (!isServer() && action && action !== "edit") {
-    router.push("/competences/[...slug]", `/competences/${workshopSlug}`);
+    router.push("/ateliers/[...slug]", `/ateliers/${workshopSlug}`);
     return null;
   }
+
+  const selectedWorkshop = workshopType.selectedWorkshop;
 
   if (workshopType.store.isLoading)
     return (
@@ -52,9 +44,9 @@ export default observer((props) => {
       </Layout>
     );
   if (workshopType.store.isEmpty)
-    return <Layout>Aucune compétence n'a été ajoutée à l'application</Layout>;
+    return <Layout>Aucune atelier n'a été ajoutée à l'application</Layout>;
   if (selectedWorkshop === null)
-    return <Layout>Nous n'avons pas pu trouver cette compétence</Layout>;
+    return <Layout>Nous n'avons pas pu trouver cet atelier</Layout>;
   if (!selectedWorkshop)
     return (
       <Layout>
@@ -65,7 +57,7 @@ export default observer((props) => {
   if (action === "edit") {
     return (
       <Layout>
-        <PageTitle>{`Modification de la compétence ${selectedWorkshop.code}`}</PageTitle>
+        <PageTitle>{`Modification de l'atelier ${selectedWorkshop.name}`}</PageTitle>
         <WorkshopForm workshop={selectedWorkshop} />
       </Layout>
     );
@@ -73,19 +65,19 @@ export default observer((props) => {
 
   const editAction = () => {
     router.push(
-      "/competences/[...slug]",
-      `/competences/${selectedWorkshop.slug}/edit`
+      "/ateliers/[...slug]",
+      `/ateliers/${selectedWorkshop.slug}/edit`
     );
   };
   const removeAction = async () => {
     const removedWorkshop = await selectedWorkshop.remove();
-    router.push("/competences");
+    router.push("/ateliers");
   };
 
   return (
     <Layout>
       <PageTitle>
-        {`Compétence ${selectedWorkshop.code}`}
+        {`Atelier ${selectedWorkshop.name}`}
         <Button variant="outline" mx={5} onClick={editAction}>
           Modifier
         </Button>

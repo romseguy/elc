@@ -27,11 +27,12 @@ export const ParentModel = t
     },
   }))
   .actions((parent) => ({
-    merge(formData) {
-      parent.firstname = formData.firstname;
-      parent.lastname = formData.lastname;
-      parent.email = formData.email;
-      parent.children = formData.profiles === "" ? [] : formData.profiles;
+    fromUi(data) {
+      parent.firstname = data.firstname;
+      parent.lastname = data.lastname;
+      parent.email = data.email;
+      parent.children = data.profiles === null ? [] : data.profiles;
+      return parent;
     },
     update() {
       return getParent(parent, 2).updateParent(parent);
@@ -67,36 +68,59 @@ const ParentStore = t
             children,
           };
         });
-        store.parents = parents;
         resolve(parents);
       });
     },
     // API
-    fetch: flow(function* fetch() {
+    getParents: flow(function* getParents() {
       store.state = "pending";
-      const { data } = yield api.get("parents");
-      yield store.setParents(data);
+      const { error, data } = yield api.get("parents");
+
+      if (error) {
+        store.state = "error";
+        return { error };
+      }
+
+      store.parents = yield store.setParents(data);
       store.state = "done";
     }),
-    postParent: flow(function* postParent(data) {
+    postParent: flow(function* postParent(formData) {
       store.state = "pending";
-      const res = yield api.post("parents", data);
+      const { error, data } = yield api.post("parents", formData);
+
+      if (error) {
+        store.state = "error";
+        return { error };
+      }
+
       store.state = "done";
-      return res;
+      return { data: ParentModel.create(data) };
     }),
     updateParent: flow(function* updateParent(parent) {
       store.state = "pending";
-      const res = yield api.update(
+      const { error, data } = yield api.update(
         `parents/${parent._id}`,
         getSnapshot(parent)
       );
+
+      if (error) {
+        store.state = "error";
+        return error;
+      }
+
       store.state = "done";
       return res;
     }),
     removeParent: flow(function* removeParent(parent) {
       // destroy(parent);
       store.state = "pending";
-      const res = yield api.remove(`parents/${parent._id}`);
+      const { data, error } = yield api.remove(`parents/${parent._id}`);
+
+      if (error) {
+        store.state = "error";
+        return { error };
+      }
+
       store.state = "done";
       return res;
     }),
@@ -112,7 +136,7 @@ export const ParentType = t
   })
   .actions((self) => ({
     selectParent: flow(function* selectParent(slug) {
-      yield self.store.fetch();
+      yield self.store.getParents();
       self.store.parents.forEach((parent) => {
         if (slug === parent.slug) {
           self.selectedParent = parent;

@@ -28,7 +28,7 @@ export default observer((props) => {
 
   useEffect(() => {
     const fetchParents = async () => {
-      await parentType.store.fetch();
+      await parentType.store.getParents();
     };
     fetchParents();
   }, []);

@@ -19,7 +19,7 @@ export default function Page(props) {
   return (
     <>
       <Layout>
-        <PageTitle>Ajouter une nouvelle compétence</PageTitle>
+        <PageTitle>Ajouter un nouveau atelier</PageTitle>
         <WorkshopForm />
       </Layout>
       {/* <DevTool control={control} /> */}

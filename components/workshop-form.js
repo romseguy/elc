@@ -1,11 +1,13 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-// import { DevTool } from "@hookform/devtools";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+//import { DevTool } from "@hookform/devtools";
 import { ErrorMessage } from "@hookform/error-message";
+import ReactSelect from "react-select";
 import { useRouter } from "next/router";
+import { values } from "mobx";
+import { Observer } from "mobx-react-lite";
 import { isStateTreeNode } from "mobx-state-tree";
 import { useStore } from "tree";
-import { domains, levels } from "tree/workshop/workshopType";
 import {
   Input,
   Button,
@@ -15,18 +17,28 @@ import {
   Text,
   Select,
   Stack,
+  Spinner,
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
+import { handleError } from "utils/form";
+import { ErrorMessageText } from "components";
 
 export const WorkshopForm = (props) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState();
-  const { workshopType } = useStore();
+  const { skillType, workshopType } = useStore();
 
   if (props.workshop && !isStateTreeNode(props.workshop)) {
     console.error("props.workshop must be a model instance");
     return null;
   }
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      await skillType.store.getSkills();
+    };
+    fetchSkills();
+  }, []);
 
   const {
     control,
@@ -41,116 +53,89 @@ export const WorkshopForm = (props) => {
   });
 
   const onChange = () => {
-    clearErrors("apiErrorMessage");
+    clearErrors("formErrorMessage");
   };
 
   const onSubmit = async (formData) => {
-    let res;
     setIsLoading(true);
 
-    const handleError = () => {
-      setIsLoading(false);
-      setError("apiErrorMessage", { type: "manual", message: res.message });
-    };
-
     if (props.workshop) {
-      props.workshop.merge(formData);
-      res = await props.workshop.update();
+      props.workshop.fromUi(formData);
+      const { error } = await props.parent.update();
+      setIsLoading(false);
 
-      if (res.status === "error") handleError();
+      if (error) handleError(error, setError);
       else
-        router.push(
-          "/competences/[...slug]",
-          `/competences/${props.workshop.slug}`
-        );
+        router.push("/ateliers/[...slug]", `/ateliers/${props.workshop.slug}`);
     } else {
-      res = await workshopType.store.postWorkshop(formData);
+      const { data, error } = await workshopType.store.postWorkshop(formData);
+      setIsLoading(false);
 
-      if (res.status === "error") handleError();
-      else router.push("/competences");
+      if (data) router.push("/ateliers");
+      else handleError(error, setError);
     }
   };
 
   return (
     <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
-      <FormControl isRequired m={5} mt={0}>
-        <FormLabel htmlFor="code">Code</FormLabel>
+      <FormControl isRequired m={5} mt={0} isInvalid={!!errors["name"]}>
+        <FormLabel htmlFor="name">Nom</FormLabel>
         <Input
-          name="code"
-          placeholder="L01"
+          name="name"
+          placeholder="Compter jusqu'à 10"
           ref={register({ required: true })}
-          defaultValue={(props.workshop && props.workshop.code) || ""}
+          defaultValue={(props.workshop && props.workshop.name) || ""}
         />
         <ErrorMessage
           errors={errors}
-          name="code"
-          message="Veuillez saisir un code"
+          name="name"
+          message="Veuillez saisir un nom"
+          as={ErrorMessageText}
         />
       </FormControl>
 
-      <FormControl isRequired m={5} mt={0}>
-        <FormLabel htmlFor="description">Description</FormLabel>
-        <Input
-          name="description"
-          placeholder="J'écoute et je comprends des consignes"
-          ref={register({ required: true })}
-          defaultValue={(props.workshop && props.workshop.description) || ""}
-        />
-        <ErrorMessage
-          errors={errors}
-          name="description"
-          message="Veuillez saisir une description"
-        />
-      </FormControl>
-
-      <FormControl m={5} mt={0}>
-        <FormLabel htmlFor="domain">Matière</FormLabel>
-        <Select
-          name="domain"
-          placeholder="Sélectionner une matière"
-          ref={register({ required: true })}
-          defaultValue={
-            props.workshop && props.workshop.domain !== "-"
-              ? props.workshop.domain
-              : "-"
-          }
-        >
-          {domains.map((domain) => (
-            <option key={domain} value={domain}>
-              {domain}
-            </option>
-          ))}
-        </Select>
-      </FormControl>
-
-      <FormControl m={5} mt={0}>
-        <FormLabel htmlFor="level">Niveau</FormLabel>
-        <Select
-          name="level"
-          placeholder="Sélectionner un niveau"
-          ref={register({ required: true })}
-          defaultValue={
-            props.workshop && props.workshop.level !== "-"
-              ? props.workshop.level
-              : "-"
-          }
-        >
-          {levels.map((level) => (
-            <option key={level} value={level}>
-              {level}
-            </option>
-          ))}
-        </Select>
-      </FormControl>
+      <Observer>
+        {() => (
+          <FormControl m={5} mt={0} id="skills" isInvalid={!!errors["skills"]}>
+            <FormLabel>
+              Compétences pouvant être acquises au cours de cet atelier
+            </FormLabel>
+            {skillType.store.isLoading ? (
+              <Spinner />
+            ) : (
+              <Controller
+                className="react-select-container"
+                classNamePrefix="react-select"
+                as={ReactSelect}
+                name="skills"
+                control={control}
+                defaultValue={null}
+                placeholder="Sélectionner une ou plusieurs compétences"
+                menuPlacement="top"
+                isClearable
+                isMulti
+                isSearchable
+                closeMenuOnSelect
+                options={values(skillType.store.skills)}
+                getOptionLabel={(option) =>
+                  `${option.description} (${option.code})`
+                }
+                getOptionValue={(option) => option._id}
+                onChange={([option]) => option._id}
+              />
+            )}
+          </FormControl>
+        )}
+      </Observer>
 
       <ErrorMessage
         errors={errors}
-        name="apiErrorMessage"
+        name="formErrorMessage"
         render={({ message }) => (
-          <Stack isInline p={5} mb={5} shadow="md" color="red.500">
+          <Stack isInline p={5} mb={5} shadow="md" color="red.600">
             <WarningIcon boxSize={5} />
             <Box>
-              <Text>{message}</Text>
+              <ErrorMessageText>{message}</ErrorMessageText>
             </Box>
           </Stack>
         )}
@@ -163,6 +148,7 @@ export const WorkshopForm = (props) => {
       >
         {props.workshop ? "Modifier" : "Ajouter"}
       </Button>
+      {/* <DevTool control={control} /> */}
     </form>
   );
 };

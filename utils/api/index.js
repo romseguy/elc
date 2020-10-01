@@ -1,5 +1,8 @@
-import { databaseErrorCodes } from "./errors";
-const HTTP_STATUS_ERROR = "HTTP_STATUS_ERROR";
+import { databaseErrorCodes } from "middlewares/errors";
+
+function createHttpRequestError(error) {
+  return error;
+}
 
 async function request(endpoint, params, method = "GET") {
   try {
@@ -22,16 +25,18 @@ async function request(endpoint, params, method = "GET") {
       `${process.env.NEXT_PUBLIC_API}/${endpoint}`,
       options
     );
-    const result = await response.json();
 
-    if (response.status !== 200) {
-      return createApiError(result);
+    if (response.status === 200) {
+      const { data } = await response.json();
+      console.log(`/${endpoint}`, data);
+      return { data };
+    } else {
+      const error = await response.json();
+      console.log(`API ERROR /${endpoint}`, error);
+      return { error };
     }
-
-    console.log(`/${endpoint}`, result.data);
-    return result;
   } catch (error) {
-    return createApiError({ error });
+    return createHttpRequestError({ error });
   }
 }
 
@@ -39,18 +44,6 @@ function objectToQueryString(obj) {
   return Object.keys(obj)
     .map((key) => key + "=" + obj[key])
     .join("&");
-}
-
-function createApiError(error) {
-  return {
-    status: HTTP_STATUS_ERROR,
-    code: error.code,
-    message: error.message
-      ? error.message
-      : error.code
-      ? ""
-      : "Le serveur a renvoyé une erreur inconnue, veuillez contacter le développeur",
-  };
 }
 
 function get(endpoint, params) {
@@ -70,11 +63,9 @@ function remove(endpoint, params) {
 }
 
 export default {
-  HTTP_STATUS_ERROR,
-  databaseErrorCodes,
   get,
   post,
   update,
   remove,
-  createApiError,
+  databaseErrorCodes,
 };
