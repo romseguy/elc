@@ -4,12 +4,12 @@ export const Button = {
   baseStyle: (props) => {
     let base = {
       textTransform: "uppercase",
-      borderRadius: "lg",
+      borderRadius: "lg"
     };
 
     if (props.type === "submit") {
       base = {
-        ...base,
+        ...base
       };
     }
 
@@ -18,20 +18,21 @@ export const Button = {
   sizes: {
     sm: {
       fontSize: "sm",
-      padding: ".5rem",
+      padding: ".5rem"
     },
     md: {
       fontSize: "md",
-      padding: ".5rem",
-    },
+      padding: ".5rem"
+    }
   },
   variants: {
     outline: {
       border: "1px solid",
-    },
+      fontWeight: "semibold"
+    }
   },
   defaultProps: {
     size: "sm",
-    colorScheme: "green",
-  },
+    colorScheme: "green"
+  }
 };

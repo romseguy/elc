@@ -1,18 +1,22 @@
+import tw, { css } from "twin.macro";
 import {
   useColorMode,
   Box,
   IconButton,
   useColorModeValue,
+  Flex
 } from "@chakra-ui/core";
+import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import { Header } from "./header";
 import { Nav } from "./nav";
 import { Footer } from "./footer";
-import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 
 export const Layout = ({ children }) => {
   const { toggleColorMode } = useColorMode();
-  const bg = useColorModeValue("gray.400", "gray.700");
   const icon = useColorModeValue(<MoonIcon />, <SunIcon />);
+  const styles = css`
+    ${useColorModeValue(tw`bg-orange-300`, tw`bg-orange-600`)}
+  `;
 
   return (
     <>
@@ -22,16 +26,7 @@ export const Layout = ({ children }) => {
 
       <Nav />
 
-      <Box
-        as="main"
-        flex="1 0 auto"
-        mx={10}
-        mb={20}
-        p={5}
-        rounded="lg"
-        bg={bg}
-        style={{ filter: "brightness(140%)" }}
-      >
+      <Box as="main" flex="1 0 auto" p={5} /* css={styles} */>
         {children}
       </Box>
 

@@ -1,4 +1,5 @@
-import { Heading } from "@chakra-ui/core";
+import { Box, Flex, Heading, IconButton, Spacer } from "@chakra-ui/core";
+import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
 
 export const PageTitle = ({ children }) => {
   return (
@@ -8,10 +9,30 @@ export const PageTitle = ({ children }) => {
   );
 };
 
-export const PageSubTitle = ({ children }) => {
+export const PageSubTitle = ({ toggled, onToggle, onClick, children }) => {
   return (
-    <Heading size="md" my={5}>
-      {children}
-    </Heading>
+    <Flex alignItems="center" my={5} onClick={onClick} cursor="pointer">
+      <Heading size="md">{children}</Heading>
+      <Spacer />
+      {onToggle && (
+        <>
+          {toggled ? (
+            <IconButton
+              colorScheme="blue"
+              size="lg"
+              icon={<ArrowUpIcon />}
+              onClick={onToggle}
+            />
+          ) : (
+            <IconButton
+              colorScheme="blue"
+              size="lg"
+              icon={<ArrowDownIcon />}
+              onClick={onToggle}
+            />
+          )}
+        </>
+      )}
+    </Flex>
   );
 };

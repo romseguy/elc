@@ -19,7 +19,7 @@ import { WarningIcon } from "@chakra-ui/icons";
 import { DatePicker } from "components";
 import { ErrorMessageText } from "./error-message-text";
 
-export const ProfileAddSkillForm = (props) => {
+export const ProfileAddWorkshopForm = (props) => {
   const router = useRouter();
   const { profileType } = useStore();
   const [isLoading, setIsLoading] = useState();
@@ -39,9 +39,9 @@ export const ProfileAddSkillForm = (props) => {
     clearErrors("formErrorMessage");
   };
 
-  const onSubmit = async ({ skill: _id, date }) => {
+  const onSubmit = async ({ workshop: _id }) => {
     setIsLoading(true);
-    props.profile.addSkill({ _id, date });
+    props.profile.addWorkshop({ _id });
     const { data, error } = await props.profile.update();
     setIsLoading(false);
     if (error) handleError(error, setError);
@@ -51,48 +51,26 @@ export const ProfileAddSkillForm = (props) => {
   return (
     <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
       <FormControl isRequired mb={5}>
-        <FormLabel htmlFor="skill">Compétence</FormLabel>
+        <FormLabel htmlFor="workshop">Atelier</FormLabel>
         <Select
-          name="skill"
-          placeholder="Sélectionner une compétence"
+          name="workshop"
+          placeholder="Sélectionner un atelier"
           ref={register({ required: true })}
-          defaultValue={"-"}
+          defaultValue={null}
         >
-          {values(props.skills).map((skill) => {
+          {values(props.workshops).map((workshop) => {
             return (
-              <option key={skill._id} value={skill._id}>
-                {skill.code}
+              <option key={workshop._id} value={workshop._id}>
+                {workshop.name}
               </option>
             );
           })}
         </Select>
         <ErrorMessage
-          errors={errors}
-          name="skill"
-          message="Veuillez sélectionner une compétence"
-        />
-      </FormControl>
-
-      <FormControl isRequired mb={5}>
-        <FormLabel htmlFor="date">Date</FormLabel>
-        <Controller
-          name="date"
-          control={control}
-          defaultValue={new Date()}
-          rules={{ required: true }}
-          render={(props) => (
-            <DatePicker
-              minDate={subYears(new Date(), 11)}
-              maxDate={new Date()}
-              {...props}
-            />
-          )}
-        />
-        <ErrorMessage
           as={ErrorMessageText}
           errors={errors}
-          name="date"
-          message="Veuillez saisir la date d'obtention de la compétence"
+          name="workshop"
+          message="Veuillez sélectionner un atelier"
         />
       </FormControl>
 

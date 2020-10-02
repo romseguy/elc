@@ -5,13 +5,19 @@ import {
   flow,
   getParent,
   destroy,
-  getSnapshot,
+  getSnapshot
 } from "mobx-state-tree";
-import { ParentModel, SkillModel } from "tree";
+import { ParentModel, SkillModel, WorkshopModel } from "tree";
 
 const SkillRef = t.model("SkillRef", {
   skill: t.reference(t.late(() => SkillModel)),
-  date: t.Date,
+  date: t.Date
+});
+
+const WorkshopRef = t.model("WorkshopRef", {
+  workshop: t.reference(t.late(() => WorkshopModel)),
+  started: t.maybeNull(t.Date),
+  completed: t.maybeNull(t.Date)
 });
 
 export const ProfileModel = t
@@ -21,17 +27,18 @@ export const ProfileModel = t
     lastname: t.string,
     birthdate: t.Date,
     skills: t.array(SkillRef),
+    workshops: t.array(WorkshopRef),
     parents: t.optional(
       t.array(t.reference(t.late(() => ParentModel))),
       // t.array(t.maybe(t.reference(t.late(() => ProfileModel)))),
       // t.array(t.safeReference(ProfileModel, { acceptsUndefined: false })),
       []
-    ),
+    )
   })
   .views((profile) => ({
     get slug() {
       return `${profile.firstname}-${profile.lastname}`;
-    },
+    }
   }))
   .actions((profile) => ({
     fromUi(data) {
@@ -51,12 +58,20 @@ export const ProfileModel = t
     removeSkill: function removeSkill(skill) {
       profile.skills = profile.skills.filter((ref) => ref.skill !== skill);
     },
+    addWorkshop: function addWorkshop({ _id }) {
+      profile.workshops.push(WorkshopRef.create({ workshop: _id }));
+    },
+    removeWorkshop: function removeWorkshop(workshop) {
+      profile.workshops = profile.workshops.filter(
+        (ref) => ref.workshop !== workshop
+      );
+    }
   }));
 
 const ProfileStore = t
   .model("ProfileStore", {
     profiles: t.map(ProfileModel),
-    state: t.optional(t.enumeration(["pending", "done", "error"]), "pending"),
+    state: t.optional(t.enumeration(["pending", "done", "error"]), "pending")
   })
   .views((store) => ({
     get isEmpty() {
@@ -64,23 +79,38 @@ const ProfileStore = t
     },
     get isLoading() {
       return store.state === "pending";
-    },
+    }
   }))
   .actions((store) => ({
     setProfiles: async function setProfiles(data) {
       return new Promise((resolve, reject) => {
         const profiles = {};
         data.forEach(
-          ({ _id, firstname, lastname, birthdate, skills, parents }) => {
+          ({
+            _id,
+            firstname,
+            lastname,
+            birthdate,
+            skills,
+            parents,
+            workshops
+          }) => {
             profiles[_id] = {
               _id,
               firstname,
               lastname,
               birthdate: new Date(birthdate),
-              skills: skills.map(({ skill, date }) => {
-                return SkillRef.create({ skill, date: new Date(date) });
-              }),
-              parents,
+              skills: skills.map(({ skill, date }) =>
+                SkillRef.create({ skill, date: new Date(date) })
+              ),
+              workshops: workshops.map(({ workshop, started, completed }) =>
+                WorkshopRef.create({
+                  workshop,
+                  started: started && new Date(started),
+                  completed: completed && new Date(completed)
+                })
+              ),
+              parents
             };
           }
         );
@@ -116,7 +146,7 @@ const ProfileStore = t
       store.state = "pending";
       const { error, data } = yield api.update(`profiles/${profile._id}`, {
         ...getSnapshot(profile),
-        birthdate: toDate(profile.birthdate),
+        birthdate: toDate(profile.birthdate)
       });
 
       if (error) {
@@ -139,7 +169,7 @@ const ProfileStore = t
 
       store.state = "done";
       return data;
-    }),
+    })
   }));
 
 export const ProfileType = t
@@ -148,7 +178,7 @@ export const ProfileType = t
     selectedProfile: t.optional(
       t.maybeNull(t.safeReference(ProfileModel)),
       undefined
-    ),
+    )
   })
   .actions((self) => ({
     selectProfile: flow(function* selectProfile(slug) {
@@ -161,5 +191,5 @@ export const ProfileType = t
       if (self.selectedProfile === undefined) {
         self.selectedProfile = null;
       }
-    }),
+    })
   }));

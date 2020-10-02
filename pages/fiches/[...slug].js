@@ -5,10 +5,25 @@ import { values } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useStore } from "tree";
 import tw, { styled } from "twin.macro";
-import { format } from "date-fns";
+import { format, isDate } from "date-fns";
 import { isServer } from "utils/isServer";
-import { Button, IconButton, Spinner } from "@chakra-ui/core";
-import { DeleteIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Button,
+  Divider,
+  HStack,
+  IconButton,
+  Spinner,
+  StackDivider,
+  useColorModeValue,
+  VStack
+} from "@chakra-ui/core";
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  DeleteIcon,
+  EditIcon
+} from "@chakra-ui/icons";
 import {
   AccessDenied,
   Layout,
@@ -17,25 +32,34 @@ import {
   ProfileAddSkillForm,
   ProfileForm,
   Table,
+  StyledTable,
+  ProfileAddWorkshopForm
 } from "components";
-
-const ParentList = styled.ul`
-  ${tw`ml-5`}
-  list-style-type: square;
-  a {
-    text-decoration: underline;
-    cursor: pointer;
-  }
-`;
 
 export default observer((props) => {
   const [session = props.session] = useSession();
   const router = useRouter();
-  const { parentType, profileType, skillType } = useStore();
+  const { parentType, profileType, skillType, workshopType } = useStore();
   const [showSkillForm, setShowSkillForm] = useState(false);
+  const [showWorkshopForm, setShowWorkshopForm] = useState(false);
+  const [showParents, setShowParents] = useState(false);
+  const [showSkills, setShowSkills] = useState(false);
+  const [showWorkshops, setShowWorkshops] = useState(false);
+  const toggleAddSkillForm = (e) => {
+    e.stopPropagation();
+    setShowSkillForm(!showSkillForm);
+  };
+  const toggleAddWorkshopForm = (e) => {
+    e.stopPropagation();
+    setShowWorkshopForm(!showWorkshopForm);
+  };
+  const toggleShowParents = () => setShowParents(!showParents);
+  const toggleShowSkills = () => setShowSkills(!showSkills);
+  const toggleShowWorkshops = () => setShowWorkshops(!showWorkshops);
   useEffect(() => {
     const selectProfile = async () => {
       await skillType.store.getSkills();
+      await workshopType.store.getWorkshops();
       await parentType.store.getParents();
       await profileType.selectProfile(profileSlug);
     };
@@ -89,7 +113,6 @@ export default observer((props) => {
       </Layout>
     );
 
-  const toggleAddSkillForm = () => setShowSkillForm(!showSkillForm);
   const editAction = () => {
     router.push("/fiches/[...slug]", `/fiches/${selectedProfile.slug}/edit`);
   };
@@ -99,14 +122,20 @@ export default observer((props) => {
   };
   const removeSkillAction = (skill) => {
     selectedProfile.removeSkill(skill);
-    const { error, data } = selectedProfile.update();
-
-    if (error) {
-      console.error(res.message); // @todo: toast
-    }
+    selectedProfile.update();
+  };
+  const removeWorkshopAction = (workshop) => {
+    selectedProfile.removeWorkshop(workshop);
+    selectedProfile.update();
   };
   const onParentRowClick = (parent) => {
     router.push("/parents/[...slug]", `/parents/${parent.slug}`);
+  };
+
+  const boxProps = {
+    bg: useColorModeValue("orange.200", "gray.800"),
+    rounded: "lg",
+    px: 5
   };
 
   return (
@@ -120,84 +149,206 @@ export default observer((props) => {
           Supprimer
         </Button>
       </PageTitle>
-      <PageSubTitle>Parents</PageSubTitle>
-      <ParentList>
-        {selectedProfile.parents.map((parent) => {
-          return (
-            <li key={parent._id}>
-              <a onClick={() => onParentRowClick(parent)}>
-                {parent.firstname} {parent.lastname}
-              </a>
-            </li>
-          );
-        })}
-      </ParentList>
-      <PageSubTitle>
-        Compétences acquises
-        <Button variant="outline" mx={5} onClick={toggleAddSkillForm}>
-          Ajouter {showSkillForm ? " 🔼" : " 🔽"}
-        </Button>
-      </PageSubTitle>
-      {showSkillForm && (
-        <ProfileAddSkillForm
-          profile={selectedProfile}
-          skills={skillType.store.skills}
-          onSubmit={toggleAddSkillForm}
-        />
-      )}
-      <Table
-        initialState={{
-          sortBy: [
-            {
-              id: "date",
-              desc: true,
-            },
-          ],
-        }}
-        data={values(selectedProfile.skills).map(({ skill, date }) => {
-          return {
-            deleteButton: (
-              <IconButton
-                icon={<DeleteIcon />}
-                onClick={() => removeSkillAction(skill)}
+
+      <VStack align="stretch" spacing={5}>
+        <Box {...boxProps}>
+          <PageSubTitle
+            toggled={showParents}
+            onToggle={toggleShowParents}
+            onClick={toggleShowParents}
+          >
+            Parents
+          </PageSubTitle>
+
+          {showParents && (
+            <>
+              <Divider mb={5} />
+
+              <StyledTable borderColor={useColorModeValue("black", "white")}>
+                <thead>
+                  <tr>
+                    <th>Prénom </th>
+                    <th>Nom </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {values(selectedProfile.parents).map((parent) => {
+                    return (
+                      <tr
+                        key={parent._id}
+                        tabIndex={0}
+                        title={`Cliquez pour ouvrir la fiche de ${parent.firstname} ${parent.lastname}`}
+                        onClick={() => onParentRowClick(parent)}
+                      >
+                        <td>{parent.firstname}</td>
+                        <td>{parent.lastname}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </StyledTable>
+            </>
+          )}
+        </Box>
+
+        <Box {...boxProps}>
+          <PageSubTitle
+            toggled={showSkills}
+            onToggle={toggleShowSkills}
+            onClick={toggleShowSkills}
+          >
+            Compétences acquises
+            <Button variant="outline" mx={5} onClick={toggleAddSkillForm}>
+              Ajouter{" "}
+              {showSkillForm ? (
+                <ArrowUpIcon ml={2} />
+              ) : (
+                <ArrowDownIcon ml={2} />
+              )}
+            </Button>
+          </PageSubTitle>
+
+          {showSkillForm && (
+            <ProfileAddSkillForm
+              profile={selectedProfile}
+              skills={skillType.store.skills}
+              onSubmit={toggleAddSkillForm}
+            />
+          )}
+
+          {showSkills && selectedProfile.skills.length > 0 && (
+            <>
+              <Divider mb={5} />
+              <Table
+                borderColor={useColorModeValue("black", "white")}
+                initialState={{
+                  sortBy: [
+                    {
+                      id: "date",
+                      desc: true
+                    }
+                  ]
+                }}
+                data={values(selectedProfile.skills).map(({ skill, date }) => {
+                  return {
+                    deleteButton: (
+                      <IconButton
+                        icon={<DeleteIcon />}
+                        colorScheme="red"
+                        onClick={() => removeSkillAction(skill)}
+                      />
+                    ),
+                    code: skill.code,
+                    description: skill.description,
+                    date: format(date, "dd/MM/yyyy")
+                  };
+                })}
+                columns={[
+                  {
+                    Header: "Date",
+                    accessor: "date",
+                    sortType: "basic"
+                  },
+                  { Header: "Code", accessor: "code" },
+                  { Header: "Description", accessor: "description" },
+                  { Header: "Matière", accessor: "domain", sortType: "basic" },
+                  {
+                    Header: "Atelier",
+                    accessor: "workshop",
+                    sortType: "basic"
+                  },
+                  { Header: "", accessor: "deleteButton", disableSortBy: true }
+                ]}
               />
-            ),
-            code: skill.code,
-            description: skill.description,
-            date: format(date, "dd/MM/yyyy"),
-          };
-        })}
-        columns={[
-          {
-            Header: "Date",
-            accessor: "date",
-            sortType: "basic",
-          },
-          { Header: "Code", accessor: "code" },
-          { Header: "Description", accessor: "description" },
-          { Header: "Matière", accessor: "domain", sortType: "basic" },
-          { Header: "Atelier", accessor: "workshop", sortType: "basic" },
-          { Header: "", accessor: "deleteButton", disableSortBy: true },
-        ]}
-      />
-      {/*
-            <PageSubTitle>Ateliers</PageSubTitle>
-              <thead>
-                <tr>
-                  <th>Code</th>
-                  <th>Description</th>
-                  <th>Statut</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>L01</td>
-                  <td>J'écoute et je comprends des consignes</td>
-                  <td>En cours</td>
-                </tr>
-              </tbody>
-            </Table>
-          */}
+            </>
+          )}
+        </Box>
+
+        <Box {...boxProps}>
+          <PageSubTitle
+            toggled={showWorkshops}
+            onToggle={toggleShowWorkshops}
+            onClick={toggleShowWorkshops}
+          >
+            Ateliers
+            <Button variant="outline" mx={5} onClick={toggleAddWorkshopForm}>
+              Ajouter
+              {showWorkshopForm ? (
+                <ArrowUpIcon ml={2} />
+              ) : (
+                <ArrowDownIcon ml={2} />
+              )}
+            </Button>
+          </PageSubTitle>
+
+          {showWorkshopForm && (
+            <ProfileAddWorkshopForm
+              profile={selectedProfile}
+              workshops={workshopType.store.workshops}
+              onSubmit={toggleAddWorkshopForm}
+            />
+          )}
+
+          {showWorkshops && selectedProfile.workshops.length > 0 && (
+            <>
+              <Divider mb={5} />
+              <Table
+                borderColor={useColorModeValue("black", "white")}
+                css={{
+                  display: !showWorkshops
+                    ? "none"
+                    : selectedProfile.workshops.length > 0
+                    ? "block"
+                    : "none"
+                }}
+                initialState={{
+                  sortBy: [
+                    {
+                      id: "name",
+                      desc: true
+                    }
+                  ]
+                }}
+                data={values(selectedProfile.workshops).map(
+                  ({ workshop, started, completed }) => {
+                    return {
+                      deleteButton: (
+                        <IconButton
+                          icon={<DeleteIcon />}
+                          colorScheme="red"
+                          onClick={() => removeWorkshopAction(workshop)}
+                        />
+                      ),
+                      editButton: (
+                        <IconButton icon={<EditIcon />} onClick={() => {}} />
+                      ),
+                      name: workshop.name,
+                      started: isDate(started) && format(started, "dd/MM/yyyy"),
+                      completed:
+                        isDate(completed) && format(completed, "dd/MM/yyyy")
+                    };
+                  }
+                )}
+                columns={[
+                  { Header: "Nom", accessor: "name" },
+                  {
+                    Header: "Commencé",
+                    accessor: "started",
+                    sortType: "basic"
+                  },
+                  {
+                    Header: "Terminé",
+                    accessor: "completed",
+                    sortType: "basic"
+                  },
+                  { Header: "", accessor: "editButton", disableSortBy: true },
+                  { Header: "", accessor: "deleteButton", disableSortBy: true }
+                ]}
+              />
+            </>
+          )}
+        </Box>
+      </VStack>
     </Layout>
   );
 });
@@ -207,7 +358,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      session,
-    },
+      session
+    }
   };
 }

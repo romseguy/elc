@@ -3,51 +3,60 @@ import mongoose from "mongoose";
 export const ParentSchema = new mongoose.Schema({
   firstname: {
     type: String,
-    required: true,
+    required: true
   },
   lastname: {
     type: String,
-    required: true,
+    required: true
   },
   email: {
     type: String,
     required: true,
-    unique: true,
+    unique: true
   },
   children: {
-    type: [String],
-  },
+    type: [String]
+  }
 });
 
 const SkillRefSchema = new mongoose.Schema({
   skill: String,
-  date: Date,
+  date: Date
+});
+
+const WorkshopRefSchema = new mongoose.Schema({
+  workshop: String,
+  started: Date,
+  completed: Date
 });
 
 export const ProfileSchema = new mongoose.Schema({
   firstname: {
     type: String,
-    required: true,
+    required: true
   },
   lastname: {
     type: String,
-    required: true,
+    required: true
   },
   birthdate: {
-    type: Date,
+    type: Date
   },
   skills: {
-    type: [SkillRefSchema],
+    type: [SkillRefSchema]
   },
   parents: {
-    type: [String],
+    type: [String]
   },
+  workshops: {
+    type: [WorkshopRefSchema]
+  }
 });
 
 ProfileSchema.index(
   {
     firstname: 1,
-    lastname: 1,
+    lastname: 1
   },
   { unique: true, background: true }
 );
@@ -56,18 +65,18 @@ export const SkillSchema = new mongoose.Schema({
   code: {
     type: String,
     required: true,
-    unique: true,
+    unique: true
   },
   description: {
     type: String,
-    required: true,
+    required: true
   },
   domain: {
-    type: String,
+    type: String
   },
   level: {
-    type: String,
-  },
+    type: String
+  }
 });
 
 export const WorkshopSchema = new mongoose.Schema({
@@ -75,11 +84,11 @@ export const WorkshopSchema = new mongoose.Schema({
     type: String,
     unique: true,
     required: [true, "Le nom de l'atelier est obligatoire"],
-    minlength: [3, "Le nom de l'atelier est trop court"],
+    minlength: [3, "Le nom de l'atelier est trop court"]
   },
   skills: {
-    type: [String],
-  },
+    type: [String]
+  }
   // state: {
   //   type: String,
   //   enum: ["idle", "ongoing", "done"],

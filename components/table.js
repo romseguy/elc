@@ -1,3 +1,4 @@
+import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
 import { useSortBy, useTable } from "react-table";
 import tw, { styled } from "twin.macro";
 
@@ -8,6 +9,7 @@ export const StyledTable = styled.table`
     }
     tr {
       ${tw`border-b`}
+      border-color: ${props => props.borderColor}
     }
   }
   tbody {
@@ -15,7 +17,8 @@ export const StyledTable = styled.table`
       ${tw`cursor-pointer`}
 
       &:hover {
-        ${tw`border-t border-b`}
+        ${tw`border-b`}
+        border-color: ${props => props.borderColor}
       }
 
       td {
@@ -69,8 +72,8 @@ export const Table = (props) => {
                     {column.canSort && (
                       /* column.isSorted
                       ?  */ column.isSortedDesc
-                        ? " 🔽"
-                        : " 🔼"
+                        ? <ArrowDownIcon ml={2}/>
+                        : <ArrowUpIcon ml={2}/>
                       /* : "" */
                     )}
                   </span>

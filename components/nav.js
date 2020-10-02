@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { signIn, signOut, useSession } from "next-auth/client";
 import md5 from "blueimp-md5";
-
 import tw, { styled, css } from "twin.macro";
 import {
   Button,
@@ -32,7 +31,7 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
-  Switch,
+  Switch
 } from "@chakra-ui/core";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import { Link } from "./link";
@@ -59,9 +58,9 @@ export const Nav = (props) => {
     watch,
     errors,
     setError,
-    clearErrors,
+    clearErrors
   } = useForm({
-    mode: "onChange",
+    mode: "onChange"
   });
   const togglePassword = watch("togglePassword", false);
   const [isLoading, setIsLoading] = useState();
@@ -86,14 +85,22 @@ export const Nav = (props) => {
     }
   };
 
+  const styles = css`
+    ${useColorModeValue(
+      //tw`h-24 bg-gradient-to-r from-red-600 via-white to-purple-600`,
+      tw`h-24 bg-gradient-to-b from-orange-100 via-orange-400 to-orange-100`,
+      tw`h-24 bg-gradient-to-b from-gray-800 via-black to-gray-800`
+    )}
+  `;
+
   return (
     <Flex
       as="nav"
       align="center"
       justify="space-between"
       wrap="wrap"
-      my={5}
       {...props}
+      css={styles}
     >
       <Box css={linkList} ml={10}>
         {session ? (
@@ -185,8 +192,8 @@ export const Nav = (props) => {
                           required: true,
                           pattern: {
                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            message: "Adresse email invalide",
-                          },
+                            message: "Adresse email invalide"
+                          }
                         })}
                       />
                     </>
