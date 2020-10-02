@@ -13,7 +13,8 @@ import {
   Box,
   Text,
   Select,
-  Stack
+  Stack,
+  FormErrorMessage
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
 import { DatePicker } from "components";
@@ -66,12 +67,13 @@ export const ProfileAddWorkshopForm = (props) => {
             );
           })}
         </Select>
-        <ErrorMessage
-          as={ErrorMessageText}
-          errors={errors}
-          name="workshop"
-          message="Veuillez sélectionner un atelier"
-        />
+        <FormErrorMessage>
+          <ErrorMessage
+            errors={errors}
+            name="workshop"
+            message="Veuillez sélectionner un atelier"
+          />
+        </FormErrorMessage>
       </FormControl>
 
       <ErrorMessage
@@ -81,7 +83,7 @@ export const ProfileAddWorkshopForm = (props) => {
           <Stack isInline p={5} mb={5} shadow="md" color="red.600">
             <WarningIcon boxSize={5} />
             <Box>
-              <Text>{message}</Text>
+              <ErrorMessageText>{message}</ErrorMessageText>
             </Box>
           </Stack>
         )}

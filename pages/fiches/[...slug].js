@@ -11,10 +11,8 @@ import {
   Box,
   Button,
   Divider,
-  HStack,
   IconButton,
   Spinner,
-  StackDivider,
   useColorModeValue,
   VStack
 } from "@chakra-ui/core";
@@ -26,14 +24,15 @@ import {
 } from "@chakra-ui/icons";
 import {
   AccessDenied,
+  ProfileEditWorkshopForm,
   Layout,
-  PageTitle,
   PageSubTitle,
+  PageTitle,
   ProfileAddSkillForm,
+  ProfileAddWorkshopForm,
   ProfileForm,
-  Table,
   StyledTable,
-  ProfileAddWorkshopForm
+  Table
 } from "components";
 
 export default observer((props) => {
@@ -45,6 +44,8 @@ export default observer((props) => {
   const [showParents, setShowParents] = useState(false);
   const [showSkills, setShowSkills] = useState(false);
   const [showWorkshops, setShowWorkshops] = useState(false);
+  const [currentWorkshopRef, setCurrentWorkshopRef] = useState();
+
   const toggleAddSkillForm = (e) => {
     e && e.stopPropagation();
     setShowSkillForm(!showSkillForm);
@@ -56,6 +57,15 @@ export default observer((props) => {
   const toggleShowParents = () => setShowParents(!showParents);
   const toggleShowSkills = () => setShowSkills(!showSkills);
   const toggleShowWorkshops = () => setShowWorkshops(!showWorkshops);
+
+  const profileSlug = router.query.slug[0];
+  const action = router.query.slug[1];
+
+  if (!isServer() && action && action !== "edit") {
+    router.push("/fiches/[...slug]", `/fiches/${profileSlug}`);
+    return null;
+  }
+
   useEffect(() => {
     const selectProfile = async () => {
       await skillType.store.getSkills();
@@ -66,14 +76,6 @@ export default observer((props) => {
 
     selectProfile();
   }, []);
-
-  const profileSlug = router.query.slug[0];
-  const action = router.query.slug[1];
-
-  if (!isServer() && action && action !== "edit") {
-    router.push("/fiches/[...slug]", `/fiches/${profileSlug}`);
-    return null;
-  }
 
   const selectedProfile = profileType.selectedProfile;
 
@@ -113,16 +115,22 @@ export default observer((props) => {
     const removedProfile = await selectedProfile.remove();
     router.push("/fiches");
   };
+
+  const onParentRowClick = (parent) => {
+    router.push("/parents/[...slug]", `/parents/${parent.slug}`);
+  };
+
   const removeSkillAction = (skill) => {
     selectedProfile.removeSkill(skill);
     selectedProfile.update();
   };
+
   const removeWorkshopAction = (workshop) => {
     selectedProfile.removeWorkshop(workshop);
     selectedProfile.update();
   };
-  const onParentRowClick = (parent) => {
-    router.push("/parents/[...slug]", `/parents/${parent.slug}`);
+  const onWorkshopEditClick = (workshopRef) => {
+    setCurrentWorkshopRef(workshopRef);
   };
 
   const boxProps = {
@@ -133,6 +141,13 @@ export default observer((props) => {
 
   return (
     <Layout>
+      {currentWorkshopRef && (
+        <ProfileEditWorkshopForm
+          currentWorkshopRef={currentWorkshopRef}
+          setCurrentWorkshopRef={setCurrentWorkshopRef}
+        />
+      )}
+
       <PageTitle>
         {`Fiche de l'élève : ${selectedProfile.firstname} ${selectedProfile.lastname}`}
         <Button variant="outline" mx={5} onClick={editAction}>
@@ -305,35 +320,37 @@ export default observer((props) => {
                     }
                   ]
                 }}
-                data={values(selectedProfile.workshops).map(
-                  ({ workshop, started, completed }) => {
-                    return {
-                      deleteButton: (
-                        <IconButton
-                          icon={<DeleteIcon />}
-                          colorScheme="red"
-                          onClick={() => removeWorkshopAction(workshop)}
-                        />
-                      ),
-                      editButton: (
-                        <IconButton icon={<EditIcon />} onClick={() => {}} />
-                      ),
-                      name: workshop.name,
-                      started: isDate(started) && format(started, "dd/MM/yyyy"),
-                      completed:
-                        isDate(completed) && format(completed, "dd/MM/yyyy")
-                    };
-                  }
-                )}
+                data={values(selectedProfile.workshops).map((workshopRef) => {
+                  const { workshop, started, completed } = workshopRef;
+                  return {
+                    deleteButton: (
+                      <IconButton
+                        icon={<DeleteIcon />}
+                        colorScheme="red"
+                        onClick={() => removeWorkshopAction(workshop)}
+                      />
+                    ),
+                    editButton: (
+                      <IconButton
+                        icon={<EditIcon />}
+                        onClick={() => onWorkshopEditClick(workshopRef)}
+                      />
+                    ),
+                    name: workshop.name,
+                    started: isDate(started) && format(started, "dd/MM/yyyy"),
+                    completed:
+                      isDate(completed) && format(completed, "dd/MM/yyyy")
+                  };
+                })}
                 columns={[
                   { Header: "Nom", accessor: "name" },
                   {
-                    Header: "Commencé",
+                    Header: "Date de début",
                     accessor: "started",
                     sortType: "basic"
                   },
                   {
-                    Header: "Terminé",
+                    Header: "Date de fin",
                     accessor: "completed",
                     sortType: "basic"
                   },

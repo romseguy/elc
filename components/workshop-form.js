@@ -17,11 +17,12 @@ import {
   Text,
   Select,
   Stack,
-  Spinner
+  Spinner,
+  FormErrorMessage
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
 import { handleError } from "utils/form";
-import { ErrorMessageText } from "components";
+import { ErrorMessageText } from "./error-message-text";
 
 export const WorkshopForm = (props) => {
   const router = useRouter();
@@ -79,12 +80,13 @@ export const WorkshopForm = (props) => {
           ref={register({ required: true })}
           defaultValue={(props.workshop && props.workshop.name) || ""}
         />
-        <ErrorMessage
-          errors={errors}
-          name="name"
-          message="Veuillez saisir un nom"
-          as={ErrorMessageText}
-        />
+        <FormErrorMessage>
+          <ErrorMessage
+            errors={errors}
+            name="name"
+            message="Veuillez saisir un nom"
+          />
+        </FormErrorMessage>
       </FormControl>
 
       <Observer>

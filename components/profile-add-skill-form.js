@@ -13,7 +13,8 @@ import {
   Box,
   Text,
   Select,
-  Stack
+  Stack,
+  FormErrorMessage
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
 import { DatePicker } from "components";
@@ -88,12 +89,13 @@ export const ProfileAddSkillForm = (props) => {
             />
           )}
         />
-        <ErrorMessage
-          as={ErrorMessageText}
-          errors={errors}
-          name="date"
-          message="Veuillez saisir la date d'obtention de la compétence"
-        />
+        <FormErrorMessage>
+          <ErrorMessage
+            errors={errors}
+            name="date"
+            message="Veuillez saisir la date d'obtention de la compétence"
+          />
+        </FormErrorMessage>
       </FormControl>
 
       <ErrorMessage
@@ -103,7 +105,7 @@ export const ProfileAddSkillForm = (props) => {
           <Stack isInline p={5} mb={5} shadow="md" color="red.600">
             <WarningIcon boxSize={5} />
             <Box>
-              <Text>{message}</Text>
+              <ErrorMessageText>{message}</ErrorMessageText>
             </Box>
           </Stack>
         )}

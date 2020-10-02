@@ -12,6 +12,7 @@ export * from "./page-title";
 export * from "./parent-form";
 export * from "./profile-add-skill-form";
 export * from "./profile-add-workshop-form";
+export * from "./profile-edit-workshop-form";
 export * from "./profile-form";
 export * from "./skill-form";
 export * from "./table";

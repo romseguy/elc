@@ -15,11 +15,12 @@ import {
   Text,
   Stack,
   FormErrorMessage,
-  RequiredIndicator,
+  RequiredIndicator
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
 import { DatePicker } from "components";
 import { handleError } from "utils/form";
+import { ErrorMessageText } from "./error-message-text";
 
 export const ProfileForm = (props) => {
   const router = useRouter();
@@ -38,9 +39,9 @@ export const ProfileForm = (props) => {
     watch,
     errors,
     setError,
-    clearErrors,
+    clearErrors
   } = useForm({
-    mode: "onChange",
+    mode: "onChange"
   });
 
   const onChange = () => {
@@ -155,7 +156,7 @@ export const ProfileForm = (props) => {
           <Stack isInline p={5} mb={5} shadow="md" color="red.500">
             <WarningIcon boxSize={5} />
             <Box>
-              <Text>{message}</Text>
+              <ErrorMessageText>{message}</ErrorMessageText>
             </Box>
           </Stack>
         )}

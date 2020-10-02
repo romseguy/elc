@@ -21,6 +21,7 @@ import { values } from "mobx";
 import { observer } from "mobx-react-lite";
 import api from "utils/api";
 import { handleError } from "utils/form";
+import { ErrorMessageText } from "./error-message-text";
 
 export const ParentForm = observer((props) => {
   const router = useRouter();
@@ -178,7 +179,7 @@ export const ParentForm = observer((props) => {
           <Stack isInline p={5} mb={5} shadow="md" color="red.500">
             <WarningIcon boxSize={5} />
             <Box>
-              <Text>{message}</Text>
+              <ErrorMessageText>{message}</ErrorMessageText>
             </Box>
           </Stack>
         )}

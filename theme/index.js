@@ -7,7 +7,7 @@ import styles from "./styles.js";
 // import border from "./borders"
 
 // Component style overrides
-import { Button } from "./components";
+import { Button, Divider } from "./components";
 
 const overrides = {
   styles,
@@ -15,8 +15,9 @@ const overrides = {
   // Other foundational style overrides go here
   components: {
     Button,
+    Divider
     // Other components go here
-  },
+  }
 };
 
 export default extendTheme(overrides);

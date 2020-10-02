@@ -31,14 +31,13 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
-  Switch
+  Switch,
+  FormErrorMessage
 } from "@chakra-ui/core";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import { Link } from "./link";
+import { ErrorMessageText } from "./error-message-text";
 
-const ErrorMessageText = styled.div`
-  margin-top: 0.3rem;
-`;
 const linkList = css`
   a {
     ${tw`mr-4`}
@@ -158,20 +157,16 @@ export const Nav = (props) => {
                     ml={5}
                     mb={5}
                   >
-                    <>
-                      <FormLabel>Nom d'utilisateur</FormLabel>
+                    <FormLabel>Nom d'utilisateur</FormLabel>
 
-                      <Input
+                    <Input name="username" ref={register({ required: true })} />
+                    <FormErrorMessage>
+                      <ErrorMessage
+                        errors={errors}
                         name="username"
-                        ref={register({ required: true })}
+                        message="Veuillez saisir un nom d'utilisateur"
                       />
-                    </>
-                    <ErrorMessage
-                      as={ErrorMessageText}
-                      errors={errors}
-                      name="username"
-                      message="Veuillez saisir un nom d'utilisateur"
-                    />
+                    </FormErrorMessage>
                   </FormControl>
                 )}
 
@@ -183,26 +178,25 @@ export const Nav = (props) => {
                     m={5}
                     mt={0}
                   >
-                    <>
-                      <FormLabel>Adresse email</FormLabel>
-                      <Input
-                        name="email"
-                        placeholder="votre-adresse-email@gmail.com"
-                        ref={register({
-                          required: true,
-                          pattern: {
-                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            message: "Adresse email invalide"
-                          }
-                        })}
-                      />
-                    </>
-                    <ErrorMessage
-                      as={ErrorMessageText}
-                      errors={errors}
+                    <FormLabel>Adresse email</FormLabel>
+                    <Input
                       name="email"
-                      message="Veuillez saisir un email"
+                      placeholder="votre-adresse-email@gmail.com"
+                      ref={register({
+                        required: true,
+                        pattern: {
+                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                          message: "Adresse email invalide"
+                        }
+                      })}
                     />
+                    <FormErrorMessage>
+                      <ErrorMessage
+                        errors={errors}
+                        name="email"
+                        message="Veuillez saisir un email"
+                      />
+                    </FormErrorMessage>
                   </FormControl>
                 )}
 
@@ -237,7 +231,7 @@ export const Nav = (props) => {
                     <Stack isInline p={5} mb={5} shadow="md" color="red.500">
                       <WarningIcon boxSize={5} />
                       <Box>
-                        <Text>{message}</Text>
+                        <ErrorMessageText>{message}</ErrorMessageText>
                       </Box>
                     </Stack>
                   )}

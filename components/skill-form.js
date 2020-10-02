@@ -14,9 +14,10 @@ import {
   Box,
   Text,
   Select,
-  Stack,
+  Stack
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
+import { ErrorMessageText } from "./error-message-text";
 
 export const SkillForm = (props) => {
   const router = useRouter();
@@ -35,9 +36,9 @@ export const SkillForm = (props) => {
     watch,
     errors,
     setError,
-    clearErrors,
+    clearErrors
   } = useForm({
-    mode: "onChange",
+    mode: "onChange"
   });
 
   const onChange = () => {
@@ -142,7 +143,7 @@ export const SkillForm = (props) => {
           <Stack isInline p={5} mb={5} shadow="md" color="red.500">
             <WarningIcon boxSize={5} />
             <Box>
-              <Text>{message}</Text>
+              <ErrorMessageText>{message}</ErrorMessageText>
             </Box>
           </Stack>
         )}
