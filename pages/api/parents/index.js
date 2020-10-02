@@ -10,16 +10,22 @@ handler.use(middleware);
 handler.get(async function getParents(req, res) {
   const session = await getSession({ req });
 
-  if (!session) {
-    res.send({ error: "Vous devez être identifié pour accéder à ce contenu." });
-  } else {
-    try {
-      const parents = await req.models.Parent.find({});
-      res.status(200).json({ data: parents });
-    } catch (error) {
-      res.status(400).json(createServerError(error));
-    }
+  // if (!session) {
+  //   res
+  //     .status(403)
+  //     .json(
+  //       createServerError(
+  //         new Error("Vous devez être identifié pour accéder à ce contenu.")
+  //       )
+  //     );
+  // } else {
+  try {
+    const parents = await req.models.Parent.find({});
+    res.status(200).json({ data: parents });
+  } catch (error) {
+    res.status(400).json(createServerError(error));
   }
+  //}
 });
 
 handler.post(async function postParent(req, res) {
@@ -34,7 +40,7 @@ handler.post(async function postParent(req, res) {
         firstname,
         lastname,
         email,
-        children,
+        children
       });
       if (Array.isArray(children)) {
         for (const _id of children) {

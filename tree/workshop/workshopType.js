@@ -3,7 +3,7 @@ import {
   flow,
   getParent,
   destroy,
-  getSnapshot,
+  getSnapshot
 } from "mobx-state-tree";
 import api from "utils/api";
 import { SkillModel } from "tree";
@@ -20,12 +20,12 @@ export const WorkshopModel = t
       // t.array(t.maybe(t.reference(t.late(() => ProfileModel)))),
       // t.array(t.safeReference(ProfileModel, { acceptsUndefined: false })),
       []
-    ),
+    )
   })
   .views((workshop) => ({
     get slug() {
       return workshop.name;
-    },
+    }
   }))
   .actions((workshop) => ({
     fromUi(data) {
@@ -38,13 +38,13 @@ export const WorkshopModel = t
     },
     remove: function remove() {
       getParent(workshop, 2).removeWorkshop(workshop);
-    },
+    }
   }));
 
 const WorkshopStore = t
   .model("WorkshopStore", {
     workshops: t.map(WorkshopModel),
-    state: t.optional(t.enumeration(["pending", "done", "error"]), "pending"),
+    state: t.optional(t.enumeration(["pending", "done", "error"]), "pending")
   })
   .views((store) => ({
     get isEmpty() {
@@ -52,7 +52,7 @@ const WorkshopStore = t
     },
     get isLoading() {
       return store.state === "pending";
-    },
+    }
   }))
   .actions((store) => ({
     setWorkshops: async function setWorkshops(data) {
@@ -61,7 +61,7 @@ const WorkshopStore = t
         data.forEach(({ _id, ...attrs }) => {
           workshops[_id] = {
             _id,
-            ...attrs,
+            ...attrs
           };
         });
         resolve(workshops);
@@ -101,11 +101,11 @@ const WorkshopStore = t
 
       if (error) {
         store.state = "error";
-        return error;
+        return { error };
       }
 
       store.state = "done";
-      return data;
+      return { data };
     }),
     removeWorkshop: flow(function* removeWorkshop(workshop) {
       // destroy(workshop);
@@ -118,8 +118,8 @@ const WorkshopStore = t
       }
 
       store.state = "done";
-      return data;
-    }),
+      return { data };
+    })
   }));
 
 export const WorkshopType = t
@@ -128,7 +128,7 @@ export const WorkshopType = t
     selectedWorkshop: t.optional(
       t.maybeNull(t.safeReference(WorkshopModel)),
       undefined
-    ),
+    )
   })
   .actions((self) => ({
     selectWorkshop: flow(function* selectWorkshop(slug) {
@@ -141,5 +141,5 @@ export const WorkshopType = t
       if (self.selectedWorkshop === undefined) {
         self.selectedWorkshop = null;
       }
-    }),
+    })
   }));

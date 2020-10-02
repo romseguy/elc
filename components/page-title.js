@@ -9,12 +9,18 @@ export const PageTitle = ({ children }) => {
   );
 };
 
-export const PageSubTitle = ({ toggled, onToggle, onClick, children }) => {
+export const PageSubTitle = ({
+  togglable = true,
+  toggled,
+  onToggle,
+  onClick,
+  children
+}) => {
   return (
     <Flex alignItems="center" my={5} onClick={onClick} cursor="pointer">
       <Heading size="md">{children}</Heading>
       <Spacer />
-      {onToggle && (
+      {togglable && onToggle && (
         <>
           {toggled ? (
             <IconButton

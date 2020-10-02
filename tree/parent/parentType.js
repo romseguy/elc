@@ -3,7 +3,7 @@ import {
   flow,
   getParent,
   destroy,
-  getSnapshot,
+  getSnapshot
 } from "mobx-state-tree";
 import { ProfileModel } from "tree";
 import api from "utils/api";
@@ -19,12 +19,12 @@ export const ParentModel = t
       // t.array(t.maybe(t.reference(t.late(() => ProfileModel)))),
       // t.array(t.safeReference(ProfileModel, { acceptsUndefined: false })),
       []
-    ),
+    )
   })
   .views((parent) => ({
     get slug() {
       return `${parent.firstname}-${parent.lastname}`;
-    },
+    }
   }))
   .actions((parent) => ({
     fromUi(data) {
@@ -39,13 +39,13 @@ export const ParentModel = t
     },
     remove: function remove() {
       getParent(parent, 2).removeParent(parent);
-    },
+    }
   }));
 
 const ParentStore = t
   .model("ParentStore", {
     parents: t.map(ParentModel),
-    state: t.optional(t.enumeration(["pending", "done", "error"]), "pending"),
+    state: t.optional(t.enumeration(["pending", "done", "error"]), "pending")
   })
   .views((store) => ({
     get isEmpty() {
@@ -53,7 +53,7 @@ const ParentStore = t
     },
     get isLoading() {
       return store.state === "pending";
-    },
+    }
   }))
   .actions((store) => ({
     setParents: async function setParents(data) {
@@ -65,7 +65,7 @@ const ParentStore = t
             firstname,
             lastname,
             email,
-            children,
+            children
           };
         });
         resolve(parents);
@@ -105,11 +105,11 @@ const ParentStore = t
 
       if (error) {
         store.state = "error";
-        return error;
+        return { error };
       }
 
       store.state = "done";
-      return res;
+      return { data };
     }),
     removeParent: flow(function* removeParent(parent) {
       // destroy(parent);
@@ -122,8 +122,8 @@ const ParentStore = t
       }
 
       store.state = "done";
-      return res;
-    }),
+      return { data };
+    })
   }));
 
 export const ParentType = t
@@ -132,7 +132,7 @@ export const ParentType = t
     selectedParent: t.optional(
       t.maybeNull(t.safeReference(ParentModel)),
       undefined
-    ),
+    )
   })
   .actions((self) => ({
     selectParent: flow(function* selectParent(slug) {
@@ -146,5 +146,5 @@ export const ParentType = t
       if (self.selectedParent === undefined) {
         self.selectedParent = null;
       }
-    }),
+    })
   }));

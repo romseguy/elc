@@ -111,7 +111,7 @@ export const Nav = (props) => {
             <Link href="/parents">Parents</Link>
           </>
         ) : (
-          <Link href="/">Public</Link>
+          <></>
         )}
       </Box>
 

@@ -140,7 +140,12 @@ const ProfileStore = t
       }
 
       store.state = "done";
-      return { data: ProfileModel.create(data) };
+      return {
+        data: ProfileModel.create({
+          _id: data._id,
+          ...formData
+        })
+      };
     }),
     updateProfile: flow(function* updateProfile(profile) {
       store.state = "pending";
@@ -168,7 +173,7 @@ const ProfileStore = t
       }
 
       store.state = "done";
-      return data;
+      return { data };
     })
   }));
 

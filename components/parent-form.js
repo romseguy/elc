@@ -13,7 +13,7 @@ import {
   Box,
   Text,
   Stack,
-  Spinner,
+  Spinner
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
 import { useStore } from "tree";
@@ -24,7 +24,7 @@ import { handleError } from "utils/form";
 
 export const ParentForm = observer((props) => {
   const router = useRouter();
-  const { profileType, parentType, skillType } = useStore();
+  const { profileType, parentType } = useStore();
   const [isLoading, setIsLoading] = useState();
   const {
     control,
@@ -33,18 +33,10 @@ export const ParentForm = observer((props) => {
     watch,
     errors,
     setError,
-    clearErrors,
+    clearErrors
   } = useForm({
-    mode: "onChange",
+    mode: "onChange"
   });
-
-  useEffect(() => {
-    const fetchProfiles = async () => {
-      await skillType.store.getSkills();
-      await profileType.store.getProfiles();
-    };
-    fetchProfiles();
-  }, []);
 
   if (props.parent && !isStateTreeNode(props.parent)) {
     console.error("props.parent must be a model instance");
@@ -139,8 +131,8 @@ export const ParentForm = observer((props) => {
             required: true,
             pattern: {
               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: "Adresse email invalide",
-            },
+              message: "Adresse email invalide"
+            }
           })}
           defaultValue={(props.parent && props.parent.email) || ""}
         />
@@ -162,7 +154,7 @@ export const ParentForm = observer((props) => {
             as={ReactSelect}
             name="profiles"
             control={control}
-            defaultValue={(props.parent && props.parent.children) || null}
+            defaultValue={props.parent ? props.parent.children : null}
             placeholder="Sélectionner un ou plusieurs enfants"
             menuPlacement="top"
             isClearable

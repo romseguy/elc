@@ -46,11 +46,11 @@ export default observer((props) => {
   const [showSkills, setShowSkills] = useState(false);
   const [showWorkshops, setShowWorkshops] = useState(false);
   const toggleAddSkillForm = (e) => {
-    e.stopPropagation();
+    e && e.stopPropagation();
     setShowSkillForm(!showSkillForm);
   };
   const toggleAddWorkshopForm = (e) => {
-    e.stopPropagation();
+    e && e.stopPropagation();
     setShowWorkshopForm(!showWorkshopForm);
   };
   const toggleShowParents = () => setShowParents(!showParents);
@@ -66,13 +66,6 @@ export default observer((props) => {
 
     selectProfile();
   }, []);
-
-  if (!session)
-    return (
-      <Layout>
-        <AccessDenied />
-      </Layout>
-    );
 
   const profileSlug = router.query.slug[0];
   const action = router.query.slug[1];
@@ -107,7 +100,7 @@ export default observer((props) => {
     return (
       <Layout>
         <PageTitle>
-          {`Modification de la fiche de l'élève ${selectedProfile.firstname} ${selectedProfile.lastname}`}
+          {`Fiche de l'élève : ${selectedProfile.firstname} ${selectedProfile.lastname}`}
         </PageTitle>
         <ProfileForm profile={selectedProfile} />
       </Layout>
@@ -153,6 +146,7 @@ export default observer((props) => {
       <VStack align="stretch" spacing={5}>
         <Box {...boxProps}>
           <PageSubTitle
+            togglable={selectedProfile.parents.length > 0}
             toggled={showParents}
             onToggle={toggleShowParents}
             onClick={toggleShowParents}
@@ -160,7 +154,7 @@ export default observer((props) => {
             Parents
           </PageSubTitle>
 
-          {showParents && (
+          {showParents && selectedProfile.parents.length > 0 && (
             <>
               <Divider mb={5} />
 
@@ -193,6 +187,7 @@ export default observer((props) => {
 
         <Box {...boxProps}>
           <PageSubTitle
+            togglable={selectedProfile.skills.length > 0}
             toggled={showSkills}
             onToggle={toggleShowSkills}
             onClick={toggleShowSkills}
@@ -266,6 +261,7 @@ export default observer((props) => {
 
         <Box {...boxProps}>
           <PageSubTitle
+            togglable={selectedProfile.workshops.length > 0}
             toggled={showWorkshops}
             onToggle={toggleShowWorkshops}
             onClick={toggleShowWorkshops}

@@ -10,22 +10,22 @@ handler.use(middleware);
 handler.get(async function getSkills(req, res) {
   const session = await getSession({ req });
 
-  if (!session) {
-    res
-      .status(403)
-      .json(
-        createServerError(
-          new Error("Vous devez être identifié pour accéder à ce contenu.")
-        )
-      );
-  } else {
-    try {
-      const skills = await req.models.Skill.find({});
-      res.json({ data: skills });
-    } catch (error) {
-      createServerError(error);
-    }
+  // if (!session) {
+  //   res
+  //     .status(403)
+  //     .json(
+  //       createServerError(
+  //         new Error("Vous devez être identifié pour accéder à ce contenu.")
+  //       )
+  //     );
+  // } else {
+  try {
+    const skills = await req.models.Skill.find({});
+    res.json({ data: skills });
+  } catch (error) {
+    createServerError(error);
   }
+  //}
 });
 
 handler.post(async function postSkill(req, res) {

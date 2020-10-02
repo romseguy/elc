@@ -17,7 +17,7 @@ import {
   Text,
   Select,
   Stack,
-  Spinner,
+  Spinner
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
 import { handleError } from "utils/form";
@@ -33,13 +33,6 @@ export const WorkshopForm = (props) => {
     return null;
   }
 
-  useEffect(() => {
-    const fetchSkills = async () => {
-      await skillType.store.getSkills();
-    };
-    fetchSkills();
-  }, []);
-
   const {
     control,
     register,
@@ -47,9 +40,9 @@ export const WorkshopForm = (props) => {
     watch,
     errors,
     setError,
-    clearErrors,
+    clearErrors
   } = useForm({
-    mode: "onChange",
+    mode: "onChange"
   });
 
   const onChange = () => {
@@ -109,7 +102,7 @@ export const WorkshopForm = (props) => {
                 as={ReactSelect}
                 name="skills"
                 control={control}
-                defaultValue={null}
+                defaultValue={props.workshop ? props.workshop.skills : []}
                 placeholder="Sélectionner une ou plusieurs compétences"
                 menuPlacement="top"
                 isClearable

@@ -12,7 +12,7 @@ import {
   Layout,
   PageTitle,
   PageSubTitle,
-  ParentForm,
+  ParentForm
 } from "components";
 
 const ChildrenList = styled.ul`
@@ -31,6 +31,7 @@ export default observer((props) => {
   useEffect(() => {
     const selectParent = async () => {
       await skillType.store.getSkills();
+      await parentType.store.getParents();
       await profileType.store.getProfiles();
       await parentType.selectParent(parentSlug);
     };
@@ -77,7 +78,7 @@ export default observer((props) => {
     return (
       <Layout>
         <PageTitle>
-          {`Modification de la fiche parent de ${selectedParent.firstname} ${selectedParent.lastname}`}
+          {`Fiche du parent : ${selectedParent.firstname} ${selectedParent.lastname}`}
         </PageTitle>
         <ParentForm parent={selectedParent} />
       </Layout>
@@ -127,7 +128,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      session,
-    },
+      session
+    }
   };
 }

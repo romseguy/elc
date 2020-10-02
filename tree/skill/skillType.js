@@ -3,7 +3,7 @@ import {
   flow,
   getParent,
   destroy,
-  getSnapshot,
+  getSnapshot
 } from "mobx-state-tree";
 import api from "utils/api";
 
@@ -16,12 +16,12 @@ export const SkillModel = t
     code: t.string,
     description: t.string,
     domain: t.optional(t.enumeration(domains), "-"),
-    level: t.optional(t.enumeration(levels), "-"),
+    level: t.optional(t.enumeration(levels), "-")
   })
   .views((skill) => ({
     get slug() {
       return skill.code;
-    },
+    }
   }))
   .actions((skill) => ({
     fromUi(data) {
@@ -35,13 +35,13 @@ export const SkillModel = t
     },
     remove: function remove() {
       getParent(skill, 2).removeSkill(skill);
-    },
+    }
   }));
 
 const SkillStore = t
   .model("SkillStore", {
     skills: t.map(SkillModel),
-    state: t.optional(t.enumeration(["pending", "done", "error"]), "pending"),
+    state: t.optional(t.enumeration(["pending", "done", "error"]), "pending")
   })
   .views((store) => ({
     get isEmpty() {
@@ -49,7 +49,7 @@ const SkillStore = t
     },
     get isLoading() {
       return store.state === "pending";
-    },
+    }
   }))
   .actions((store) => ({
     setSkills: async function setSkills(data) {
@@ -59,7 +59,7 @@ const SkillStore = t
           skills[_id] = {
             _id,
             code,
-            ...attrs,
+            ...attrs
           };
         });
         resolve(skills);
@@ -102,7 +102,7 @@ const SkillStore = t
       }
 
       store.state = "done";
-      return data;
+      return { data };
     }),
     removeSkill: flow(function* removeSkill(skill) {
       // destroy(skill);
@@ -115,10 +115,10 @@ const SkillStore = t
       }
 
       store.state = "done";
-      return data;
-    }),
+      return { data };
+    })
   }));
 
 export const SkillType = t.model("SkillType", {
-  store: t.optional(SkillStore, {}),
+  store: t.optional(SkillStore, {})
 });
