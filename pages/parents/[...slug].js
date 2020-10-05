@@ -6,13 +6,14 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "tree";
 import tw, { styled } from "twin.macro";
 import { isServer } from "utils/isServer";
-import { Button, Spinner } from "@chakra-ui/core";
+import { Button, Spinner, Text } from "@chakra-ui/core";
 import {
   AccessDenied,
   Layout,
   PageTitle,
   PageSubTitle,
-  ParentForm
+  ParentForm,
+  Link
 } from "components";
 
 const ChildrenList = styled.ul`
@@ -84,8 +85,9 @@ export default observer((props) => {
       </Layout>
     );
   }
+  const editLink = `/parents/${selectedParent.slug}/edit`;
   const editAction = () => {
-    router.push("/parents/[...slug]", `/parents/${selectedParent.slug}/edit`);
+    router.push("/parents/[...slug]", editLink);
   };
   const removeAction = async () => {
     const removedParent = await selectedParent.remove();
@@ -110,15 +112,23 @@ export default observer((props) => {
 
       <PageSubTitle>Enfants</PageSubTitle>
 
-      <ChildrenList>
-        {values(selectedParent.children).map((profile) => (
-          <li key={profile._id}>
-            <a onClick={() => onRowClick(profile)}>
-              {profile.firstname} {profile.lastname}
-            </a>
-          </li>
-        ))}
-      </ChildrenList>
+      {selectedParent.children.length === 0 ? (
+        <Text>
+          <Link textDecoration="underline" href={editLink}>
+            Modifier la fiche du parent pour associer un ou plusieurs enfants
+          </Link>
+        </Text>
+      ) : (
+        <ChildrenList>
+          {values(selectedParent.children).map((profile) => (
+            <li key={profile._id}>
+              <a onClick={() => onRowClick(profile)}>
+                {profile.firstname} {profile.lastname}
+              </a>
+            </li>
+          ))}
+        </ChildrenList>
+      )}
     </Layout>
   );
 });

@@ -1,32 +1,38 @@
+import { useColorModeValue } from "@chakra-ui/core";
 import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
 import { useSortBy, useTable } from "react-table";
 import tw, { styled } from "twin.macro";
 
-export const StyledTable = styled.table`
-  thead {
-    th {
-    ${tw`pr-16`}
-    }
-    tr {
-      ${tw`border-b`}
-      border-color: ${props => props.borderColor}
-    }
-  }
-  tbody {
-    tr {
-      ${tw`cursor-pointer`}
+export const StyledTable = (props) => {
+  const borderColor =useColorModeValue("black", "white")
 
-      &:hover {
+  const Component = styled.table`
+    thead {
+      th {
+      ${tw`pr-16`}
+      }
+      tr {
         ${tw`border-b`}
-        border-color: ${props => props.borderColor}
-      }
-
-      td {
-        ${tw`py-4`}
+        border-color: ${borderColor}
       }
     }
-  }
-`
+    tbody {
+      tr {
+        ${tw`cursor-pointer`}
+
+        &:hover {
+          ${tw`border-b`}
+          border-color: ${borderColor}
+        }
+
+        td {
+          ${tw`py-4`}
+        }
+      }
+    }
+  `
+  return <Component {...props}/>
+}
 
 export const Table = (props) => {
   // extract props for useTable hook config

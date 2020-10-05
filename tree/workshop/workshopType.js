@@ -57,6 +57,8 @@ const WorkshopStore = t
   .actions((store) => ({
     setWorkshops: async function setWorkshops(data) {
       return new Promise((resolve, reject) => {
+        if (!Array.isArray(data)) return reject();
+
         const workshops = {};
         data.forEach(({ _id, ...attrs }) => {
           workshops[_id] = {

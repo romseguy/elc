@@ -1,6 +1,6 @@
 import { description } from "package.json";
 import { Box, Flex, Heading, useColorModeValue } from "@chakra-ui/core";
-import { Link } from "./link";
+import { Link } from "components";
 import tw, { css } from "twin.macro";
 
 export const Header = (props) => {

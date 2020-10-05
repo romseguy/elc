@@ -54,6 +54,8 @@ const SkillStore = t
   .actions((store) => ({
     setSkills: async function setSkills(data) {
       return new Promise((resolve, reject) => {
+        if (!Array.isArray(data)) return reject();
+
         const skills = {};
         data.forEach(({ _id, code, ...attrs }) => {
           skills[_id] = {

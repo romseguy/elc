@@ -14,7 +14,7 @@ handler.get(async function getParent(req, res) {
     res.send({ error: "Vous devez être identifié pour accéder à ce contenu." });
   } else {
     const {
-      query: { pid },
+      query: { pid }
     } = req;
 
     try {
@@ -41,18 +41,27 @@ handler.put(async function editParent(req, res) {
   if (!session) {
     res.send({ error: "Vous devez être identifié pour accéder à ce contenu." });
   } else {
-    const {
-      query: { pid },
-    } = req;
-
     try {
+      const {
+        query: { pid },
+        body: { children }
+      } = req;
+
+      if (Array.isArray(children)) {
+        for (const _id of children) {
+          const childProfile = await req.models.Profile.findOne({ _id });
+          childProfile.parents = childProfile.parents.concat([pid]);
+          await childProfile.save();
+        }
+      }
+
       const { n, nModified } = await req.models.Parent.updateOne(
         { _id: pid },
         req.body
       );
 
       if (nModified === 1) {
-        res.status(200).json({});
+        res.status(200).json(req.body);
       } else {
         res
           .status(400)
@@ -73,7 +82,7 @@ handler.delete(async (req, res) => {
     res.send({ error: "Vous devez être identifié pour accéder à ce contenu." });
   } else {
     const {
-      query: { pid },
+      query: { pid }
     } = req;
 
     try {

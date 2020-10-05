@@ -58,6 +58,8 @@ const ParentStore = t
   .actions((store) => ({
     setParents: async function setParents(data) {
       return new Promise((resolve, reject) => {
+        if (!Array.isArray(data)) return reject();
+
         const parents = {};
         data.forEach(({ _id, firstname, lastname, email, children }) => {
           parents[_id] = {

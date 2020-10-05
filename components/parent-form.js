@@ -155,7 +155,7 @@ export const ParentForm = observer((props) => {
             as={ReactSelect}
             name="profiles"
             control={control}
-            defaultValue={props.parent ? props.parent.children : null}
+            defaultValue={props.parent ? props.parent.children : []}
             placeholder="Sélectionner un ou plusieurs enfants"
             menuPlacement="top"
             isClearable

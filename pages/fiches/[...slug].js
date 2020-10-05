@@ -35,7 +35,7 @@ import {
   Table
 } from "components";
 
-export default observer((props) => {
+export default observer(function ProfilePage(props) {
   const [session = props.session] = useSession();
   const router = useRouter();
   const { parentType, profileType, skillType, workshopType } = useStore();
@@ -45,6 +45,11 @@ export default observer((props) => {
   const [showSkills, setShowSkills] = useState(false);
   const [showWorkshops, setShowWorkshops] = useState(false);
   const [currentWorkshopRef, setCurrentWorkshopRef] = useState();
+  const boxProps = {
+    bg: useColorModeValue("orange.200", "gray.800"),
+    rounded: "lg",
+    px: 5
+  };
 
   const toggleAddSkillForm = (e) => {
     e && e.stopPropagation();
@@ -133,12 +138,6 @@ export default observer((props) => {
     setCurrentWorkshopRef(workshopRef);
   };
 
-  const boxProps = {
-    bg: useColorModeValue("orange.200", "gray.800"),
-    rounded: "lg",
-    px: 5
-  };
-
   return (
     <Layout>
       {currentWorkshopRef && (
@@ -173,7 +172,7 @@ export default observer((props) => {
             <>
               <Divider mb={5} />
 
-              <StyledTable borderColor={useColorModeValue("black", "white")}>
+              <StyledTable>
                 <thead>
                   <tr>
                     <th>Prénom </th>
@@ -230,7 +229,6 @@ export default observer((props) => {
             <>
               <Divider mb={5} />
               <Table
-                borderColor={useColorModeValue("black", "white")}
                 initialState={{
                   sortBy: [
                     {
@@ -304,7 +302,6 @@ export default observer((props) => {
             <>
               <Divider mb={5} />
               <Table
-                borderColor={useColorModeValue("black", "white")}
                 css={{
                   display: !showWorkshops
                     ? "none"

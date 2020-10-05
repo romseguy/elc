@@ -84,6 +84,8 @@ const ProfileStore = t
   .actions((store) => ({
     setProfiles: async function setProfiles(data) {
       return new Promise((resolve, reject) => {
+        if (!Array.isArray(data)) return reject();
+
         const profiles = {};
         data.forEach(
           ({

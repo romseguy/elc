@@ -35,7 +35,7 @@ import {
   FormErrorMessage
 } from "@chakra-ui/core";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
-import { Link } from "./link";
+import { Link } from "components";
 import { ErrorMessageText } from "./error-message-text";
 
 const linkList = css`

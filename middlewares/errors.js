@@ -1,7 +1,7 @@
 export const HTTP_ERROR = "HTTP_ERROR";
 
 export const databaseErrorCodes = {
-  DUPLICATE_KEY: 11000,
+  DUPLICATE_KEY: 11000
 };
 
 export const databaseErrorMessages = {};
@@ -30,5 +30,5 @@ export const createServerError = (error) => {
     return new Error(databaseErrorMessages[error.code]);
   }
 
-  return error;
+  return error.message;
 };
