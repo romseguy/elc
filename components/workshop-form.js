@@ -72,8 +72,14 @@ export const WorkshopForm = (props) => {
 
   return (
     <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
-      <FormControl isRequired m={5} mt={0} isInvalid={!!errors["name"]}>
-        <FormLabel htmlFor="name">Nom</FormLabel>
+      <FormControl
+        id="name"
+        isRequired
+        m={5}
+        mt={0}
+        isInvalid={!!errors["name"]}
+      >
+        <FormLabel>Nom</FormLabel>
         <Input
           name="name"
           placeholder="Compter jusqu'à 10"

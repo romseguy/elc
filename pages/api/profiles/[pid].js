@@ -1,6 +1,6 @@
 import nextConnect from "next-connect";
 import middleware from "middlewares/database";
-import { getSession } from "next-auth/client";
+import { getSession } from "utils/useAuth";
 import { createServerError } from "middlewares/errors";
 
 const handler = nextConnect();

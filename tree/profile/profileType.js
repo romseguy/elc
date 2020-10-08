@@ -124,13 +124,13 @@ const ProfileStore = t
       store.state = "pending";
       const { error, data } = yield api.get("profiles");
 
-      if (status === api.HTTP_ERROR) {
+      if (error) {
         store.state = "error";
         return { error };
-      } else {
-        store.profiles = yield store.setProfiles(data);
-        store.state = "done";
       }
+
+      store.profiles = yield store.setProfiles(data);
+      store.state = "done";
     }),
     postProfile: flow(function* postProfile(formData) {
       store.state = "pending";

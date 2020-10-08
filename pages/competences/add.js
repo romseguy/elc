@@ -1,4 +1,5 @@
-import { getSession, useSession } from "next-auth/client";
+import { getSession } from "next-auth/client";
+import { useSession } from "utils/useAuth";
 // import { DevTool } from "@hookform/devtools";
 import { AccessDenied, Layout, PageTitle, SkillForm } from "components";
 
@@ -32,7 +33,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      session,
-    },
+      session
+    }
   };
 }

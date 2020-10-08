@@ -201,20 +201,22 @@ export default observer(function ProfilePage(props) {
 
         <Box {...boxProps}>
           <PageSubTitle
+            button={
+              <Button variant="outline" mx={5} onClick={toggleAddSkillForm}>
+                Ajouter une compétence
+                {showSkillForm ? (
+                  <ArrowUpIcon ml={2} />
+                ) : (
+                  <ArrowDownIcon ml={2} />
+                )}
+              </Button>
+            }
             togglable={selectedProfile.skills.length > 0}
             toggled={showSkills}
             onToggle={toggleShowSkills}
             onClick={toggleShowSkills}
           >
             Compétences acquises
-            <Button variant="outline" mx={5} onClick={toggleAddSkillForm}>
-              Ajouter{" "}
-              {showSkillForm ? (
-                <ArrowUpIcon ml={2} />
-              ) : (
-                <ArrowDownIcon ml={2} />
-              )}
-            </Button>
           </PageSubTitle>
 
           {showSkillForm && (
@@ -274,20 +276,22 @@ export default observer(function ProfilePage(props) {
 
         <Box {...boxProps}>
           <PageSubTitle
+            button={
+              <Button variant="outline" mx={5} onClick={toggleAddWorkshopForm}>
+                Ajouter un atelier
+                {showWorkshopForm ? (
+                  <ArrowUpIcon ml={2} />
+                ) : (
+                  <ArrowDownIcon ml={2} />
+                )}
+              </Button>
+            }
             togglable={selectedProfile.workshops.length > 0}
             toggled={showWorkshops}
             onToggle={toggleShowWorkshops}
             onClick={toggleShowWorkshops}
           >
             Ateliers
-            <Button variant="outline" mx={5} onClick={toggleAddWorkshopForm}>
-              Ajouter
-              {showWorkshopForm ? (
-                <ArrowUpIcon ml={2} />
-              ) : (
-                <ArrowDownIcon ml={2} />
-              )}
-            </Button>
           </PageSubTitle>
 
           {showWorkshopForm && (

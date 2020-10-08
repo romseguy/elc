@@ -36,14 +36,14 @@ const formStyles = (props) => ({
 
     ".react-select__menu": {
       ".react-select__menu-list": {
-        backgroundColor: "black",
-        color: "white",
+        backgroundColor: mode("white", "black")(props),
+        color: mode("black", "white")(props),
         ".react-select__option": {
-          backgroundColor: "black",
+          backgroundColor: mode("white", "black")(props),
           "&:hover": {
             cursor: "pointer",
-            backgroundColor: "white",
-            color: "black"
+            backgroundColor: mode("black", "white")(props),
+            color: mode("white", "black")(props)
           }
         }
       }

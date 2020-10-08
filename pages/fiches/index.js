@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { getSession, useSession } from "next-auth/client";
+import { getSession } from "next-auth/client";
+import { useSession } from "utils/useAuth";
 import { useRouter } from "next/router";
 import { values } from "mobx";
 import { observer } from "mobx-react-lite";
@@ -11,17 +12,17 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
-  AlertDescription,
+  AlertDescription
 } from "@chakra-ui/core";
 import {
   AccessDenied,
   Layout,
   Link,
   PageTitle,
-  StyledTable as Table,
+  StyledTable as Table
 } from "components";
 
-export default observer((props) => {
+export default observer(function ProfileListPage(props) {
   const [session = props.session] = useSession();
   const router = useRouter();
   const { profileType } = useStore();
@@ -107,7 +108,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      session,
-    },
+      session
+    }
   };
 }

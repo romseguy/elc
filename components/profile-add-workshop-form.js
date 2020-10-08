@@ -51,8 +51,8 @@ export const ProfileAddWorkshopForm = (props) => {
 
   return (
     <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
-      <FormControl isRequired mb={5}>
-        <FormLabel htmlFor="workshop">Atelier</FormLabel>
+      <FormControl id="workshop" isRequired mb={5}>
+        <FormLabel>Atelier</FormLabel>
         <Select
           name="workshop"
           placeholder="Sélectionner un atelier"

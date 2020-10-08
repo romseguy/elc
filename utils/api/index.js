@@ -9,8 +9,8 @@ async function request(endpoint, params, method = "GET") {
     const options = {
       method,
       headers: {
-        "Content-Type": "application/json",
-      },
+        "Content-Type": "application/json"
+      }
     };
 
     if (params) {
@@ -28,7 +28,7 @@ async function request(endpoint, params, method = "GET") {
 
     if (response.status === 200) {
       const { data } = await response.json();
-      console.log(`/${endpoint}`, data);
+      // console.log(`/${endpoint}`, data);
       return { data };
     } else {
       const error = await response.json();
@@ -67,5 +67,5 @@ export default {
   post,
   update,
   remove,
-  databaseErrorCodes,
+  databaseErrorCodes
 };

@@ -15,24 +15,24 @@ export const Tree = t
     parentType: t.optional(ParentType, {}),
     profileType: t.optional(ProfileType, {}),
     skillType: t.optional(SkillType, {}),
-    workshopType: t.optional(WorkshopType, {}),
+    workshopType: t.optional(WorkshopType, {})
   })
   .actions((tree) => ({
     reset() {
       Object.keys(tree).forEach((key) => {
         tree[key].reset && tree[key].reset();
       });
-    },
+    }
   }));
 
 export function initializeStore(snapshot = null) {
   const root = makeInspectable(Tree.create({}));
-  onSnapshot(
-    root,
-    (snapshot) => console.log(snapshot)
-    //(snapshot) => !isServer() && console.log(snapshot)
-    //(snapshot) => console.log(JSON.stringify(snapshot, null, 2))
-  );
+  // onSnapshot(
+  //   root,
+  //   // (snapshot) => console.log(snapshot)
+  //   //(snapshot) => !isServer() && console.log(snapshot)
+  //   //(snapshot) => console.log(JSON.stringify(snapshot, null, 2))
+  // );
   const store = clientStore ?? root;
 
   // If your page has Next.js data fetching methods that use a Mobx store, it will

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
-import { signIn, signOut, useSession } from "next-auth/client";
+import { signIn, signOut } from "next-auth/client";
+import { useSession } from "utils/useAuth";
 import md5 from "blueimp-md5";
 import tw, { styled, css } from "twin.macro";
 import {
@@ -64,6 +65,8 @@ export const Nav = (props) => {
   const togglePassword = watch("togglePassword", false);
   const [isLoading, setIsLoading] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: false });
+  const onLoginClick = async (e) =>
+    process.env.NEXT_PUBLIC_IS_TEST ? await signIn("test-auth") : onOpen();
 
   const onChange = (e) => {
     clearErrors("formErrorMessage");
@@ -119,10 +122,13 @@ export const Nav = (props) => {
           <MenuButton mr={10}>
             <Avatar
               src={
-                session.user.image ||
-                `https://www.gravatar.com/avatar/${md5(
-                  session.user.email
-                )}?d=identicon`
+                session.user.image
+                  ? session.user.image
+                  : !process.env.NEXT_PUBLIC_OFFLINE
+                  ? `https://www.gravatar.com/avatar/${md5(
+                      session.user.email
+                    )}?d=identicon`
+                  : ""
               }
               w="48px"
               h="48px"
@@ -136,7 +142,7 @@ export const Nav = (props) => {
         </Menu>
       ) : (
         <Box mr={10}>
-          <Button variant="outline" onClick={onOpen}>
+          <Button variant="outline" onClick={onLoginClick}>
             Connexion
           </Button>
         </Box>

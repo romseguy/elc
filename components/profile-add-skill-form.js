@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
 import { DatePicker } from "components";
+import { handleError } from "utils/form";
 import { ErrorMessageText } from "./error-message-text";
 
 export const ProfileAddSkillForm = (props) => {
@@ -51,8 +52,8 @@ export const ProfileAddSkillForm = (props) => {
 
   return (
     <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
-      <FormControl isRequired mb={5}>
-        <FormLabel htmlFor="skill">Compétence</FormLabel>
+      <FormControl id="skill" isRequired mb={5}>
+        <FormLabel>Compétence</FormLabel>
         <Select
           name="skill"
           placeholder="Sélectionner une compétence"
@@ -74,8 +75,8 @@ export const ProfileAddSkillForm = (props) => {
         />
       </FormControl>
 
-      <FormControl isRequired mb={5}>
-        <FormLabel htmlFor="date">Date</FormLabel>
+      <FormControl id="date" isRequired mb={5}>
+        <FormLabel>Date</FormLabel>
         <Controller
           name="date"
           control={control}

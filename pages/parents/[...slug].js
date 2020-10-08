@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { getSession, useSession } from "next-auth/client";
+import { getSession } from "next-auth/client";
+import { useSession } from "utils/useAuth";
 import { useRouter } from "next/router";
 import { values } from "mobx";
 import { observer } from "mobx-react-lite";
@@ -28,6 +29,7 @@ const ChildrenList = styled.ul`
 export default observer((props) => {
   const [session = props.session] = useSession();
   const router = useRouter();
+  const parentSlug = router.query.slug[0];
   const { parentType, profileType, skillType } = useStore();
   useEffect(() => {
     const selectParent = async () => {
@@ -47,7 +49,6 @@ export default observer((props) => {
       </Layout>
     );
 
-  const parentSlug = router.query.slug[0];
   const action = router.query.slug[1];
 
   if (!isServer() && action && action !== "edit") {
@@ -122,7 +123,10 @@ export default observer((props) => {
         <ChildrenList>
           {values(selectedParent.children).map((profile) => (
             <li key={profile._id}>
-              <a onClick={() => onRowClick(profile)}>
+              <a
+                title={`Cliquez pour ouvrir la fiche de ${profile.firstname} ${profile.lastname}`}
+                onClick={() => onRowClick(profile)}
+              >
                 {profile.firstname} {profile.lastname}
               </a>
             </li>

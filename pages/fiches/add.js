@@ -1,11 +1,12 @@
-import { getSession, useSession } from "next-auth/client";
+import { getSession } from "next-auth/client";
+import { useSession } from "utils/useAuth";
 // import { DevTool } from "@hookform/devtools";
 import { AccessDenied, Layout, PageTitle, ProfileForm } from "components";
 
 // registerLocale("fr", fr);
 // setDefaultLocale("fr");
 
-export default function Page(props) {
+export default function AddProfilePage(props) {
   const [session = props.session] = useSession();
 
   if (!session) {
@@ -32,7 +33,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      session,
-    },
+      session
+    }
   };
 }

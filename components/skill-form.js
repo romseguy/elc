@@ -17,6 +17,7 @@ import {
   Stack
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
+import { handleError } from "utils/form";
 import { ErrorMessageText } from "./error-message-text";
 
 export const SkillForm = (props) => {
@@ -70,8 +71,8 @@ export const SkillForm = (props) => {
 
   return (
     <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
-      <FormControl isRequired m={5} mt={0}>
-        <FormLabel htmlFor="code">Code</FormLabel>
+      <FormControl id="code" isRequired m={5} mt={0}>
+        <FormLabel>Code</FormLabel>
         <Input
           name="code"
           placeholder="L01"
@@ -85,8 +86,8 @@ export const SkillForm = (props) => {
         />
       </FormControl>
 
-      <FormControl isRequired m={5} mt={0}>
-        <FormLabel htmlFor="description">Description</FormLabel>
+      <FormControl id="description" isRequired m={5} mt={0}>
+        <FormLabel>Description</FormLabel>
         <Input
           name="description"
           placeholder="J'écoute et je comprends des consignes"
@@ -100,8 +101,8 @@ export const SkillForm = (props) => {
         />
       </FormControl>
 
-      <FormControl m={5} mt={0}>
-        <FormLabel htmlFor="domain">Matière</FormLabel>
+      <FormControl id="domain" m={5} mt={0}>
+        <FormLabel>Matière</FormLabel>
         <Select
           name="domain"
           placeholder="Sélectionner une matière"
@@ -118,8 +119,8 @@ export const SkillForm = (props) => {
         </Select>
       </FormControl>
 
-      <FormControl m={5} mt={0}>
-        <FormLabel htmlFor="level">Niveau</FormLabel>
+      <FormControl id="level" m={5} mt={0}>
+        <FormLabel>Niveau</FormLabel>
         <Select
           name="level"
           placeholder="Sélectionner un niveau"

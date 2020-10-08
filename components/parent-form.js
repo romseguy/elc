@@ -19,7 +19,6 @@ import { WarningIcon } from "@chakra-ui/icons";
 import { useStore } from "tree";
 import { values } from "mobx";
 import { observer } from "mobx-react-lite";
-import api from "utils/api";
 import { handleError } from "utils/form";
 import { ErrorMessageText } from "./error-message-text";
 
@@ -72,6 +71,11 @@ export const ParentForm = observer((props) => {
       else handleError(error, setError);
     }
   };
+  const options = [];
+  for (const v of profileType.store.profiles.values()) {
+    const { _id, firstname, lastname } = v;
+    options.push({ _id, firstname, lastname });
+  }
 
   return (
     <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
@@ -82,7 +86,7 @@ export const ParentForm = observer((props) => {
         m={5}
         mt={0}
       >
-        <FormLabel htmlFor="firstname">Prénom</FormLabel>
+        <FormLabel>Prénom</FormLabel>
         <Input
           name="firstname"
           placeholder="Prénom"
@@ -127,7 +131,7 @@ export const ParentForm = observer((props) => {
         <FormLabel>Adresse email</FormLabel>
         <Input
           name="email"
-          placeholder="adresse-email-du-parent@gmail.com"
+          placeholder="adresse-email-du-parent@email.com"
           ref={register({
             required: true,
             pattern: {
@@ -162,7 +166,7 @@ export const ParentForm = observer((props) => {
             isMulti
             isSearchable
             closeMenuOnSelect
-            options={values(profileType.store.profiles)}
+            options={options}
             getOptionLabel={(option) =>
               `${option.firstname} ${option.lastname}`
             }

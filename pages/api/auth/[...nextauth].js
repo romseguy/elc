@@ -1,11 +1,14 @@
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 
-// For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
-const options = {
+let options = {
   // https://next-auth.js.org/configuration/providers
   providers: [
+    Providers.Email({
+      server: process.env.EMAIL_SERVER,
+      from: process.env.EMAIL_FROM
+    }),
     Providers.Credentials({
       // The name to display on the sign in form (e.g. 'Sign in with...')
       name: "Credentials",
@@ -14,7 +17,7 @@ const options = {
       // e.g. domain, username, password, 2FA token, etc.
       credentials: {
         username: { label: "Username", type: "text" },
-        password: { label: "Password", type: "password" },
+        password: { label: "Password", type: "password" }
       },
       authorize: async (credentials) => {
         const user =
@@ -22,52 +25,14 @@ const options = {
             ? {
                 id: 1,
                 name: "Romain Séguy",
-                email: "rom.seguy@lilo.org",
+                email: "rom.seguy@lilo.org"
               }
             : null;
 
-        if (user) {
-          // Any user object returned here will be saved in the JSON Web Token
-          return Promise.resolve(user);
-        } else {
-          return Promise.resolve(null);
-        }
-      },
-    }),
-    Providers.Email({
-      server: process.env.EMAIL_SERVER,
-      from: process.env.EMAIL_FROM,
-    }),
-    Providers.Apple({
-      clientId: process.env.APPLE_ID,
-      clientSecret: {
-        appleId: process.env.APPLE_ID,
-        teamId: process.env.APPLE_TEAM_ID,
-        privateKey: process.env.APPLE_PRIVATE_KEY,
-        keyId: process.env.APPLE_KEY_ID,
-      },
-    }),
-    Providers.Auth0({
-      clientId: process.env.AUTH0_ID,
-      clientSecret: process.env.AUTH0_SECRET,
-      domain: process.env.AUTH0_DOMAIN,
-    }),
-    Providers.Facebook({
-      clientId: process.env.FACEBOOK_ID,
-      clientSecret: process.env.FACEBOOK_SECRET,
-    }),
-    Providers.GitHub({
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
-    }),
-    Providers.Google({
-      clientId: process.env.GOOGLE_ID,
-      clientSecret: process.env.GOOGLE_SECRET,
-    }),
-    Providers.Twitter({
-      clientId: process.env.TWITTER_ID,
-      clientSecret: process.env.TWITTER_SECRET,
-    }),
+        // Any user object returned here will be saved in the JSON Web Token
+        return Promise.resolve(user);
+      }
+    })
   ],
   // Database optional. MySQL, Maria DB, Postgres and MongoDB are supported.
   // https://next-auth.js.org/configuration/database
@@ -86,7 +51,7 @@ const options = {
     // Use JSON Web Tokens for session instead of database sessions.
     // This option can be used with or without a database for users/accounts.
     // Note: `jwt` is automatically set to `true` if no database is specified.
-    jwt: true,
+    jwt: true
 
     // Seconds - How long until an idle session expires and is no longer valid.
     // maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -102,7 +67,7 @@ const options = {
   // https://next-auth.js.org/configuration/options#jwt
   jwt: {
     // A secret to use for key generation (you should set this explicitly)
-    // secret: 'INp8IvdIyeMcoGAgFGoA61DdBglwwSqnXJZkgz8PSnw',
+    secret: process.env.SECRET
     // Set to true to use encryption (default: false)
     // encryption: true,
     // You can define your own encode/decode functions for signing and encryption
@@ -127,7 +92,10 @@ const options = {
   // when an action is performed.
   // https://next-auth.js.org/configuration/callbacks
   callbacks: {
-    // signIn: async (user, account, profile) => { return Promise.resolve(true) },
+    signIn: async (user, account, profile) => {
+      console.log(user);
+      return Promise.resolve(true);
+    }
     // redirect: async (url, baseUrl) => { return Promise.resolve(baseUrl) },
     // session: async (session, user) => { return Promise.resolve(session) },
     // jwt: async (token, user, account, profile, isNewUser) => { return Promise.resolve(token) }
@@ -138,7 +106,36 @@ const options = {
   events: {},
 
   // Enable debug messages in the console if you are having problems
-  debug: true,
+  debug: true
 };
+
+if (process.env.NEXT_PUBLIC_IS_TEST) {
+  options = {
+    providers: [
+      Providers.Credentials({
+        name: "test-auth",
+        credentials: {
+          username: { label: "Username", type: "text" }
+        },
+
+        async authorize() {
+          return Promise.resolve({
+            id: 1,
+            name: "todo",
+            email: `todo@email.com`
+          });
+        }
+      })
+    ],
+    session: { jwt: true },
+    jwt: { secret: process.env.SECRET },
+    callbacks: {
+      async signIn(user, account, profile) {
+        console.log(user, account, profile);
+      }
+    },
+    debug: true
+  };
+}
 
 export default (req, res) => NextAuth(req, res, options);

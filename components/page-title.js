@@ -10,6 +10,7 @@ export const PageTitle = ({ children }) => {
 };
 
 export const PageSubTitle = ({
+  button,
   togglable = true,
   toggled,
   onToggle,
@@ -19,6 +20,7 @@ export const PageSubTitle = ({
   return (
     <Flex alignItems="center" my={5} onClick={onClick} cursor="pointer">
       <Heading size="md">{children}</Heading>
+      {button}
       <Spacer />
       {togglable && onToggle && (
         <>
