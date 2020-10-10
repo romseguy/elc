@@ -10,14 +10,14 @@ import {
   AlertTitle,
   AlertDescription,
   Button,
-  Spinner,
+  Spinner
 } from "@chakra-ui/core";
 import {
   AccessDenied,
   Layout,
   Link,
   PageTitle,
-  StyledTable as Table,
+  StyledTable as Table
 } from "components";
 
 export default observer((props) => {
@@ -84,7 +84,7 @@ export default observer((props) => {
                 <tr
                   key={workshop._id}
                   tabIndex={0}
-                  title={`Cliquez pour ouvrir l'atelier ${workshop.code}`}
+                  title={`Cliquez pour ouvrir l'atelier ${workshop.name}`}
                   onClick={() => onRowClick(workshop)}
                 >
                   <td>{workshop.name}</td>
@@ -104,7 +104,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      session,
-    },
+      session
+    }
   };
 }

@@ -20,12 +20,19 @@ export const ParentSchema = new mongoose.Schema({
 });
 
 const SkillRefSchema = new mongoose.Schema({
-  skill: String,
+  skill: {
+    type: String,
+    required: true
+  },
+  workshop: String,
   date: Date
 });
 
 const WorkshopRefSchema = new mongoose.Schema({
-  workshop: String,
+  workshop: {
+    type: String,
+    required: true
+  },
   started: Date,
   completed: Date
 });

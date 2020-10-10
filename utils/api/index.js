@@ -28,7 +28,8 @@ async function request(endpoint, params, method = "GET") {
 
     if (response.status === 200) {
       const { data } = await response.json();
-      // console.log(`/${endpoint}`, data);
+      if (!process.env.NEXT_PUBLIC_IS_TEST) console.log(`/${endpoint}`, data);
+
       return { data };
     } else {
       const error = await response.json();

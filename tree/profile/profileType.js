@@ -9,16 +9,30 @@ import {
 } from "mobx-state-tree";
 import { ParentModel, SkillModel, WorkshopModel } from "tree";
 
-const SkillRef = t.model("SkillRef", {
-  skill: t.reference(t.late(() => SkillModel)),
-  date: t.Date
-});
+const SkillRef = t
+  .model("SkillRef", {
+    skill: t.reference(t.late(() => SkillModel)),
+    workshop: t.maybe(t.reference(t.late(() => WorkshopModel))),
+    date: t.Date
+  })
+  .actions((skillRef) => ({
+    fromUi(data) {
+      skillRef.date = data.date;
+    }
+  }));
 
-const WorkshopRef = t.model("WorkshopRef", {
-  workshop: t.reference(t.late(() => WorkshopModel)),
-  started: t.maybeNull(t.Date),
-  completed: t.maybeNull(t.Date)
-});
+const WorkshopRef = t
+  .model("WorkshopRef", {
+    workshop: t.reference(t.late(() => WorkshopModel)),
+    started: t.maybeNull(t.Date),
+    completed: t.maybeNull(t.Date)
+  })
+  .actions((workshopRef) => ({
+    fromUi(data) {
+      workshopRef.started = data.started;
+      workshopRef.completed = data.completed;
+    }
+  }));
 
 export const ProfileModel = t
   .model("ProfileModel", {
@@ -52,8 +66,20 @@ export const ProfileModel = t
     remove: function remove() {
       getParent(profile, 2).removeProfile(profile);
     },
-    addSkill: function addSkill({ _id, date }) {
-      profile.skills.push(SkillRef.create({ skill: _id, date }));
+    addSkill: function addSkill({ _id, workshop, date }) {
+      const add = () =>
+        profile.skills.push(SkillRef.create({ skill: _id, workshop, date }));
+
+      if (!profile.skills.length) add();
+      else {
+        let found = false;
+        let i = 0;
+
+        while (!found && i <= profile.skills.length)
+          profile.skills.get(i).skill._id === _id ? (found = true) : i++;
+
+        if (!found) add();
+      }
     },
     removeSkill: function removeSkill(skill) {
       profile.skills = profile.skills.filter((ref) => ref.skill !== skill);
@@ -102,8 +128,8 @@ const ProfileStore = t
               firstname,
               lastname,
               birthdate: new Date(birthdate),
-              skills: skills.map(({ skill, date }) =>
-                SkillRef.create({ skill, date: new Date(date) })
+              skills: skills.map(({ skill, workshop, date }) =>
+                SkillRef.create({ skill, workshop, date: new Date(date) })
               ),
               workshops: workshops.map(({ workshop, started, completed }) =>
                 WorkshopRef.create({
