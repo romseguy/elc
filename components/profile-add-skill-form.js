@@ -23,7 +23,7 @@ import { ErrorMessageText } from "./error-message-text";
 
 export const ProfileAddSkillForm = (props) => {
   const router = useRouter();
-  const { profileType } = useStore();
+  const { profileType, skillType } = useStore();
   const [isLoading, setIsLoading] = useState();
   const {
     control,
@@ -41,10 +41,15 @@ export const ProfileAddSkillForm = (props) => {
     clearErrors("formErrorMessage");
   };
 
-  const onSubmit = async ({ skill: _id, date }) => {
+  const onSubmit = async ({ skill, date }) => {
     setIsLoading(true);
-    props.profile.addSkill({ _id, date });
-    const { data, error } = await props.profile.update();
+    props.profile.addSkill({
+      skill: skillType.store.getById(skill),
+      date
+    });
+    const { data, error } = await profileType.store.updateProfile(
+      props.profile
+    );
     setIsLoading(false);
     if (error) handleError(error, setError);
     else props.onSubmit();
@@ -58,7 +63,6 @@ export const ProfileAddSkillForm = (props) => {
           name="skill"
           placeholder="Sélectionner une compétence"
           ref={register({ required: true })}
-          defaultValue={"-"}
         >
           {values(props.skills).map((skill) => {
             return (

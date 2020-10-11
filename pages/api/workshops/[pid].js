@@ -1,6 +1,6 @@
 import nextConnect from "next-connect";
 import middleware from "middlewares/database";
-import { getSession } from "next-auth/client";
+import { getSession } from "utils/useAuth";
 import { createServerError } from "middlewares/errors";
 
 const handler = nextConnect();
@@ -20,7 +20,7 @@ handler.get(async function getWorkshop(req, res) {
       );
   } else {
     const {
-      query: { pid },
+      query: { pid }
     } = req;
 
     try {
@@ -54,7 +54,7 @@ handler.put(async function updateWorkshop(req, res) {
       );
   } else {
     const {
-      query: { pid },
+      query: { pid }
     } = req;
 
     try {
@@ -91,12 +91,12 @@ handler.delete(async (req, res) => {
       );
   } else {
     const {
-      query: { pid },
+      query: { pid }
     } = req;
 
     try {
       const { deletedCount } = await req.models.Workshop.deleteOne({
-        _id: pid,
+        _id: pid
       });
 
       if (deletedCount === 1) {

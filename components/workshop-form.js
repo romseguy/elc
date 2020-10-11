@@ -34,6 +34,14 @@ export const WorkshopForm = (props) => {
     return null;
   }
 
+  useEffect(() => {
+    const fetch = async () => {
+      await skillType.store.getSkills();
+    };
+
+    fetch();
+  }, []);
+
   const {
     control,
     register,
@@ -52,22 +60,18 @@ export const WorkshopForm = (props) => {
 
   const onSubmit = async (formData) => {
     setIsLoading(true);
-
-    if (props.workshop) {
-      props.workshop.fromUi(formData);
-      const { error } = await props.parent.update();
-      setIsLoading(false);
-
-      if (error) handleError(error, setError);
-      else
-        router.push("/ateliers/[...slug]", `/ateliers/${props.workshop.slug}`);
-    } else {
-      const { data, error } = await workshopType.store.postWorkshop(formData);
-      setIsLoading(false);
-
-      if (data) router.push("/ateliers");
-      else handleError(error, setError);
-    }
+    const request = (workshop) =>
+      workshop
+        ? workshopType.store.updateWorkshop(props.workshop.edit(formData))
+        : workshopType.store.postWorkshop(formData);
+    const redirect = (workshop) =>
+      workshop
+        ? router.push("/ateliers/[...slug]", `/ateliers/${props.workshop.slug}`)
+        : router.push("/ateliers");
+    const { data, error } = await request(props.workshop);
+    setIsLoading(false);
+    if (error) handleError(error, setError);
+    else redirect(props.workshop);
   };
 
   return (

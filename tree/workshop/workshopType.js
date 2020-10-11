@@ -7,9 +7,12 @@ import {
 } from "mobx-state-tree";
 import api from "utils/api";
 import { SkillModel } from "tree";
+import { array2map } from "utils/array2map";
 
-export const levels = ["-", "CP", "CE1", "CE2", "CM1", "CM2"];
-export const domains = ["-", "Français"];
+const mapWorkshops = ({ _id, ...rest }) => ({
+  _id,
+  ...rest
+});
 
 export const WorkshopModel = t
   .model("WorkshopModel", {
@@ -28,7 +31,7 @@ export const WorkshopModel = t
     }
   }))
   .actions((workshop) => ({
-    fromUi(data) {
+    edit(data) {
       workshop.name = data.name;
       workshop.skills = data.skills === null ? [] : data.skills;
       return workshop;
@@ -55,20 +58,6 @@ const WorkshopStore = t
     }
   }))
   .actions((store) => ({
-    setWorkshops: async function setWorkshops(data) {
-      return new Promise((resolve, reject) => {
-        if (!Array.isArray(data)) return reject();
-
-        const workshops = {};
-        data.forEach(({ _id, ...attrs }) => {
-          workshops[_id] = {
-            _id,
-            ...attrs
-          };
-        });
-        resolve(workshops);
-      });
-    },
     // API
     getWorkshops: flow(function* getWorkshops() {
       store.state = "pending";
@@ -79,7 +68,7 @@ const WorkshopStore = t
         return { error };
       }
 
-      store.workshops = yield store.setWorkshops(data);
+      store.workshops = array2map(data.map(mapWorkshops), "_id");
       store.state = "done";
     }),
     postWorkshop: flow(function* postWorkshop(formData) {
@@ -91,8 +80,9 @@ const WorkshopStore = t
         return { error };
       }
 
+      const workshop = WorkshopModel.create(mapWorkshops(data));
       store.state = "done";
-      return { data: WorkshopModel.create(data) };
+      return { data };
     }),
     updateWorkshop: flow(function* updateWorkshop(workshop) {
       store.state = "pending";

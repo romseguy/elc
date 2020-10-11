@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { values } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useStore } from "tree";
+import { levels } from "tree/skill/skillType";
 import tw, { styled } from "twin.macro";
 import { format, isDate } from "date-fns";
 import { isServer } from "utils/isServer";
@@ -47,6 +48,7 @@ export default observer(function ProfilePage(props) {
   const [showWorkshopForm, setShowWorkshopForm] = useState(false);
   const [showParents, setShowParents] = useState(false);
   const [showSkills, setShowSkills] = useState(false);
+  const [showLevels, setShowLevels] = useState(false);
   const [showWorkshops, setShowWorkshops] = useState(false);
   const [currentSkillRef, setCurrentSkillRef] = useState();
   const [currentWorkshopRef, setCurrentWorkshopRef] = useState();
@@ -70,6 +72,7 @@ export default observer(function ProfilePage(props) {
   };
   const toggleShowParents = () => setShowParents(!showParents);
   const toggleShowSkills = () => setShowSkills(!showSkills);
+  const toggleShowLevels = () => setShowLevels(!showLevels);
   const toggleShowWorkshops = () => setShowWorkshops(!showWorkshops);
 
   const profileSlug = router.query.slug[0];
@@ -130,7 +133,7 @@ export default observer(function ProfilePage(props) {
 
   const removeSkillAction = (skill) => {
     selectedProfile.removeSkill(skill);
-    selectedProfile.update();
+    profileType.store.updateProfile(selectedProfile);
   };
   const editSkillAction = (skillRef) => {
     setCurrentSkillRef(skillRef);
@@ -138,7 +141,7 @@ export default observer(function ProfilePage(props) {
 
   const removeWorkshopAction = (workshop) => {
     selectedProfile.removeWorkshop(workshop);
-    selectedProfile.update();
+    profileType.store.updateProfile(selectedProfile);
   };
   const editWorkshopAction = (workshopRef) => {
     setCurrentWorkshopRef(workshopRef);
@@ -148,57 +151,55 @@ export default observer(function ProfilePage(props) {
     <Layout>
       <ProfileEditSkillForm
         currentSkillRef={currentSkillRef}
-        setCurrentSkillRef={setCurrentSkillRef}
         selectedProfile={selectedProfile}
+        onModalClose={() => setCurrentSkillRef()}
+        onSubmit={() => setCurrentSkillRef()}
       />
 
       <ProfileEditWorkshopForm
         currentWorkshopRef={currentWorkshopRef}
-        setCurrentWorkshopRef={setCurrentWorkshopRef}
         selectedProfile={selectedProfile}
+        onModalClose={() => setCurrentWorkshopRef()}
+        onSubmit={() => setCurrentWorkshopRef()}
       />
 
-      {profileType.store.isLoading ? (
-        <Spinner />
-      ) : (
-        <>
-          <PageTitle>
-            {`Fiche de l'élève : ${selectedProfile.firstname} ${selectedProfile.lastname}`}
-            <Button variant="outline" mx={5} onClick={editAction}>
-              Modifier
-            </Button>
-            <Button variant="outline" onClick={removeAction}>
-              Supprimer
-            </Button>
-          </PageTitle>
+      <PageTitle>
+        {`Fiche de l'élève : ${selectedProfile.firstname} ${selectedProfile.lastname}`}
+        <Button variant="outline" mx={5} onClick={editAction}>
+          Modifier
+        </Button>
+        <Button variant="outline" onClick={removeAction}>
+          Supprimer
+        </Button>
+      </PageTitle>
 
-          <VStack align="stretch" spacing={5}>
-            <Box {...boxProps}>
-              <PageSubTitle
-                button={
-                  <Button
-                    display="none"
-                    variant="outline"
-                    mx={5}
-                    onClick={toggleParentForm}
-                  >
-                    Associer un parent
-                    {showParentForm ? (
-                      <ArrowUpIcon ml={2} />
-                    ) : (
-                      <ArrowDownIcon ml={2} />
-                    )}
-                  </Button>
-                }
-                togglable={selectedProfile.parents.length > 0}
-                toggled={showParents}
-                onToggle={toggleShowParents}
-                onClick={toggleShowParents}
+      <VStack align="stretch" spacing={5}>
+        <Box {...boxProps}>
+          <PageSubTitle
+            button={
+              <Button
+                display="none"
+                variant="outline"
+                mx={5}
+                onClick={toggleParentForm}
               >
-                Parents
-              </PageSubTitle>
+                Associer un parent
+                {showParentForm ? (
+                  <ArrowUpIcon ml={2} />
+                ) : (
+                  <ArrowDownIcon ml={2} />
+                )}
+              </Button>
+            }
+            togglable={selectedProfile.parents.length > 0}
+            toggled={showParents}
+            onToggle={toggleShowParents}
+            onClick={toggleShowParents}
+          >
+            Parents
+          </PageSubTitle>
 
-              {/* {showParentForm && (
+          {/* {showParentForm && (
                 <ParentForm
                   profiles={[selectedProfile]}
                   onSubmit={async () => {
@@ -209,248 +210,278 @@ export default observer(function ProfilePage(props) {
                 />
               )} */}
 
-              {showParents && selectedProfile.parents.length > 0 && (
-                <>
-                  <Divider mb={5} />
+          {showParents && selectedProfile.parents.length > 0 && (
+            <>
+              <Divider mb={5} />
 
-                  <StyledTable>
-                    <thead>
-                      <tr>
-                        <th>Prénom </th>
-                        <th>Nom </th>
+              <StyledTable>
+                <thead>
+                  <tr>
+                    <th>Prénom </th>
+                    <th>Nom </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {values(selectedProfile.parents).map((parent) => {
+                    return (
+                      <tr
+                        key={parent._id}
+                        tabIndex={0}
+                        title={`Cliquez pour ouvrir la fiche de ${parent.firstname} ${parent.lastname}`}
+                        onClick={() => onParentRowClick(parent)}
+                      >
+                        <td>{parent.firstname}</td>
+                        <td>{parent.lastname}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {values(selectedProfile.parents).map((parent) => {
-                        return (
-                          <tr
-                            key={parent._id}
-                            tabIndex={0}
-                            title={`Cliquez pour ouvrir la fiche de ${parent.firstname} ${parent.lastname}`}
-                            onClick={() => onParentRowClick(parent)}
-                          >
-                            <td>{parent.firstname}</td>
-                            <td>{parent.lastname}</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </StyledTable>
-                </>
-              )}
-            </Box>
+                    );
+                  })}
+                </tbody>
+              </StyledTable>
+            </>
+          )}
+        </Box>
 
-            <Box {...boxProps}>
-              <PageSubTitle
-                button={
-                  <Button variant="outline" mx={5} onClick={toggleAddSkillForm}>
-                    Valider une compétence
-                    {showSkillForm ? (
-                      <ArrowUpIcon ml={2} />
-                    ) : (
-                      <ArrowDownIcon ml={2} />
-                    )}
-                  </Button>
-                }
-                togglable={selectedProfile.skills.length > 0}
-                toggled={showSkills}
-                onToggle={toggleShowSkills}
-                onClick={toggleShowSkills}
-              >
-                Compétences acquises
-              </PageSubTitle>
+        <Box {...boxProps}>
+          <PageSubTitle
+            button={
+              <Button variant="outline" mx={5} onClick={toggleAddSkillForm}>
+                Valider une compétence
+                {showSkillForm ? (
+                  <ArrowUpIcon ml={2} />
+                ) : (
+                  <ArrowDownIcon ml={2} />
+                )}
+              </Button>
+            }
+            togglable={selectedProfile.skills.length > 0}
+            toggled={showSkills}
+            onToggle={toggleShowSkills}
+            onClick={toggleShowSkills}
+          >
+            Compétences acquises
+          </PageSubTitle>
 
-              {showSkillForm && (
-                <ProfileAddSkillForm
-                  profile={selectedProfile}
-                  skills={skillType.store.skills}
-                  onSubmit={toggleAddSkillForm}
-                />
-              )}
+          {showSkillForm && (
+            <ProfileAddSkillForm
+              profile={selectedProfile}
+              skills={skillType.store.skills}
+              onSubmit={toggleAddSkillForm}
+            />
+          )}
 
-              {showSkills && selectedProfile.skills.length > 0 && (
-                <>
-                  <Divider mb={5} />
-                  <Table
-                    initialState={{
-                      sortBy: [
-                        {
-                          id: "date",
-                          desc: true
-                        }
-                      ]
-                    }}
-                    data={values(selectedProfile.skills).map((skillRef) => {
-                      const { skill, workshop, date } = skillRef;
-                      return {
-                        date: format(date, "dd/MM/yyyy"),
-                        code: skill.code,
-                        description: skill.description,
-                        workshop: workshop && workshop.name,
-                        editButton: (
-                          <IconButton
-                            icon={<EditIcon />}
-                            onClick={() => editSkillAction(skillRef)}
-                          />
-                        ),
-                        deleteButton: (
-                          <IconButton
-                            icon={<DeleteIcon />}
-                            colorScheme="red"
-                            onClick={() => removeSkillAction(skill)}
-                          />
-                        )
-                      };
-                    })}
-                    columns={[
-                      {
-                        Header: "Date",
-                        accessor: "date",
-                        sortType: "basic"
-                      },
-                      { Header: "Code", accessor: "code" },
-                      { Header: "Description", accessor: "description" },
-                      {
-                        Header: "Matière",
-                        accessor: "domain",
-                        sortType: "basic"
-                      },
-                      {
-                        Header: "Atelier",
-                        accessor: "workshop",
-                        sortType: "basic"
-                      },
-                      {
-                        Header: "",
-                        accessor: "editButton",
-                        disableSortBy: true
-                      },
-                      {
-                        Header: "",
-                        accessor: "deleteButton",
-                        disableSortBy: true
-                      }
-                    ]}
-                  />
-                </>
-              )}
-            </Box>
+          {showSkills && selectedProfile.skills.length > 0 && (
+            <>
+              <Divider mb={5} />
+              <Table
+                initialState={{
+                  sortBy: [
+                    {
+                      id: "date",
+                      desc: true
+                    }
+                  ]
+                }}
+                data={values(selectedProfile.skills).map((skillRef) => {
+                  const { skill, workshop, date } = skillRef;
+                  return {
+                    date: format(date, "dd/MM/yyyy"),
+                    code: skill.code,
+                    description: skill.description,
+                    domain: skill.domain,
+                    workshop: workshop && workshop.name,
+                    editButton: (
+                      <IconButton
+                        icon={<EditIcon />}
+                        onClick={() => editSkillAction(skillRef)}
+                      />
+                    ),
+                    deleteButton: (
+                      <IconButton
+                        icon={<DeleteIcon />}
+                        colorScheme="red"
+                        onClick={() => removeSkillAction(skill)}
+                      />
+                    )
+                  };
+                })}
+                columns={[
+                  {
+                    Header: "Date",
+                    accessor: "date",
+                    sortType: "basic"
+                  },
+                  { Header: "Code", accessor: "code" },
+                  { Header: "Description", accessor: "description" },
+                  {
+                    Header: "Matière",
+                    accessor: "domain",
+                    sortType: "basic"
+                  },
+                  {
+                    Header: "Atelier",
+                    accessor: "workshop",
+                    sortType: "basic"
+                  },
+                  {
+                    Header: "",
+                    accessor: "editButton",
+                    disableSortBy: true
+                  },
+                  {
+                    Header: "",
+                    accessor: "deleteButton",
+                    disableSortBy: true
+                  }
+                ]}
+              />
+            </>
+          )}
+        </Box>
 
-            <Box {...boxProps}>
-              <PageSubTitle
-                button={
-                  <Button
-                    variant="outline"
-                    mx={5}
-                    onClick={toggleAddWorkshopForm}
-                  >
-                    Associer un atelier
-                    {showWorkshopForm ? (
-                      <ArrowUpIcon ml={2} />
-                    ) : (
-                      <ArrowDownIcon ml={2} />
-                    )}
-                  </Button>
-                }
-                togglable={selectedProfile.workshops.length > 0}
-                toggled={showWorkshops}
-                onToggle={toggleShowWorkshops}
-                onClick={toggleShowWorkshops}
-              >
-                Ateliers
-              </PageSubTitle>
+        <Box {...boxProps}>
+          <PageSubTitle
+            toggled={showLevels}
+            onToggle={toggleShowLevels}
+            onClick={toggleShowLevels}
+          >
+            Niveaux
+          </PageSubTitle>
 
-              {showWorkshopForm && (
-                <ProfileAddWorkshopForm
-                  profile={selectedProfile}
-                  workshops={workshopType.store.workshops}
-                  onSubmit={toggleAddWorkshopForm}
-                />
-              )}
+          {showLevels && (
+            <StyledTable>
+              <thead>
+                <tr>
+                  <th>Niveau</th>
+                  <th>Progression</th>
+                </tr>
+              </thead>
+              <tbody>
+                {levels.map((level) => {
+                  return (
+                    <tr key={level}>
+                      <td>{level}</td>
+                      <td>
+                        {selectedProfile.getSkillsByLevel(level).length +
+                          "/" +
+                          skillType.store.getSkillsByLevel(level).length}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </StyledTable>
+          )}
+        </Box>
 
-              {showWorkshops && selectedProfile.workshops.length > 0 && (
-                <>
-                  <Divider mb={5} />
-                  <Table
-                    css={{
-                      display: !showWorkshops
-                        ? "none"
-                        : selectedProfile.workshops.length > 0
-                        ? "block"
-                        : "none"
-                    }}
-                    initialState={{
-                      sortBy: [
-                        {
-                          id: "name",
-                          desc: true
-                        }
-                      ]
-                    }}
-                    data={values(selectedProfile.workshops).map(
-                      (workshopRef) => {
-                        const { workshop, started, completed } = workshopRef;
-                        return {
-                          name: workshop.name,
-                          started:
-                            isDate(started) && format(started, "dd/MM/yyyy"),
-                          completed:
-                            isDate(completed) &&
-                            format(completed, "dd/MM/yyyy"),
-                          skills: workshop.skills.map((skill) => (
-                            <Tag key={skill._id}>{skill.code}</Tag>
-                          )),
-                          editButton: (
-                            <IconButton
-                              icon={<EditIcon />}
-                              onClick={() => editWorkshopAction(workshopRef)}
-                            />
-                          ),
-                          deleteButton: (
-                            <IconButton
-                              icon={<DeleteIcon />}
-                              colorScheme="red"
-                              onClick={() => removeWorkshopAction(workshop)}
-                            />
-                          )
-                        };
-                      }
-                    )}
-                    columns={[
-                      { Header: "Nom", accessor: "name" },
-                      {
-                        Header: "Date de début",
-                        accessor: "started",
-                        sortType: "basic"
-                      },
-                      {
-                        Header: "Date de fin",
-                        accessor: "completed",
-                        sortType: "basic"
-                      },
-                      {
-                        Header: "Compétences",
-                        accessor: "skills",
-                        disableSortBy: true
-                      },
-                      {
-                        Header: "",
-                        accessor: "editButton",
-                        disableSortBy: true
-                      },
-                      {
-                        Header: "",
-                        accessor: "deleteButton",
-                        disableSortBy: true
-                      }
-                    ]}
-                  />
-                </>
-              )}
-            </Box>
-          </VStack>
-        </>
-      )}
+        <Box {...boxProps}>
+          <PageSubTitle
+            button={
+              <Button variant="outline" mx={5} onClick={toggleAddWorkshopForm}>
+                Associer un atelier
+                {showWorkshopForm ? (
+                  <ArrowUpIcon ml={2} />
+                ) : (
+                  <ArrowDownIcon ml={2} />
+                )}
+              </Button>
+            }
+            togglable={selectedProfile.workshops.length > 0}
+            toggled={showWorkshops}
+            onToggle={toggleShowWorkshops}
+            onClick={toggleShowWorkshops}
+          >
+            Ateliers
+          </PageSubTitle>
+
+          {showWorkshopForm && (
+            <ProfileAddWorkshopForm
+              profile={selectedProfile}
+              workshops={workshopType.store.workshops}
+              onSubmit={() => {
+                setShowWorkshopForm(false);
+                setShowWorkshops(true);
+              }}
+            />
+          )}
+
+          {showWorkshops && selectedProfile.workshops.length > 0 && (
+            <>
+              <Divider mb={5} />
+              <Table
+                css={{
+                  display: !showWorkshops
+                    ? "none"
+                    : selectedProfile.workshops.length > 0
+                    ? "block"
+                    : "none"
+                }}
+                initialState={{
+                  sortBy: [
+                    {
+                      id: "name",
+                      desc: true
+                    }
+                  ]
+                }}
+                data={values(selectedProfile.workshops).map((workshopRef) => {
+                  const { workshop, started, completed } = workshopRef;
+                  return {
+                    name: workshop.name,
+                    started: isDate(started) && format(started, "dd/MM/yyyy"),
+                    completed:
+                      isDate(completed) && format(completed, "dd/MM/yyyy"),
+                    skills: workshop.skills.map((skill) => (
+                      <Tag key={skill._id}>{skill.code}</Tag>
+                    )),
+                    editButton: (
+                      <IconButton
+                        id="editWorkshop"
+                        icon={<EditIcon />}
+                        onClick={() => editWorkshopAction(workshopRef)}
+                      />
+                    ),
+                    deleteButton: (
+                      <IconButton
+                        icon={<DeleteIcon />}
+                        colorScheme="red"
+                        onClick={() => removeWorkshopAction(workshop)}
+                      />
+                    )
+                  };
+                })}
+                columns={[
+                  { Header: "Nom", accessor: "name" },
+                  {
+                    Header: "Date de début",
+                    accessor: "started",
+                    sortType: "basic"
+                  },
+                  {
+                    Header: "Date de fin",
+                    accessor: "completed",
+                    sortType: "basic"
+                  },
+                  {
+                    Header: "Compétences",
+                    accessor: "skills",
+                    disableSortBy: true
+                  },
+                  {
+                    Header: "",
+                    accessor: "editButton",
+                    disableSortBy: true
+                  },
+                  {
+                    Header: "",
+                    accessor: "deleteButton",
+                    disableSortBy: true
+                  }
+                ]}
+              />
+            </>
+          )}
+        </Box>
+      </VStack>
     </Layout>
   );
 });

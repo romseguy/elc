@@ -1,6 +1,6 @@
 import nextConnect from "next-connect";
 import middleware from "middlewares/database";
-import { createServerError } from "middlewares/errors";
+import { createServerError, databaseErrorCodes } from "middlewares/errors";
 import { getSession } from "utils/useAuth";
 
 const handler = nextConnect();
@@ -47,7 +47,7 @@ handler.post(async function postSkill(req, res) {
       if (error.code && error.code === databaseErrorCodes.DUPLICATE_KEY) {
         res
           .status(400)
-          .json({ name: "Une compétence avec ce code existe déjà" });
+          .json({ code: "Une compétence avec ce code existe déjà" });
       } else {
         res.status(400).json(createServerError(error));
       }

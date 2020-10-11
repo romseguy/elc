@@ -6,10 +6,10 @@ const handler = nextConnect();
 handler.use(middleware);
 
 handler.get(async function resetDb(req, res) {
-  if (!process.env.NEXT_PUBLIC_IS_TEST) {
-    res.status(400).send("Bad Request");
-    return;
-  }
+  // if (!process.env.NEXT_PUBLIC_IS_TEST) {
+  //   res.status(400).send("Bad Request");
+  //   return;
+  // }
 
   try {
     await req.db.dropDatabase();

@@ -22,14 +22,17 @@ import { DatePicker } from "components";
 import { format, subYears } from "date-fns";
 import { ErrorMessageText } from "./error-message-text";
 import { handleError } from "utils/form";
+import { useStore } from "tree";
 
 export const ProfileEditWorkshopForm = ({
   currentWorkshopRef,
-  setCurrentWorkshopRef,
-  selectedProfile
+  selectedProfile,
+  onModalClose,
+  ...props
 }) => {
   if (!currentWorkshopRef || !currentWorkshopRef.workshop) return null;
 
+  const { profileType } = useStore();
   const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: false });
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -59,19 +62,21 @@ export const ProfileEditWorkshopForm = ({
     if (formData.completed)
       workshop.skills.forEach((skill) =>
         selectedProfile.addSkill({
-          _id: skill._id,
+          skill,
           workshop,
           date: formData.completed
         })
       );
 
-    currentWorkshopRef.fromUi(formData);
-    const { data, error } = await selectedProfile.update();
-    if (error) handleError(error);
+    currentWorkshopRef.edit(formData);
+    const { data, error } = await profileType.store.updateProfile(
+      selectedProfile
+    );
     setIsLoading(false);
-    setCurrentWorkshopRef();
+
+    if (error) handleError(error);
+    else props.onSubmit();
   };
-  const onModalClose = () => setCurrentWorkshopRef();
   const started = watch("started", currentWorkshopRef.started);
   const completed = watch("completed", currentWorkshopRef.completed);
 

@@ -48,27 +48,23 @@ export const ProfileForm = (props) => {
     clearErrors("formErrorMessage");
   };
 
-  const onSubmit = async (formData) => {
+  const onSubmit = async (form) => {
+    const request = async (profile) =>
+      profile ? profile.edit(form) : profileType.store.postProfile(form);
+    const redirect = (profile) =>
+      profile
+        ? router.push("/fiches/[...slug]", `/fiches/${props.profile.slug}`)
+        : router.push("/fiches");
+
     setIsLoading(true);
-
-    if (props.profile) {
-      props.profile.fromUi(formData);
-      const { error } = await props.profile.update();
-      setIsLoading(false);
-
-      if (error) handleError(error, setError);
-      else router.push("/fiches/[...slug]", `/fiches/${props.profile.slug}`);
-    } else {
-      const { data, error } = await profileType.store.postProfile(formData);
-      setIsLoading(false);
-
-      if (data) router.push("/fiches");
-      else handleError(error, setError);
-    }
+    const { data, error } = await request(props.profile);
+    setIsLoading(false);
+    if (error) handleError(error, setError);
+    else redirect(props.profile);
   };
 
   return (
-    <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
+    <form method="post" onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
       <FormControl
         id="firstname"
         isRequired

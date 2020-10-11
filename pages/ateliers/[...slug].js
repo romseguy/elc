@@ -1,19 +1,29 @@
 import { useEffect, useState } from "react";
-import { getSession, useSession } from "next-auth/client";
+import { getSession } from "next-auth/client";
+import { useSession } from "utils/useAuth";
 import { useRouter } from "next/router";
 import { values } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useStore } from "tree";
 import { isServer } from "utils/isServer";
 import { Button, Spinner } from "@chakra-ui/core";
-import { AccessDenied, Layout, PageTitle, WorkshopForm } from "components";
+import {
+  AccessDenied,
+  Layout,
+  PageSubTitle,
+  PageTitle,
+  Table,
+  WorkshopForm
+} from "components";
+import { format } from "date-fns";
 
 export default observer((props) => {
   const [session = props.session] = useSession();
   const router = useRouter();
-  const { workshopType } = useStore();
+  const { skillType, workshopType } = useStore();
   useEffect(() => {
     const selectWorkshop = async () => {
+      await skillType.store.getSkills();
       await workshopType.selectWorkshop(workshopSlug);
     };
 
@@ -85,6 +95,41 @@ export default observer((props) => {
           Supprimer
         </Button>
       </PageTitle>
+
+      <PageSubTitle>
+        Compétences acquises une fois l'atelier terminé
+      </PageSubTitle>
+
+      <Table
+        initialState={{
+          sortBy: [
+            {
+              id: "code",
+              desc: true
+            }
+          ]
+        }}
+        data={values(selectedWorkshop.skills).map((skill) => {
+          return {
+            code: skill.code,
+            description: skill.description,
+            domain: skill.domain,
+            level: skill.level
+          };
+        })}
+        columns={[
+          { Header: "Code", accessor: "code" },
+          { Header: "Description", accessor: "description" },
+          {
+            Header: "Matière",
+            accessor: "domain"
+          },
+          {
+            Header: "Niveau",
+            accessor: "level"
+          }
+        ]}
+      />
     </Layout>
   );
 });
@@ -94,7 +139,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      session,
-    },
+      session
+    }
   };
 }

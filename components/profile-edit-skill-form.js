@@ -25,8 +25,9 @@ import { handleError } from "utils/form";
 
 export const ProfileEditSkillForm = ({
   currentSkillRef,
-  setCurrentSkillRef,
-  selectedProfile
+  onModalClose,
+  selectedProfile,
+  ...props
 }) => {
   if (!currentSkillRef) return null;
 
@@ -52,13 +53,15 @@ export const ProfileEditSkillForm = ({
     clearErrors("formErrorMessage");
   };
   const onSubmit = async (formData) => {
+    // todo
     setIsLoading(true);
-    currentSkillRef.fromUi(formData);
-    const { data, error } = await selectedProfile.update();
-    if (error) handleError(error);
     setIsLoading(false);
+
+    const { data, error } = {};
+
+    if (error) handleError(error);
+    else props.onSubmit();
   };
-  const onModalClose = () => setCurrentSkillRef();
 
   return (
     <Modal isOpen={isOpen} onClose={onModalClose}>

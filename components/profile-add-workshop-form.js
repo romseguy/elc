@@ -40,10 +40,12 @@ export const ProfileAddWorkshopForm = (props) => {
     clearErrors("formErrorMessage");
   };
 
-  const onSubmit = async ({ workshop: _id }) => {
+  const onSubmit = async ({ workshop: workshopId }) => {
     setIsLoading(true);
-    props.profile.addWorkshop({ _id });
-    const { data, error } = await props.profile.update();
+    props.profile.addWorkshop({ workshopId });
+    const { data, error } = await profileType.store.updateProfile(
+      props.profile
+    );
     setIsLoading(false);
     if (error) handleError(error, setError);
     else props.onSubmit();

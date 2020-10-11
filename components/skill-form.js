@@ -5,7 +5,7 @@ import { ErrorMessage } from "@hookform/error-message";
 import { useRouter } from "next/router";
 import { isStateTreeNode } from "mobx-state-tree";
 import { useStore } from "tree";
-import { domains, levels } from "tree/skill/skillType";
+import { domains, levels, uiToApi } from "tree/skill/skillType";
 import {
   Input,
   Button,
@@ -14,7 +14,8 @@ import {
   Box,
   Text,
   Select,
-  Stack
+  Stack,
+  FormErrorMessage
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
 import { handleError } from "utils/form";
@@ -48,57 +49,55 @@ export const SkillForm = (props) => {
 
   const onSubmit = async (formData) => {
     setIsLoading(true);
-
-    if (props.skill) {
-      props.skill.fromUi(formData);
-      res = await props.skill.update();
-      setIsLoading(false);
-
-      if (error) handleError(error, setError);
-      else
-        router.push(
-          "/competences/[...slug]",
-          `/competences/${props.skill.slug}`
-        );
-    } else {
-      const { data, error } = await skillType.store.postSkill(formData);
-      setIsLoading(false);
-
-      if (data) router.push("/competences");
-      else handleError(error, setError);
-    }
+    const apiData = uiToApi(formData);
+    const request = async (skill) =>
+      skill ? skill.edit(apiData) : skillType.store.postSkill(apiData);
+    const redirect = (skill) =>
+      skill
+        ? router.push("/competences/[...slug]", `/competences/${skill.slug}`)
+        : router.push("/competences");
+    const { data, error } = await request(props.skill);
+    setIsLoading(false);
+    if (error) handleError(error, setError);
+    else redirect(props.skill);
   };
 
   return (
     <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
-      <FormControl id="code" isRequired m={5} mt={0}>
+      <FormControl id="code" isRequired isInvalid={!!errors.code} m={5} mt={0}>
         <FormLabel>Code</FormLabel>
         <Input
           name="code"
           placeholder="L01"
           ref={register({ required: true })}
-          defaultValue={(props.skill && props.skill.code) || ""}
+          defaultValue={props.skill && props.skill.code}
         />
-        <ErrorMessage
-          errors={errors}
-          name="code"
-          message="Veuillez saisir un code"
-        />
+        <FormErrorMessage>
+          <ErrorMessage
+            errors={errors}
+            name="code"
+            message="Veuillez saisir un code"
+          />
+        </FormErrorMessage>
       </FormControl>
 
-      <FormControl id="description" isRequired m={5} mt={0}>
+      <FormControl
+        id="description"
+        isRequired
+        isInvalid={!!errors.description}
+        m={5}
+        mt={0}
+      >
         <FormLabel>Description</FormLabel>
         <Input
           name="description"
           placeholder="J'écoute et je comprends des consignes"
-          ref={register({ required: true })}
-          defaultValue={(props.skill && props.skill.description) || ""}
+          ref={register({ required: "Veuillez saisir une description" })}
+          defaultValue={props.skill && props.skill.description}
         />
-        <ErrorMessage
-          errors={errors}
-          name="description"
-          message="Veuillez saisir une description"
-        />
+        <FormErrorMessage>
+          <ErrorMessage errors={errors} name="description" />
+        </FormErrorMessage>
       </FormControl>
 
       <FormControl id="domain" m={5} mt={0}>
@@ -106,10 +105,8 @@ export const SkillForm = (props) => {
         <Select
           name="domain"
           placeholder="Sélectionner une matière"
-          ref={register({ required: true })}
-          defaultValue={
-            props.skill && props.skill.domain !== "-" ? props.skill.domain : "-"
-          }
+          ref={register()}
+          defaultValue={props.skill && props.skill.domain}
         >
           {domains.map((domain) => (
             <option key={domain} value={domain}>
@@ -124,10 +121,8 @@ export const SkillForm = (props) => {
         <Select
           name="level"
           placeholder="Sélectionner un niveau"
-          ref={register({ required: true })}
-          defaultValue={
-            props.skill && props.skill.level !== "-" ? props.skill.level : "-"
-          }
+          ref={register()}
+          defaultValue={props.skill && props.skill.level}
         >
           {levels.map((level) => (
             <option key={level} value={level}>

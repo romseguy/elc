@@ -1,5 +1,5 @@
 import api from "utils/api";
-import { toDate } from "date-fns";
+import { parseISO, toDate } from "date-fns";
 import {
   types as t,
   flow,
@@ -8,6 +8,21 @@ import {
   getSnapshot
 } from "mobx-state-tree";
 import { ParentModel, SkillModel, WorkshopModel } from "tree";
+import { array2map } from "utils/array2map";
+
+const mapProfiles = ({ birthdate, skills, workshops, ...rest }) => ({
+  birthdate: new Date(birthdate),
+  skills: skills.map(({ date, ...rest }) => ({
+    date: new Date(date),
+    ...rest
+  })),
+  workshops: workshops.map(({ started, completed, ...rest }) => ({
+    started: started && new Date(started),
+    completed: completed && new Date(completed),
+    ...rest
+  })),
+  ...rest
+});
 
 const SkillRef = t
   .model("SkillRef", {
@@ -28,7 +43,7 @@ const WorkshopRef = t
     completed: t.maybeNull(t.Date)
   })
   .actions((workshopRef) => ({
-    fromUi(data) {
+    edit(data) {
       workshopRef.started = data.started;
       workshopRef.completed = data.completed;
     }
@@ -52,31 +67,34 @@ export const ProfileModel = t
   .views((profile) => ({
     get slug() {
       return `${profile.firstname}-${profile.lastname}`;
+    },
+    getSkillsByLevel(level) {
+      return profile.skills.filter(
+        (skillRef) => skillRef.skill.level === level
+      );
     }
   }))
   .actions((profile) => ({
-    fromUi(data) {
-      profile.firstname = data.firstname;
-      profile.lastname = data.lastname;
-      profile.birthdate = data.birthdate;
-    },
-    update() {
+    edit({ firstname, lastname, birthdate }) {
+      profile.firstname = firstname;
+      profile.lastname = lastname;
+      profile.birthdate = birthdate;
       return getParent(profile, 2).updateProfile(profile);
     },
     remove: function remove() {
       getParent(profile, 2).removeProfile(profile);
     },
-    addSkill: function addSkill({ _id, workshop, date }) {
+    addSkill: function addSkill({ skill, workshop, date }) {
       const add = () =>
-        profile.skills.push(SkillRef.create({ skill: _id, workshop, date }));
+        profile.skills.push(SkillRef.create({ skill, workshop, date }));
 
       if (!profile.skills.length) add();
       else {
         let found = false;
         let i = 0;
 
-        while (!found && i <= profile.skills.length)
-          profile.skills.get(i).skill._id === _id ? (found = true) : i++;
+        while (!found && i <= profile.skills.length - 1)
+          profile.skills.get(i).skill._id === skill._id ? (found = true) : i++;
 
         if (!found) add();
       }
@@ -84,8 +102,8 @@ export const ProfileModel = t
     removeSkill: function removeSkill(skill) {
       profile.skills = profile.skills.filter((ref) => ref.skill !== skill);
     },
-    addWorkshop: function addWorkshop({ _id }) {
-      profile.workshops.push(WorkshopRef.create({ workshop: _id }));
+    addWorkshop: function addWorkshop({ workshopId }) {
+      profile.workshops.push(WorkshopRef.create({ workshop: workshopId }));
     },
     removeWorkshop: function removeWorkshop(workshop) {
       profile.workshops = profile.workshops.filter(
@@ -108,72 +126,31 @@ const ProfileStore = t
     }
   }))
   .actions((store) => ({
-    setProfiles: async function setProfiles(data) {
-      return new Promise((resolve, reject) => {
-        if (!Array.isArray(data)) return reject();
-
-        const profiles = {};
-        data.forEach(
-          ({
-            _id,
-            firstname,
-            lastname,
-            birthdate,
-            skills,
-            parents,
-            workshops
-          }) => {
-            profiles[_id] = {
-              _id,
-              firstname,
-              lastname,
-              birthdate: new Date(birthdate),
-              skills: skills.map(({ skill, workshop, date }) =>
-                SkillRef.create({ skill, workshop, date: new Date(date) })
-              ),
-              workshops: workshops.map(({ workshop, started, completed }) =>
-                WorkshopRef.create({
-                  workshop,
-                  started: started && new Date(started),
-                  completed: completed && new Date(completed)
-                })
-              ),
-              parents
-            };
-          }
-        );
-        resolve(profiles);
-      });
-    },
-    // API
+    // CRUD API CALLS
     getProfiles: flow(function* getProfiles() {
       store.state = "pending";
       const { error, data } = yield api.get("profiles");
 
-      if (error) {
+      if (error || !Array.isArray(data)) {
         store.state = "error";
         return { error };
       }
 
-      store.profiles = yield store.setProfiles(data);
+      store.profiles = array2map(data.map(mapProfiles), "_id");
       store.state = "done";
     }),
-    postProfile: flow(function* postProfile(formData) {
+    postProfile: flow(function* postProfile(snapshot) {
       store.state = "pending";
-      const { error, data } = yield api.post("profiles", formData);
+      const { error, data } = yield api.post("profiles", snapshot);
 
       if (error) {
         store.state = "error";
         return { error };
       }
 
+      const profile = ProfileModel.create(mapProfiles(data));
       store.state = "done";
-      return {
-        data: ProfileModel.create({
-          _id: data._id,
-          ...formData
-        })
-      };
+      return { data };
     }),
     updateProfile: flow(function* updateProfile(profile) {
       store.state = "pending";

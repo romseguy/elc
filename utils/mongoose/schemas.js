@@ -33,8 +33,14 @@ const WorkshopRefSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  started: Date,
-  completed: Date
+  started: {
+    type: Date,
+    default: null
+  },
+  completed: {
+    type: Date,
+    default: null
+  }
 });
 
 export const ProfileSchema = new mongoose.Schema({
@@ -47,7 +53,8 @@ export const ProfileSchema = new mongoose.Schema({
     required: true
   },
   birthdate: {
-    type: Date
+    type: Date,
+    default: null
   },
   skills: {
     type: [SkillRefSchema]
@@ -79,10 +86,12 @@ export const SkillSchema = new mongoose.Schema({
     required: true
   },
   domain: {
-    type: String
+    type: String,
+    default: null
   },
   level: {
-    type: String
+    type: String,
+    default: null
   }
 });
 

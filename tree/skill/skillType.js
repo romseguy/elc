@@ -1,3 +1,4 @@
+import { values } from "mobx";
 import {
   types as t,
   flow,
@@ -6,17 +7,25 @@ import {
   getSnapshot
 } from "mobx-state-tree";
 import api from "utils/api";
+import { array2map } from "utils/array2map";
 
-export const levels = ["-", "CP", "CE1", "CE2", "CM1", "CM2"];
-export const domains = ["-", "Français"];
+export const levels = ["CP", "CE1", "CE2", "CM1", "CM2"];
+export const domains = ["Français"];
+export const uiToApi = ({ code, description, domain, level }) => ({
+  code,
+  description,
+  domain: domain === "" ? null : domain,
+  level: level === "" ? null : level
+});
+const mapSkills = ({ ...rest }) => ({ ...rest });
 
 export const SkillModel = t
   .model("SkillModel", {
     _id: t.identifier,
     code: t.string,
     description: t.string,
-    domain: t.optional(t.enumeration(domains), "-"),
-    level: t.optional(t.enumeration(levels), "-")
+    domain: t.maybeNull(t.enumeration(domains)),
+    level: t.maybeNull(t.enumeration(levels))
   })
   .views((skill) => ({
     get slug() {
@@ -24,13 +33,11 @@ export const SkillModel = t
     }
   }))
   .actions((skill) => ({
-    fromUi(data) {
-      skill.code = data.code;
-      skill.description = data.description;
-      skill.domain = data.domain;
-      skill.level = data.level;
-    },
-    update() {
+    edit({ code, description, domain, level }) {
+      skill.code = code;
+      skill.description = description;
+      skill.domain = domain;
+      skill.level = level;
       return getParent(skill, 2).updateSkill(skill);
     },
     remove: function remove() {
@@ -49,47 +56,41 @@ const SkillStore = t
     },
     get isLoading() {
       return store.state === "pending";
+    },
+    getSkillsByLevel(level) {
+      return values(store.skills).filter((skill) => skill.level === level);
     }
   }))
   .actions((store) => ({
-    setSkills: async function setSkills(data) {
-      return new Promise((resolve, reject) => {
-        if (!Array.isArray(data)) return reject();
-
-        const skills = {};
-        data.forEach(({ _id, code, ...attrs }) => {
-          skills[_id] = {
-            _id,
-            code,
-            ...attrs
-          };
-        });
-        resolve(skills);
-      });
+    getById(id) {
+      for (const skill of values(store.skills))
+        if (skill._id === id) return skill;
     },
-    // API
+    // CRUD API CALLS
     getSkills: flow(function* getSkills() {
       store.state = "pending";
       const { error, data } = yield api.get("skills");
 
-      if (error) {
+      if (error || !Array.isArray(data)) {
         store.state = "error";
         return { error };
       }
-      store.skills = yield store.setSkills(data);
+
+      store.skills = array2map(data.map(mapSkills), "_id");
       store.state = "done";
     }),
-    postSkill: flow(function* postSkill(formData) {
+    postSkill: flow(function* postSkill(snapshot) {
       store.state = "pending";
-      const { error, data } = yield api.post("skills", formData);
+      const { error, data } = yield api.post("skills", snapshot);
 
       if (error) {
         store.state = "error";
         return { error };
       }
 
+      const skill = SkillModel.create(mapSkills(data));
       store.state = "done";
-      return { data: SkillModel.create(data) };
+      return { data };
     }),
     updateSkill: flow(function* updateSkill(skill) {
       store.state = "pending";
