@@ -10,7 +10,8 @@ import {
   AlertTitle,
   AlertDescription,
   Button,
-  Spinner
+  Spinner,
+  Tag
 } from "@chakra-ui/core";
 import {
   AccessDenied,
@@ -88,7 +89,11 @@ export default observer((props) => {
                   onClick={() => onRowClick(workshop)}
                 >
                   <td>{workshop.name}</td>
-                  <td>{/* {workshop.domain} */}</td>
+                  <td>
+                    {workshop.skills.map((skill) => (
+                      <Tag>{skill.code}</Tag>
+                    ))}
+                  </td>
                 </tr>
               );
             })}

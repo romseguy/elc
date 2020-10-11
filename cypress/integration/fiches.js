@@ -46,14 +46,14 @@ describe("CRUD", () => {
     it("add workshop to profile", () => {
       cy.visit("http://localhost:3004/fiches/1-2");
       cy.get("h2").contains("Ateliers").should("be.visible");
-      cy.get("button").contains("Ajouter un atelier").click();
+      cy.get("button").contains("Associer un atelier").click();
       cy.get("select#workshop").select("ABC");
       cy.get("form").submit();
     });
 
     it("add skill to profile", () => {
       cy.visit("http://localhost:3004/fiches/1-2");
-      cy.findByRole("button", { name: "Ajouter une compétence" }).click();
+      cy.findByRole("button", { name: "Valider une compétence" }).click();
       cy.get("select#skill").select("L01");
       cy.get("form").submit();
     });
@@ -82,7 +82,7 @@ describe("CRUD", () => {
       cy.get("input#email").type("p@e.com");
       cy.get(".react-select-container").click();
       cy.get(".react-select__option").contains("1 2").click();
-      cy.findByRole("button", { name: "Ajouter" }).click();
+      cy.findByRole("button", { name: "Ajouter le parent" }).click();
     });
 
     it("check parent has been added to profile", () => {

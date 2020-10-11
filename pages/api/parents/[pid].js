@@ -86,6 +86,26 @@ handler.delete(async (req, res) => {
     } = req;
 
     try {
+      // remove reference to the parent from her/his children' profiles
+      const profiles = await req.models.Profile.find({});
+
+      for (const profile of profiles) {
+        if (Array.isArray(profile.parents)) {
+          for (const parentId of profile.parents) {
+            if (parentId === pid) {
+              await req.models.Profile.updateOne(
+                { _id: profile._id },
+                {
+                  parents: profile.parents.filter(
+                    (parentId) => parentId !== pid
+                  )
+                }
+              );
+            }
+          }
+        }
+      }
+
       const { deletedCount } = await req.models.Parent.deleteOne({ _id: pid });
 
       if (deletedCount === 1) {

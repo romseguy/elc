@@ -34,13 +34,15 @@ import {
   ProfileEditSkillForm,
   ProfileForm,
   StyledTable,
-  Table
+  Table,
+  ParentForm
 } from "components";
 
 export default observer(function ProfilePage(props) {
   const [session = props.session] = useSession();
   const router = useRouter();
   const { parentType, profileType, skillType, workshopType } = useStore();
+  const [showParentForm, setShowParentForm] = useState(false);
   const [showSkillForm, setShowSkillForm] = useState(false);
   const [showWorkshopForm, setShowWorkshopForm] = useState(false);
   const [showParents, setShowParents] = useState(false);
@@ -54,6 +56,10 @@ export default observer(function ProfilePage(props) {
     px: 5
   };
 
+  const toggleParentForm = (e) => {
+    e && e.stopPropagation();
+    setShowParentForm(!showParentForm);
+  };
   const toggleAddSkillForm = (e) => {
     e && e.stopPropagation();
     setShowSkillForm(!showSkillForm);
@@ -169,6 +175,21 @@ export default observer(function ProfilePage(props) {
           <VStack align="stretch" spacing={5}>
             <Box {...boxProps}>
               <PageSubTitle
+                button={
+                  <Button
+                    display="none"
+                    variant="outline"
+                    mx={5}
+                    onClick={toggleParentForm}
+                  >
+                    Associer un parent
+                    {showParentForm ? (
+                      <ArrowUpIcon ml={2} />
+                    ) : (
+                      <ArrowDownIcon ml={2} />
+                    )}
+                  </Button>
+                }
                 togglable={selectedProfile.parents.length > 0}
                 toggled={showParents}
                 onToggle={toggleShowParents}
@@ -176,6 +197,17 @@ export default observer(function ProfilePage(props) {
               >
                 Parents
               </PageSubTitle>
+
+              {/* {showParentForm && (
+                <ParentForm
+                  profiles={[selectedProfile]}
+                  onSubmit={async () => {
+                    await parentType.store.getParents();
+                    await profileType.store.getProfiles();
+                    toggleParentForm();
+                  }}
+                />
+              )} */}
 
               {showParents && selectedProfile.parents.length > 0 && (
                 <>
@@ -212,7 +244,7 @@ export default observer(function ProfilePage(props) {
               <PageSubTitle
                 button={
                   <Button variant="outline" mx={5} onClick={toggleAddSkillForm}>
-                    Ajouter une compétence
+                    Valider une compétence
                     {showSkillForm ? (
                       <ArrowUpIcon ml={2} />
                     ) : (
@@ -312,7 +344,7 @@ export default observer(function ProfilePage(props) {
                     mx={5}
                     onClick={toggleAddWorkshopForm}
                   >
-                    Ajouter un atelier
+                    Associer un atelier
                     {showWorkshopForm ? (
                       <ArrowUpIcon ml={2} />
                     ) : (

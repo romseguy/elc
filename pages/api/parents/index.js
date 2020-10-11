@@ -42,6 +42,7 @@ handler.post(async function postParent(req, res) {
         email,
         children
       });
+      // add reference to the parent to his/her child's profile
       if (Array.isArray(children)) {
         for (const _id of children) {
           const childProfile = await req.models.Profile.findOne({ _id });

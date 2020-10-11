@@ -71,7 +71,7 @@ export const ProfileEditWorkshopForm = ({
     setIsLoading(false);
     setCurrentWorkshopRef();
   };
-  const onModalClose = () => {};
+  const onModalClose = () => setCurrentWorkshopRef();
   const started = watch("started", currentWorkshopRef.started);
   const completed = watch("completed", currentWorkshopRef.completed);
 

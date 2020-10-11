@@ -67,11 +67,13 @@ export const ParentForm = observer((props) => {
       const { data, error } = await parentType.store.postParent(parent);
       setIsLoading(false);
 
-      if (data) router.push("/parents");
+      if (data) props.onSubmit ? props.onSubmit() : router.push("/parents");
       else handleError(error, setError);
     }
   };
+
   const options = [];
+
   for (const v of profileType.store.profiles.values()) {
     const { _id, firstname, lastname } = v;
     options.push({ _id, firstname, lastname });
@@ -159,7 +161,13 @@ export const ParentForm = observer((props) => {
             as={ReactSelect}
             name="profiles"
             control={control}
-            defaultValue={props.parent ? props.parent.children : []}
+            defaultValue={
+              props.parent
+                ? props.parent.children
+                : props.profiles
+                ? props.profiles
+                : []
+            }
             placeholder="Sélectionner un ou plusieurs enfants"
             menuPlacement="top"
             isClearable
@@ -194,7 +202,7 @@ export const ParentForm = observer((props) => {
         isLoading={isLoading}
         isDisabled={Object.keys(errors).length > 0}
       >
-        {props.parent ? "Modifier" : "Ajouter"}
+        {props.parent ? "Modifier le parent" : "Ajouter le parent"}
       </Button>
     </form>
   );

@@ -43,7 +43,7 @@ export const ProfileModel = t
     skills: t.array(SkillRef),
     workshops: t.array(WorkshopRef),
     parents: t.optional(
-      t.array(t.reference(t.late(() => ParentModel))),
+      t.array(t.safeReference(t.late(() => ParentModel))),
       // t.array(t.maybe(t.reference(t.late(() => ProfileModel)))),
       // t.array(t.safeReference(ProfileModel, { acceptsUndefined: false })),
       []
