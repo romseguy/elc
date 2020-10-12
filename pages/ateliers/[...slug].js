@@ -54,7 +54,7 @@ export default observer((props) => {
       </Layout>
     );
   if (workshopType.store.isEmpty)
-    return <Layout>Aucune atelier n'a été ajoutée à l'application</Layout>;
+    return <Layout>Aucun atelier n'a été ajouté à l'application</Layout>;
   if (selectedWorkshop === null)
     return <Layout>Nous n'avons pas pu trouver cet atelier</Layout>;
   if (!selectedWorkshop)

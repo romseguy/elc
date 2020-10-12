@@ -30,11 +30,9 @@ export default observer((props) => {
   const [session = props.session] = useSession();
   const router = useRouter();
   const parentSlug = router.query.slug[0];
-  const { parentType, profileType, skillType } = useStore();
+  const { parentType, profileType } = useStore();
   useEffect(() => {
     const selectParent = async () => {
-      await skillType.store.getSkills();
-      await parentType.store.getParents();
       await profileType.store.getProfiles();
       await parentType.selectParent(parentSlug);
     };
@@ -58,16 +56,17 @@ export default observer((props) => {
 
   const selectedParent = parentType.selectedParent;
 
-  if (profileType.store.isLoading)
+  if (parentType.store.isLoading)
     return (
       <Layout>
         <Spinner />
       </Layout>
     );
-  if (parentType.store.isEmpty) return <Layout>Aucune fiche trouvée</Layout>;
+  if (parentType.store.isEmpty)
+    return <Layout>Aucune fiche parent n'a été ajoutée à l'application</Layout>;
   if (selectedParent === null)
     return (
-      <Layout>Nous n'avons pas pu trouver de fiche associée à cet élève</Layout>
+      <Layout>Nous n'avons pas pu trouver de fiche associée à ce parent</Layout>
     );
   if (!selectedParent)
     return (
@@ -113,7 +112,7 @@ export default observer((props) => {
 
       <PageSubTitle>Enfants</PageSubTitle>
 
-      {selectedParent.children.length === 0 ? (
+      {!selectedParent.children ? (
         <Text>
           <Link textDecoration="underline" href={editLink}>
             Modifier la fiche du parent pour associer un ou plusieurs enfants

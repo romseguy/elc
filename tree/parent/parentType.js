@@ -14,12 +14,9 @@ export const ParentModel = t
     firstname: t.string,
     lastname: t.string,
     email: t.string,
-    children: t.optional(
-      t.array(t.reference(t.late(() => ProfileModel))),
-      // t.array(t.maybe(t.reference(t.late(() => ProfileModel)))),
-      // t.array(t.safeReference(ProfileModel, { acceptsUndefined: false })),
-      []
-    )
+    children: t.maybeNull(t.array(t.reference(t.late(() => ProfileModel))))
+    // t.array(t.maybe(t.reference(t.late(() => ProfileModel)))),
+    // t.array(t.safeReference(ProfileModel, { acceptsUndefined: false })),
   })
   .views((parent) => ({
     get slug() {
@@ -27,11 +24,13 @@ export const ParentModel = t
     }
   }))
   .actions((parent) => ({
-    fromUi(data) {
+    edit(data) {
       parent.firstname = data.firstname;
       parent.lastname = data.lastname;
       parent.email = data.email;
-      parent.children = data.profiles === null ? [] : data.profiles;
+      parent.children = !data.children
+        ? []
+        : data.children.map(({ _id }) => _id);
       return parent;
     },
     update() {
@@ -138,13 +137,12 @@ export const ParentType = t
   })
   .actions((self) => ({
     selectParent: flow(function* selectParent(slug) {
-      yield self.store.getParents();
+      if (self.store.state === "pending") yield self.store.getParents();
       self.store.parents.forEach((parent) => {
         if (slug === parent.slug) {
           self.selectedParent = parent;
         }
       });
-
       if (self.selectedParent === undefined) {
         self.selectedParent = null;
       }

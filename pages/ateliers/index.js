@@ -25,9 +25,10 @@ import {
 export default observer((props) => {
   const [session = props.session] = useSession();
   const router = useRouter();
-  const { workshopType } = useStore();
+  const { skillType, workshopType } = useStore();
   useEffect(() => {
     const fetchWorkshops = async () => {
+      await skillType.store.getSkills();
       await workshopType.store.getWorkshops();
     };
     fetchWorkshops();

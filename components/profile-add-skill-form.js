@@ -57,12 +57,12 @@ export const ProfileAddSkillForm = (props) => {
 
   return (
     <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
-      <FormControl id="skill" isRequired mb={5}>
+      <FormControl id="skill" isRequired isInvalid={!!errors.skill} mb={5}>
         <FormLabel>Compétence</FormLabel>
         <Select
           name="skill"
           placeholder="Sélectionner une compétence"
-          ref={register({ required: true })}
+          ref={register({ required: "Veuillez sélectionner une compétence" })}
         >
           {values(props.skills).map((skill) => {
             return (
@@ -72,20 +72,20 @@ export const ProfileAddSkillForm = (props) => {
             );
           })}
         </Select>
-        <ErrorMessage
-          errors={errors}
-          name="skill"
-          message="Veuillez sélectionner une compétence"
-        />
+        <FormErrorMessage>
+          <ErrorMessage errors={errors} name="skill" />
+        </FormErrorMessage>
       </FormControl>
 
-      <FormControl id="date" isRequired mb={5}>
+      <FormControl id="date" isRequired isInvalid={!!errors.date} mb={5}>
         <FormLabel>Date</FormLabel>
         <Controller
           name="date"
           control={control}
           defaultValue={new Date()}
-          rules={{ required: true }}
+          rules={{
+            required: "Veuillez saisir la date d'obtention de la compétence"
+          }}
           render={(props) => (
             <DatePicker
               minDate={subYears(new Date(), 11)}
@@ -95,11 +95,7 @@ export const ProfileAddSkillForm = (props) => {
           )}
         />
         <FormErrorMessage>
-          <ErrorMessage
-            errors={errors}
-            name="date"
-            message="Veuillez saisir la date d'obtention de la compétence"
-          />
+          <ErrorMessage errors={errors} name="date" />
         </FormErrorMessage>
       </FormControl>
 

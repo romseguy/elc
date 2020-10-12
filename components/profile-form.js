@@ -79,15 +79,11 @@ export const ProfileForm = (props) => {
         <Input
           name="firstname"
           placeholder="Prénom"
-          ref={register({ required: true })}
-          defaultValue={(props.profile && props.profile.firstname) || ""}
+          ref={register({ required: "Veuillez saisir un prénom" })}
+          defaultValue={props.profile && props.profile.firstname}
         />
         <FormErrorMessage>
-          <ErrorMessage
-            errors={errors}
-            name="firstname"
-            message="Veuillez saisir un prénom"
-          />
+          <ErrorMessage errors={errors} name="firstname" />
         </FormErrorMessage>
       </FormControl>
 
@@ -102,21 +98,16 @@ export const ProfileForm = (props) => {
         <Input
           name="lastname"
           placeholder="Nom"
-          ref={register({ required: true })}
-          defaultValue={(props.profile && props.profile.lastname) || ""}
+          ref={register({ required: "Veuillez saisir un nom de famille" })}
+          defaultValue={props.profile && props.profile.lastname}
         />
         <FormErrorMessage>
-          <ErrorMessage
-            errors={errors}
-            name="lastname"
-            message="Veuillez saisir un nom de famille"
-          />
+          <ErrorMessage errors={errors} name="lastname" />
         </FormErrorMessage>
       </FormControl>
 
       <FormControl
         id="birthdate"
-        isRequired
         isInvalid={!!errors["birthdate"]}
         m={5}
         mt={0}
@@ -125,8 +116,7 @@ export const ProfileForm = (props) => {
         <Controller
           name="birthdate"
           control={control}
-          defaultValue={(props.profile && props.profile.birthdate) || ""}
-          rules={{ required: true }}
+          defaultValue={(props.profile && props.profile.birthdate) || null}
           render={(props) => (
             <DatePicker
               minDate={subYears(new Date(), 11)}
@@ -137,11 +127,7 @@ export const ProfileForm = (props) => {
           )}
         />
         <FormErrorMessage>
-          <ErrorMessage
-            errors={errors}
-            name="birthdate"
-            message="Veuillez saisir une date de naissance"
-          />
+          <ErrorMessage errors={errors} name="birthdate" />
         </FormErrorMessage>
       </FormControl>
 

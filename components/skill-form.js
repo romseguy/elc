@@ -69,15 +69,11 @@ export const SkillForm = (props) => {
         <Input
           name="code"
           placeholder="L01"
-          ref={register({ required: true })}
+          ref={register({ required: "Veuillez saisir un code" })}
           defaultValue={props.skill && props.skill.code}
         />
         <FormErrorMessage>
-          <ErrorMessage
-            errors={errors}
-            name="code"
-            message="Veuillez saisir un code"
-          />
+          <ErrorMessage errors={errors} name="code" />
         </FormErrorMessage>
       </FormControl>
 

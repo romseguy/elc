@@ -11,6 +11,13 @@ export const databaseErrorMessages = {};
  * }
  */
 export const createValidationError = (error) => {
+  if (error.errors) {
+    const errors = {};
+    Object.keys(error.errors).map((key) => {
+      errors[key] = error.errors[key].message;
+    });
+    return errors;
+  }
   return { [error.errors.name.path]: error.errors.name.message };
 };
 

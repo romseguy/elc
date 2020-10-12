@@ -33,7 +33,7 @@ export const WorkshopModel = t
   .actions((workshop) => ({
     edit(data) {
       workshop.name = data.name;
-      workshop.skills = data.skills === null ? [] : data.skills;
+      workshop.skills = !data.skills ? [] : data.skills;
       return workshop;
     },
     update() {
@@ -124,7 +124,7 @@ export const WorkshopType = t
   })
   .actions((self) => ({
     selectWorkshop: flow(function* selectWorkshop(slug) {
-      yield self.store.getWorkshops();
+      if (self.store.state === "pending") yield self.store.getWorkshops();
       self.store.workshops.forEach((workshop) => {
         if (slug === workshop.slug) {
           self.selectedWorkshop = workshop;

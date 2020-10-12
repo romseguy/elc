@@ -117,7 +117,7 @@ export const ProfileEditWorkshopForm = ({
                 <Controller
                   name="started"
                   control={control}
-                  defaultValue={currentWorkshopRef.started || null}
+                  defaultValue={currentWorkshopRef.started}
                   render={(props) => (
                     <DatePicker
                       minDate={subYears(new Date(), 1)}
@@ -143,10 +143,10 @@ export const ProfileEditWorkshopForm = ({
                 <Controller
                   name="completed"
                   control={control}
-                  defaultValue={currentWorkshopRef.completed || null}
+                  defaultValue={currentWorkshopRef.completed}
                   render={(props) => (
                     <DatePicker
-                      minDate={subYears(new Date(), 1)}
+                      minDate={started}
                       maxDate={new Date()}
                       placeholderText={format(new Date(), "dd/MM/yyyy")}
                       {...props}

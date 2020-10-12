@@ -11,7 +11,7 @@ import { ParentModel, SkillModel, WorkshopModel } from "tree";
 import { array2map } from "utils/array2map";
 
 const mapProfiles = ({ birthdate, skills, workshops, ...rest }) => ({
-  birthdate: new Date(birthdate),
+  birthdate: birthdate && new Date(birthdate),
   skills: skills.map(({ date, ...rest }) => ({
     date: new Date(date),
     ...rest
@@ -54,7 +54,7 @@ export const ProfileModel = t
     _id: t.identifier,
     firstname: t.string,
     lastname: t.string,
-    birthdate: t.Date,
+    birthdate: t.maybeNull(t.Date),
     skills: t.array(SkillRef),
     workshops: t.array(WorkshopRef),
     parents: t.optional(
@@ -192,7 +192,7 @@ export const ProfileType = t
   })
   .actions((self) => ({
     selectProfile: flow(function* selectProfile(slug) {
-      yield self.store.getProfiles();
+      if (self.store.state === "pending") yield self.store.getProfiles();
       self.store.profiles.forEach((profile) => {
         if (slug === profile.slug) {
           self.selectedProfile = profile;

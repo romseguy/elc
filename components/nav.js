@@ -165,13 +165,14 @@ export const Nav = (props) => {
                   >
                     <FormLabel>Nom d'utilisateur</FormLabel>
 
-                    <Input name="username" ref={register({ required: true })} />
+                    <Input
+                      name="username"
+                      ref={register({
+                        required: "Veuillez saisir un nom d'utilisateur"
+                      })}
+                    />
                     <FormErrorMessage>
-                      <ErrorMessage
-                        errors={errors}
-                        name="username"
-                        message="Veuillez saisir un nom d'utilisateur"
-                      />
+                      <ErrorMessage errors={errors} name="username" />
                     </FormErrorMessage>
                   </FormControl>
                 )}
@@ -189,7 +190,7 @@ export const Nav = (props) => {
                       name="email"
                       placeholder="votre-adresse-email@gmail.com"
                       ref={register({
-                        required: true,
+                        required: "Veuillez saisir un email",
                         pattern: {
                           value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                           message: "Adresse email invalide"
@@ -197,11 +198,7 @@ export const Nav = (props) => {
                       })}
                     />
                     <FormErrorMessage>
-                      <ErrorMessage
-                        errors={errors}
-                        name="email"
-                        message="Veuillez saisir un email"
-                      />
+                      <ErrorMessage errors={errors} name="email" />
                     </FormErrorMessage>
                   </FormControl>
                 )}
@@ -224,9 +221,14 @@ export const Nav = (props) => {
                   >
                     <Input
                       name="password"
-                      ref={register({ required: true })}
+                      ref={register({
+                        required: "Veuillez saisir un mot de passe"
+                      })}
                       type="password"
                     />
+                    <FormErrorMessage>
+                      <ErrorMessage errors={errors} name="password" />
+                    </FormErrorMessage>
                   </FormControl>
                 )}
 

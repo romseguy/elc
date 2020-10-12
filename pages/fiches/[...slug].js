@@ -97,7 +97,7 @@ export default observer(function ProfilePage(props) {
   const selectedProfile = profileType.selectedProfile;
 
   if (!profileType.store.isLoading && profileType.store.isEmpty)
-    return <Layout>Aucune fiche n'a été ajoutée à l'application</Layout>;
+    return <Layout>Aucune fiche élève n'a été ajoutée à l'application</Layout>;
   if (selectedProfile === null)
     return (
       <Layout>Nous n'avons pas pu trouver de fiche associée à cet élève</Layout>
@@ -131,6 +131,7 @@ export default observer(function ProfilePage(props) {
     router.push("/parents/[...slug]", `/parents/${parent.slug}`);
   };
 
+  const disableSortBySkill = selectedProfile.skills.length <= 1;
   const removeSkillAction = (skill) => {
     selectedProfile.removeSkill(skill);
     profileType.store.updateProfile(selectedProfile);
@@ -139,6 +140,7 @@ export default observer(function ProfilePage(props) {
     setCurrentSkillRef(skillRef);
   };
 
+  const disableSortByWorkshop = selectedProfile.workshops.length <= 1;
   const removeWorkshopAction = (workshop) => {
     selectedProfile.removeWorkshop(workshop);
     profileType.store.updateProfile(selectedProfile);
@@ -288,6 +290,7 @@ export default observer(function ProfilePage(props) {
                     code: skill.code,
                     description: skill.description,
                     domain: skill.domain,
+                    level: skill.level,
                     workshop: workshop && workshop.name,
                     editButton: (
                       <IconButton
@@ -308,19 +311,33 @@ export default observer(function ProfilePage(props) {
                   {
                     Header: "Date",
                     accessor: "date",
-                    sortType: "basic"
+                    sortType: "basic",
+                    disableSortBy: disableSortBySkill
                   },
-                  { Header: "Code", accessor: "code" },
-                  { Header: "Description", accessor: "description" },
+                  {
+                    Header: "Code",
+                    accessor: "code",
+                    disableSortBy: disableSortBySkill
+                  },
+                  {
+                    Header: "Description",
+                    accessor: "description",
+                    disableSortBy: disableSortBySkill
+                  },
                   {
                     Header: "Matière",
                     accessor: "domain",
-                    sortType: "basic"
+                    disableSortBy: disableSortBySkill
+                  },
+                  {
+                    Header: "Niveau",
+                    accessor: "level",
+                    disableSortBy: disableSortBySkill
                   },
                   {
                     Header: "Atelier",
                     accessor: "workshop",
-                    sortType: "basic"
+                    disableSortBy: disableSortBySkill
                   },
                   {
                     Header: "",
@@ -450,16 +467,22 @@ export default observer(function ProfilePage(props) {
                   };
                 })}
                 columns={[
-                  { Header: "Nom", accessor: "name" },
+                  {
+                    Header: "Nom",
+                    accessor: "name",
+                    disableSortBy: disableSortByWorkshop
+                  },
                   {
                     Header: "Date de début",
                     accessor: "started",
-                    sortType: "basic"
+                    sortType: "basic",
+                    disableSortBy: disableSortByWorkshop
                   },
                   {
                     Header: "Date de fin",
                     accessor: "completed",
-                    sortType: "basic"
+                    sortType: "basic",
+                    disableSortBy: disableSortByWorkshop
                   },
                   {
                     Header: "Compétences",

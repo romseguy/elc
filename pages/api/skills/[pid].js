@@ -1,7 +1,7 @@
 import nextConnect from "next-connect";
 import middleware from "middlewares/database";
-import { getSession } from "next-auth/client";
 import { createServerError } from "middlewares/errors";
+import { getSession } from "utils/useAuth";
 
 const handler = nextConnect();
 
@@ -20,7 +20,7 @@ handler.get(async function getSkill(req, res) {
       );
   } else {
     const {
-      query: { pid },
+      query: { pid }
     } = req;
 
     try {
@@ -54,7 +54,7 @@ handler.put(async function editSkill(req, res) {
       );
   } else {
     const {
-      query: { pid },
+      query: { pid }
     } = req;
 
     try {
@@ -91,7 +91,7 @@ handler.delete(async (req, res) => {
       );
   } else {
     const {
-      query: { pid },
+      query: { pid }
     } = req;
 
     try {

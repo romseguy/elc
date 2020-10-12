@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { isStateTreeNode } from "mobx-state-tree";
 import { Controller, useForm } from "react-hook-form";
 // import { DevTool } from "@hookform/devtools";
@@ -11,13 +11,12 @@ import {
   FormControl,
   FormLabel,
   Box,
-  Text,
   Stack,
-  Spinner
+  Spinner,
+  FormErrorMessage
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
 import { useStore } from "tree";
-import { values } from "mobx";
 import { observer } from "mobx-react-lite";
 import { handleError } from "utils/form";
 import { ErrorMessageText } from "./error-message-text";
@@ -49,35 +48,35 @@ export const ParentForm = observer((props) => {
 
   const onSubmit = async (formData) => {
     setIsLoading(true);
-
-    if (props.parent) {
-      props.parent.fromUi(formData);
-      const { error } = await props.parent.update();
-      setIsLoading(false);
-
-      if (error) handleError(error, setError);
-      router.push("/parents/[...slug]", `/parents/${props.parent.slug}`);
-    } else {
-      const parent = { ...formData };
-
-      if (formData.profiles) {
-        parent.children = formData.profiles.map((profile) => profile._id);
-      }
-
-      const { data, error } = await parentType.store.postParent(parent);
-      setIsLoading(false);
-
-      if (data) props.onSubmit ? props.onSubmit() : router.push("/parents");
-      else handleError(error, setError);
-    }
+    const request = (parent) =>
+      parent
+        ? parentType.store.updateParent(props.parent.edit(formData))
+        : parentType.store.postParent(formData);
+    const redirect = (parent) =>
+      parent
+        ? router.push("/parents/[...slug]", `/parents/${props.parent.slug}`)
+        : router.push("/parents");
+    const { data, error } = await request(props.parent);
+    setIsLoading(false);
+    if (error) handleError(error, setError);
+    else if (props.onSubmit) props.onSubmit();
+    else redirect(props.parent);
   };
 
+  const mapProfile = (profile) => ({
+    _id: profile._id,
+    firstname: profile.firstname,
+    lastname: profile.lastname
+  });
+  const defaultValue = props.parent
+    ? props.parent.children.map(mapProfile)
+    : props.profiles
+    ? props.profiles.map(mapProfile)
+    : [];
   const options = [];
-
-  for (const v of profileType.store.profiles.values()) {
-    const { _id, firstname, lastname } = v;
-    options.push({ _id, firstname, lastname });
-  }
+  profileType.store.profiles.forEach((profile) => {
+    options.push(mapProfile(profile));
+  });
 
   return (
     <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
@@ -92,14 +91,12 @@ export const ParentForm = observer((props) => {
         <Input
           name="firstname"
           placeholder="Prénom"
-          ref={register({ required: true })}
-          defaultValue={(props.parent && props.parent.firstname) || ""}
+          ref={register({ required: "Veuillez saisir un prénom" })}
+          defaultValue={props.parent && props.parent.firstname}
         />
-        <ErrorMessage
-          errors={errors}
-          name="firstname"
-          message="Veuillez saisir un prénom"
-        />
+        <FormErrorMessage>
+          <ErrorMessage errors={errors} name="firstname" />
+        </FormErrorMessage>
       </FormControl>
 
       <FormControl
@@ -113,14 +110,12 @@ export const ParentForm = observer((props) => {
         <Input
           name="lastname"
           placeholder="Nom"
-          ref={register({ required: true })}
-          defaultValue={(props.parent && props.parent.lastname) || ""}
+          ref={register({ required: "Veuillez saisir un nom de famille" })}
+          defaultValue={props.parent && props.parent.lastname}
         />
-        <ErrorMessage
-          errors={errors}
-          name="lastname"
-          message="Veuillez saisir un nom de famille"
-        />
+        <FormErrorMessage>
+          <ErrorMessage errors={errors} name="lastname" />
+        </FormErrorMessage>
       </FormControl>
 
       <FormControl
@@ -135,22 +130,20 @@ export const ParentForm = observer((props) => {
           name="email"
           placeholder="adresse-email-du-parent@email.com"
           ref={register({
-            required: true,
+            required: "Veuillez saisir une adresse email",
             pattern: {
               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
               message: "Adresse email invalide"
             }
           })}
-          defaultValue={(props.parent && props.parent.email) || ""}
+          defaultValue={props.parent && props.parent.email}
         />
-        <ErrorMessage
-          errors={errors}
-          name="email"
-          message="Veuillez saisir un email"
-        />
+        <FormErrorMessage>
+          <ErrorMessage errors={errors} name="email" />
+        </FormErrorMessage>
       </FormControl>
 
-      <FormControl m={5} mt={0} id="profiles" isInvalid={!!errors["profiles"]}>
+      <FormControl m={5} mt={0} id="children" isInvalid={!!errors["children"]}>
         <FormLabel>Enfants</FormLabel>
         {profileType.store.isLoading ? (
           <Spinner />
@@ -159,15 +152,9 @@ export const ParentForm = observer((props) => {
             className="react-select-container"
             classNamePrefix="react-select"
             as={ReactSelect}
-            name="profiles"
+            name="children"
             control={control}
-            defaultValue={
-              props.parent
-                ? props.parent.children
-                : props.profiles
-                ? props.profiles
-                : []
-            }
+            defaultValue={defaultValue}
             placeholder="Sélectionner un ou plusieurs enfants"
             menuPlacement="top"
             isClearable
@@ -182,6 +169,9 @@ export const ParentForm = observer((props) => {
             onChange={([option]) => option._id}
           />
         )}
+        <FormErrorMessage>
+          <ErrorMessage errors={errors} name="children" />
+        </FormErrorMessage>
       </FormControl>
 
       <ErrorMessage

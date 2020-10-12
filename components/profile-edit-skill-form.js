@@ -104,7 +104,7 @@ export const ProfileEditSkillForm = ({
                 <Controller
                   name="date"
                   control={control}
-                  defaultValue={currentSkillRef.date || null}
+                  defaultValue={currentSkillRef.date}
                   render={(props) => (
                     <DatePicker
                       minDate={subYears(new Date(), 1)}

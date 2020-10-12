@@ -53,13 +53,17 @@ export const ProfileAddWorkshopForm = (props) => {
 
   return (
     <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
-      <FormControl id="workshop" isRequired mb={5}>
+      <FormControl
+        id="workshop"
+        isRequired
+        isInvalid={!!errors.workshop}
+        mb={5}
+      >
         <FormLabel>Atelier</FormLabel>
         <Select
           name="workshop"
           placeholder="Sélectionner un atelier"
-          ref={register({ required: true })}
-          defaultValue={null}
+          ref={register({ required: "Veuillez sélectionner un atelier" })}
         >
           {values(props.workshops).map((workshop) => {
             return (
@@ -70,11 +74,7 @@ export const ProfileAddWorkshopForm = (props) => {
           })}
         </Select>
         <FormErrorMessage>
-          <ErrorMessage
-            errors={errors}
-            name="workshop"
-            message="Veuillez sélectionner un atelier"
-          />
+          <ErrorMessage errors={errors} name="workshop" />
         </FormErrorMessage>
       </FormControl>
 

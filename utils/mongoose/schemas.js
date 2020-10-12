@@ -3,19 +3,20 @@ import mongoose from "mongoose";
 export const ParentSchema = new mongoose.Schema({
   firstname: {
     type: String,
-    required: true
+    required: "Veuillez saisir un prénom"
   },
   lastname: {
     type: String,
-    required: true
+    required: "Veuillez saisir un nom"
   },
   email: {
     type: String,
-    required: true,
+    required: "Veuillez saisir un email",
     unique: true
   },
   children: {
-    type: [String]
+    type: [String],
+    default: []
   }
 });
 
@@ -103,7 +104,8 @@ export const WorkshopSchema = new mongoose.Schema({
     minlength: [3, "Le nom de l'atelier est trop court"]
   },
   skills: {
-    type: [String]
+    type: [String],
+    default: []
   }
   // state: {
   //   type: String,

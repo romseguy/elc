@@ -87,15 +87,11 @@ export const WorkshopForm = (props) => {
         <Input
           name="name"
           placeholder="Compter jusqu'à 10"
-          ref={register({ required: true })}
-          defaultValue={(props.workshop && props.workshop.name) || ""}
+          ref={register({ required: "Veuillez saisir un nom" })}
+          defaultValue={props.workshop && props.workshop.name}
         />
         <FormErrorMessage>
-          <ErrorMessage
-            errors={errors}
-            name="name"
-            message="Veuillez saisir un nom"
-          />
+          <ErrorMessage errors={errors} name="name" />
         </FormErrorMessage>
       </FormControl>
 
@@ -114,7 +110,7 @@ export const WorkshopForm = (props) => {
                 as={ReactSelect}
                 name="skills"
                 control={control}
-                defaultValue={props.workshop ? props.workshop.skills : []}
+                defaultValue={(props.workshop && props.workshop.skills) || []}
                 placeholder="Sélectionner une ou plusieurs compétences"
                 menuPlacement="top"
                 isClearable

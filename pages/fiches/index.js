@@ -92,7 +92,10 @@ export default observer(function ProfileListPage(props) {
                 >
                   <td>{profile.firstname}</td>
                   <td>{profile.lastname}</td>
-                  <td>{format(profile.birthdate, "dd/MM/yyyy")}</td>
+                  <td>
+                    {profile.birthdate &&
+                      format(profile.birthdate, "dd/MM/yyyy")}
+                  </td>
                 </tr>
               );
             })}
