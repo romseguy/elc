@@ -41,7 +41,7 @@ handler.get(async function getProfile(req, res) {
   //}
 });
 
-handler.put(async function editProfile(req, res) {
+handler.put(async function updateProfile(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
@@ -64,7 +64,9 @@ handler.put(async function editProfile(req, res) {
       );
 
       if (nModified === 1) {
-        res.status(200).json({});
+        res
+          .status(200)
+          .json({ data: await req.models.Profile.findOne({ _id: pid }) });
       } else {
         res
           .status(400)

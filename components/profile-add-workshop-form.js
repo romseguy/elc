@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
 import { DatePicker } from "components";
+import { handleError } from "utils/form";
 import { ErrorMessageText } from "./error-message-text";
 
 export const ProfileAddWorkshopForm = (props) => {
@@ -46,6 +47,7 @@ export const ProfileAddWorkshopForm = (props) => {
     const { data, error } = await profileType.store.updateProfile(
       props.profile
     );
+    props.profile.edit(data);
     setIsLoading(false);
     if (error) handleError(error, setError);
     else props.onSubmit();

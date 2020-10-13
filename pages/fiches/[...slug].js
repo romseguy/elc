@@ -141,8 +141,8 @@ export default observer(function ProfilePage(props) {
   };
 
   const disableSortByWorkshop = selectedProfile.workshops.length <= 1;
-  const removeWorkshopAction = (workshop) => {
-    selectedProfile.removeWorkshop(workshop);
+  const removeWorkshopRefAction = (_id) => {
+    selectedProfile.removeWorkshopRef(_id);
     profileType.store.updateProfile(selectedProfile);
   };
   const editWorkshopAction = (workshopRef) => {
@@ -441,7 +441,8 @@ export default observer(function ProfilePage(props) {
                   ]
                 }}
                 data={values(selectedProfile.workshops).map((workshopRef) => {
-                  const { workshop, started, completed } = workshopRef;
+                  const { _id, workshop, started, completed } = workshopRef;
+
                   return {
                     name: workshop.name,
                     started: isDate(started) && format(started, "dd/MM/yyyy"),
@@ -461,7 +462,7 @@ export default observer(function ProfilePage(props) {
                       <IconButton
                         icon={<DeleteIcon />}
                         colorScheme="red"
-                        onClick={() => removeWorkshopAction(workshop)}
+                        onClick={() => removeWorkshopRefAction(_id)}
                       />
                     )
                   };

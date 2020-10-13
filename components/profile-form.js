@@ -50,7 +50,9 @@ export const ProfileForm = (props) => {
 
   const onSubmit = async (form) => {
     const request = async (profile) =>
-      profile ? profile.edit(form) : profileType.store.postProfile(form);
+      profile
+        ? profile.edit(form).update()
+        : profileType.store.postProfile(form);
     const redirect = (profile) =>
       profile
         ? router.push("/fiches/[...slug]", `/fiches/${props.profile.slug}`)

@@ -1,5 +1,5 @@
 import api from "utils/api";
-import { parseISO, toDate } from "date-fns";
+import { isDate, parseISO, toDate } from "date-fns";
 import {
   types as t,
   flow,
@@ -38,6 +38,7 @@ const SkillRef = t
 
 const WorkshopRef = t
   .model("WorkshopRef", {
+    _id: t.maybe(t.string),
     workshop: t.reference(t.late(() => WorkshopModel)),
     started: t.maybeNull(t.Date),
     completed: t.maybeNull(t.Date)
@@ -75,10 +76,13 @@ export const ProfileModel = t
     }
   }))
   .actions((profile) => ({
-    edit({ firstname, lastname, birthdate }) {
+    edit({ firstname, lastname, birthdate, workshops }) {
       profile.firstname = firstname;
       profile.lastname = lastname;
-      profile.birthdate = birthdate;
+      profile.birthdate = isDate(birthdate) ? birthdate : parseISO(birthdate);
+      profile.workshops = workshops;
+    },
+    update() {
       return getParent(profile, 2).updateProfile(profile);
     },
     remove: function remove() {
@@ -105,10 +109,10 @@ export const ProfileModel = t
     addWorkshop: function addWorkshop({ workshopId }) {
       profile.workshops.push(WorkshopRef.create({ workshop: workshopId }));
     },
-    removeWorkshop: function removeWorkshop(workshop) {
-      profile.workshops = profile.workshops.filter(
-        (ref) => ref.workshop !== workshop
-      );
+    removeWorkshopRef: function removeWorkshopRef(_id) {
+      profile.workshops = profile.workshops.filter((ref) => {
+        return ref._id !== _id;
+      });
     }
   }));
 
