@@ -54,7 +54,7 @@ export default observer((props) => {
     <Layout>
       <PageTitle>
         Liste des compétences et des observables
-        <Link href="/competences/add">
+        <Link href="/competences/ajouter">
           <Button variant="outline" ml={5}>
             Ajouter
           </Button>

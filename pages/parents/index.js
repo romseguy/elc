@@ -49,7 +49,7 @@ export default observer((props) => {
     <Layout>
       <PageTitle>
         Liste des parents
-        <Link href="/parents/add">
+        <Link href="/parents/ajouter">
           <Button variant="outline" ml={5}>
             Ajouter
           </Button>

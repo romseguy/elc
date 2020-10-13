@@ -55,7 +55,7 @@ export default observer(function ProfileListPage(props) {
     <Layout>
       <PageTitle>
         Liste des fiches élèves
-        <Link href="/fiches/add">
+        <Link href="/fiches/ajouter">
           <Button variant="outline" ml={5}>
             Ajouter
           </Button>

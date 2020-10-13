@@ -21,13 +21,12 @@ const connection = mongoose.createConnection(process.env.DATABASE_URL, {
   useUnifiedTopology: true
 });
 const client = connection.client;
-const db = client.db();
 
 middleware.use(async (req, res, next) => {
-  if (!client.isConnected() || !db) await client.connect();
+  if (!client.isConnected()) await client.connect();
 
   req.dbClient = client;
-  req.db = db;
+  req.db = client.db();
   req.models = {
     Parent: connection.model("Parent", ParentSchema),
     Profile: connection.model("Profile", ProfileSchema),

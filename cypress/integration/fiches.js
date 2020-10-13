@@ -1,12 +1,12 @@
 describe("CRUD", () => {
   beforeEach(() => {});
 
-  // it("check fiches/add button", () => {
+  // it("check fiches/ajouter button", () => {
   //   cy.visit("http://localhost:3004/fiches");
 
   //   cy.get("h2 > a")
   //     .should("have.attr", "href")
-  //     .and("match", /\/fiches\/add/);
+  //     .and("match", /\/fiches\/ajouter/);
   //   cy.get("h2 > a > button").click();
   // });
 
@@ -32,7 +32,7 @@ describe("CRUD", () => {
     //   cy.findByText("Aucune fiche parent n'a été ajoutée à l'application");
     // });
     it("add profile", () => {
-      cy.visit("http://localhost:3004/fiches/add");
+      cy.visit("http://localhost:3004/fiches/ajouter");
       cy.get("input#firstname").type("1");
       cy.get("input#lastname").type("2");
       cy.get("input#birthdate").click();
@@ -44,21 +44,21 @@ describe("CRUD", () => {
       cy.findByRole("button", { name: "Ajouter" }).click();
     });
     it("add skill", () => {
-      cy.visit("http://localhost:3004/competences/add");
+      cy.visit("http://localhost:3004/competences/ajouter");
       cy.get("input#code").type("L01");
       cy.get("input#description").type("J");
       cy.get("select#level").select("CP");
       cy.findByRole("button", { name: "Ajouter" }).click();
     });
     it("add workshop", () => {
-      cy.visit("http://localhost:3004/ateliers/add");
+      cy.visit("http://localhost:3004/ateliers/ajouter");
       cy.get("input#name").type("ABC");
       cy.get(".react-select-container").click();
       cy.get(".react-select__option").contains("L01").click();
       cy.findByRole("button", { name: "Ajouter" }).click();
     });
     it("add parent", () => {
-      cy.visit("http://localhost:3004/parents/add");
+      cy.visit("http://localhost:3004/parents/ajouter");
       cy.get("input#firstname").type("p1");
       cy.get("input#lastname").type("p2");
       cy.get("input#email").type("p@e.com");
@@ -170,7 +170,7 @@ describe("CRUD", () => {
   //   });
 
   //   it("update workshop with new skill and completes it", () => {
-  //     cy.visit("http://localhost:3004/competences/add");
+  //     cy.visit("http://localhost:3004/competences/ajouter");
   //     cy.get("input#code").type("L02");
   //     cy.get("input#description").type("J");
   //     cy.get("select#level").select("CP");

@@ -56,7 +56,7 @@ export default observer((props) => {
     <Layout>
       <PageTitle>
         Liste des ateliers
-        <Link href="/ateliers/add">
+        <Link href="/ateliers/ajouter">
           <Button variant="outline" ml={5}>
             Ajouter
           </Button>
