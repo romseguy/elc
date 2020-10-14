@@ -3,7 +3,8 @@ import {
   flow,
   getParent,
   destroy,
-  getSnapshot
+  getSnapshot,
+  getRoot
 } from "mobx-state-tree";
 import api from "utils/api";
 import { SkillModel } from "tree";
@@ -60,6 +61,8 @@ const WorkshopStore = t
   .actions((store) => ({
     // API
     getWorkshops: flow(function* getWorkshops() {
+      yield getRoot(store).skillType.store.getSkills();
+
       store.state = "pending";
       const { error, data } = yield api.get("workshops");
 
@@ -123,8 +126,7 @@ export const WorkshopType = t
     )
   })
   .actions((self) => ({
-    selectWorkshop: flow(function* selectWorkshop(slug) {
-      if (self.store.state === "pending") yield self.store.getWorkshops();
+    selectWorkshop(slug) {
       self.store.workshops.forEach((workshop) => {
         if (slug === workshop.slug) {
           self.selectedWorkshop = workshop;
@@ -133,5 +135,5 @@ export const WorkshopType = t
       if (self.selectedWorkshop === undefined) {
         self.selectedWorkshop = null;
       }
-    })
+    }
   }));

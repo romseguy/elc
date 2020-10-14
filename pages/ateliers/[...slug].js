@@ -15,18 +15,16 @@ import {
   Table,
   WorkshopForm
 } from "components";
-import { format } from "date-fns";
 
 export default observer((props) => {
   const [session = props.session] = useSession();
   const router = useRouter();
-  const { skillType, workshopType } = useStore();
+  const { workshopType } = useStore();
   useEffect(() => {
     const selectWorkshop = async () => {
-      await skillType.store.getSkills();
-      await workshopType.selectWorkshop(workshopSlug);
+      await workshopType.store.getWorkshops();
+      workshopType.selectWorkshop(workshopSlug);
     };
-
     selectWorkshop();
   }, []);
 
@@ -113,7 +111,7 @@ export default observer((props) => {
           return {
             code: skill.code,
             description: skill.description,
-            domain: skill.domain,
+            domain: skill.domain && skill.domain.name,
             level: skill.level
           };
         })}

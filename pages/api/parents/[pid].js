@@ -75,7 +75,7 @@ handler.put(async function editParent(req, res) {
   }
 });
 
-handler.delete(async (req, res) => {
+handler.delete(async function removeParent(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
@@ -106,10 +106,11 @@ handler.delete(async (req, res) => {
         }
       }
 
+      const parent = await req.models.Parent.findOne({ _id: pid });
       const { deletedCount } = await req.models.Parent.deleteOne({ _id: pid });
 
       if (deletedCount === 1) {
-        res.status(200);
+        res.status(200).json({ data: parent });
       } else {
         res
           .status(400)

@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { values } from "mobx";
+import { Observer } from "mobx-react-lite";
 import { isStateTreeNode } from "mobx-state-tree";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // import { DevTool } from "@hookform/devtools";
 import { ErrorMessage } from "@hookform/error-message";
@@ -17,11 +19,15 @@ import {
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
 import { useStore } from "tree";
-import { observer } from "mobx-react-lite";
 import { handleError } from "utils/form";
 import { ErrorMessageText } from "./error-message-text";
 
-export const ParentForm = observer((props) => {
+export const ParentForm = (props) => {
+  if (props.parent && !isStateTreeNode(props.parent)) {
+    console.error("props.parent must be a model instance");
+    return null;
+  }
+
   const router = useRouter();
   const { profileType, parentType } = useStore();
   const [isLoading, setIsLoading] = useState();
@@ -36,11 +42,6 @@ export const ParentForm = observer((props) => {
   } = useForm({
     mode: "onChange"
   });
-
-  if (props.parent && !isStateTreeNode(props.parent)) {
-    console.error("props.parent must be a model instance");
-    return null;
-  }
 
   const onChange = () => {
     clearErrors("formErrorMessage");
@@ -67,15 +68,6 @@ export const ParentForm = observer((props) => {
     _id: profile._id,
     firstname: profile.firstname,
     lastname: profile.lastname
-  });
-  const defaultValue = props.parent
-    ? props.parent.children.map(mapProfile)
-    : props.profiles
-    ? props.profiles.map(mapProfile)
-    : [];
-  const options = [];
-  profileType.store.profiles.forEach((profile) => {
-    options.push(mapProfile(profile));
   });
 
   return (
@@ -143,36 +135,51 @@ export const ParentForm = observer((props) => {
         </FormErrorMessage>
       </FormControl>
 
-      <FormControl m={5} mt={0} id="children" isInvalid={!!errors["children"]}>
-        <FormLabel>Enfants</FormLabel>
-        {profileType.store.isLoading ? (
-          <Spinner />
-        ) : (
-          <Controller
-            className="react-select-container"
-            classNamePrefix="react-select"
-            as={ReactSelect}
-            name="children"
-            control={control}
-            defaultValue={defaultValue}
-            placeholder="Sélectionner un ou plusieurs enfants"
-            menuPlacement="top"
-            isClearable
-            isMulti
-            isSearchable
-            closeMenuOnSelect
-            options={options}
-            getOptionLabel={(option) =>
-              `${option.firstname} ${option.lastname}`
-            }
-            getOptionValue={(option) => option._id}
-            onChange={([option]) => option._id}
-          />
+      <Observer>
+        {() => (
+          <FormControl
+            m={5}
+            mt={0}
+            id="children"
+            isInvalid={!!errors["children"]}
+          >
+            <FormLabel>Enfants</FormLabel>
+            {profileType.store.isLoading ? (
+              <Spinner />
+            ) : (
+              <Controller
+                className="react-select-container"
+                classNamePrefix="react-select"
+                as={ReactSelect}
+                name="children"
+                control={control}
+                defaultValue={
+                  props.parent
+                    ? props.parent.children.map(mapProfile)
+                    : //: props.profiles
+                      //? props.profiles.map(mapProfile)
+                      []
+                }
+                placeholder="Sélectionner un ou plusieurs enfants"
+                menuPlacement="top"
+                isClearable
+                isMulti
+                isSearchable
+                closeMenuOnSelect
+                options={values(profileType.store.profiles).map(mapProfile)}
+                getOptionLabel={(option) =>
+                  `${option.firstname} ${option.lastname}`
+                }
+                getOptionValue={(option) => option._id}
+                onChange={([option]) => option._id}
+              />
+            )}
+            <FormErrorMessage>
+              <ErrorMessage errors={errors} name="children" />
+            </FormErrorMessage>
+          </FormControl>
         )}
-        <FormErrorMessage>
-          <ErrorMessage errors={errors} name="children" />
-        </FormErrorMessage>
-      </FormControl>
+      </Observer>
 
       <ErrorMessage
         errors={errors}
@@ -196,4 +203,4 @@ export const ParentForm = observer((props) => {
       </Button>
     </form>
   );
-});
+};

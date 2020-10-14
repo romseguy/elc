@@ -5,7 +5,8 @@ import {
   flow,
   getParent,
   destroy,
-  getSnapshot
+  getSnapshot,
+  getRoot
 } from "mobx-state-tree";
 import { ParentModel, SkillModel, WorkshopModel } from "tree";
 import { array2map } from "utils/array2map";
@@ -76,11 +77,11 @@ export const ProfileModel = t
     }
   }))
   .actions((profile) => ({
-    edit({ firstname, lastname, birthdate, workshops }) {
+    edit({ firstname, lastname, birthdate }) {
       profile.firstname = firstname;
       profile.lastname = lastname;
       profile.birthdate = isDate(birthdate) ? birthdate : parseISO(birthdate);
-      profile.workshops = workshops;
+      return profile;
     },
     update() {
       return getParent(profile, 2).updateProfile(profile);
@@ -132,6 +133,8 @@ const ProfileStore = t
   .actions((store) => ({
     // CRUD API CALLS
     getProfiles: flow(function* getProfiles() {
+      yield getRoot(store).workshopType.store.getWorkshops();
+
       store.state = "pending";
       const { error, data } = yield api.get("profiles");
 
@@ -195,8 +198,7 @@ export const ProfileType = t
     )
   })
   .actions((self) => ({
-    selectProfile: flow(function* selectProfile(slug) {
-      if (self.store.state === "pending") yield self.store.getProfiles();
+    selectProfile(slug) {
       self.store.profiles.forEach((profile) => {
         if (slug === profile.slug) {
           self.selectedProfile = profile;
@@ -205,5 +207,5 @@ export const ProfileType = t
       if (self.selectedProfile === undefined) {
         self.selectedProfile = null;
       }
-    })
+    }
   }));

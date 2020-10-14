@@ -6,6 +6,7 @@
 import nextConnect from "next-connect";
 import mongoose from "mongoose";
 import {
+  DomainSchema,
   ParentSchema,
   ProfileSchema,
   SkillSchema,
@@ -28,6 +29,7 @@ middleware.use(async (req, res, next) => {
   req.dbClient = client;
   req.db = client.db();
   req.models = {
+    Domain: connection.model("Domain", DomainSchema),
     Parent: connection.model("Parent", ParentSchema),
     Profile: connection.model("Profile", ProfileSchema),
     Skill: connection.model("Skill", SkillSchema),

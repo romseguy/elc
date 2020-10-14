@@ -28,17 +28,6 @@ const ChildrenList = styled.ul`
 
 export default observer((props) => {
   const [session = props.session] = useSession();
-  const router = useRouter();
-  const parentSlug = router.query.slug[0];
-  const { parentType, profileType } = useStore();
-  useEffect(() => {
-    const selectParent = async () => {
-      await profileType.store.getProfiles();
-      await parentType.selectParent(parentSlug);
-    };
-
-    selectParent();
-  }, []);
 
   if (!session)
     return (
@@ -47,12 +36,23 @@ export default observer((props) => {
       </Layout>
     );
 
+  const router = useRouter();
+  const parentSlug = router.query.slug[0];
   const action = router.query.slug[1];
 
   if (!isServer() && action && action !== "edit") {
     router.push("/parents/[...slug]", `/parents/${parentSlug}`);
     return null;
   }
+
+  const { parentType } = useStore();
+  useEffect(() => {
+    const selectParent = async () => {
+      await parentType.store.getParents();
+      parentType.selectParent(parentSlug);
+    };
+    selectParent();
+  }, []);
 
   const selectedParent = parentType.selectedParent;
 

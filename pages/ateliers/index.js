@@ -14,21 +14,14 @@ import {
   Spinner,
   Tag
 } from "@chakra-ui/core";
-import {
-  AccessDenied,
-  Layout,
-  Link,
-  PageTitle,
-  StyledTable as Table
-} from "components";
+import { AccessDenied, Layout, Link, PageTitle, StyledTable } from "components";
 
 export default observer((props) => {
   const [session = props.session] = useSession();
   const router = useRouter();
-  const { skillType, workshopType } = useStore();
+  const { workshopType } = useStore();
   useEffect(() => {
     const fetchWorkshops = async () => {
-      await skillType.store.getSkills();
       await workshopType.store.getWorkshops();
     };
     fetchWorkshops();
@@ -74,7 +67,7 @@ export default observer((props) => {
         </Alert>
       )}
       {!workshopType.store.isEmpty && (
-        <Table>
+        <StyledTable>
           <thead>
             <tr>
               <th>Nom</th>
@@ -93,14 +86,16 @@ export default observer((props) => {
                   <td>{workshop.name}</td>
                   <td>
                     {workshop.skills.map((skill) => (
-                      <Tag>{skill.code}</Tag>
+                      <Tag key={skill._id} mr={2}>
+                        {skill.code}
+                      </Tag>
                     ))}
                   </td>
                 </tr>
               );
             })}
           </tbody>
-        </Table>
+        </StyledTable>
       )}
     </Layout>
   );

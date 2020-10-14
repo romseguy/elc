@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 //import { DevTool } from "@hookform/devtools";
 import { ErrorMessage } from "@hookform/error-message";
@@ -25,22 +25,14 @@ import { handleError } from "utils/form";
 import { ErrorMessageText } from "./error-message-text";
 
 export const WorkshopForm = (props) => {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState();
-  const { skillType, workshopType } = useStore();
-
   if (props.workshop && !isStateTreeNode(props.workshop)) {
     console.error("props.workshop must be a model instance");
     return null;
   }
 
-  useEffect(() => {
-    const fetch = async () => {
-      await skillType.store.getSkills();
-    };
-
-    fetch();
-  }, []);
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState();
+  const { skillType, workshopType } = useStore();
 
   const {
     control,

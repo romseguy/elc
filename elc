@@ -1,5 +1,7 @@
 - lorsque l'on change la date à laquelle l'atelier a été complété
 il faut changer la date d'acquisition des compétences correspondantes
+- coté  api lorsqu'un skill est ajouté avec une matière inconnue à la collection "domain" on la rajoute
+coté appli après initialisation du skillType on récupère la collection domain et on l'ajoute à l'observable array "domains"
 
 matières
 

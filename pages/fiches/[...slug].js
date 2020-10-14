@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { values } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useStore } from "tree";
-import { levels } from "tree/skill/skillType";
+import { levels } from "tree/skill/utils";
 import tw, { styled } from "twin.macro";
 import { format, isDate } from "date-fns";
 import { isServer } from "utils/isServer";
@@ -13,6 +13,8 @@ import {
   Button,
   Divider,
   IconButton,
+  List,
+  ListItem,
   Spinner,
   Tag,
   useColorModeValue,
@@ -25,7 +27,6 @@ import {
   EditIcon
 } from "@chakra-ui/icons";
 import {
-  AccessDenied,
   ProfileEditWorkshopForm,
   Layout,
   PageSubTitle,
@@ -35,13 +36,20 @@ import {
   ProfileEditSkillForm,
   ProfileForm,
   StyledTable,
-  Table,
-  ParentForm
+  Table
 } from "components";
 
 export default observer(function ProfilePage(props) {
   const [session = props.session] = useSession();
   const router = useRouter();
+  const profileSlug = router.query.slug[0];
+  const action = router.query.slug[1];
+
+  if (!isServer() && action && action !== "edit") {
+    router.push("/fiches/[...slug]", `/fiches/${profileSlug}`);
+    return null;
+  }
+
   const { parentType, profileType, skillType, workshopType } = useStore();
   const [showParentForm, setShowParentForm] = useState(false);
   const [showSkillForm, setShowSkillForm] = useState(false);
@@ -75,22 +83,11 @@ export default observer(function ProfilePage(props) {
   const toggleShowLevels = () => setShowLevels(!showLevels);
   const toggleShowWorkshops = () => setShowWorkshops(!showWorkshops);
 
-  const profileSlug = router.query.slug[0];
-  const action = router.query.slug[1];
-
-  if (!isServer() && action && action !== "edit") {
-    router.push("/fiches/[...slug]", `/fiches/${profileSlug}`);
-    return null;
-  }
-
   useEffect(() => {
     const selectProfile = async () => {
-      await skillType.store.getSkills();
-      await workshopType.store.getWorkshops();
       await parentType.store.getParents();
-      await profileType.selectProfile(profileSlug);
+      profileType.selectProfile(profileSlug);
     };
-
     selectProfile();
   }, []);
 
@@ -174,6 +171,12 @@ export default observer(function ProfilePage(props) {
           Supprimer
         </Button>
       </PageTitle>
+
+      <List mb={5}>
+        <ListItem>
+          Date de naissance : {format(selectedProfile.birthdate, "dd/MM/yyyy")}
+        </ListItem>
+      </List>
 
       <VStack align="stretch" spacing={5}>
         <Box {...boxProps}>
@@ -289,7 +292,7 @@ export default observer(function ProfilePage(props) {
                     date: format(date, "dd/MM/yyyy"),
                     code: skill.code,
                     description: skill.description,
-                    domain: skill.domain,
+                    domain: skill.domain && skill.domain.name,
                     level: skill.level,
                     workshop: workshop && workshop.name,
                     editButton: (
@@ -449,7 +452,9 @@ export default observer(function ProfilePage(props) {
                     completed:
                       isDate(completed) && format(completed, "dd/MM/yyyy"),
                     skills: workshop.skills.map((skill) => (
-                      <Tag key={skill._id}>{skill.code}</Tag>
+                      <Tag key={skill._id} mr={2}>
+                        {skill.code}
+                      </Tag>
                     )),
                     editButton: (
                       <IconButton

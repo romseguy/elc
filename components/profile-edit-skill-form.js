@@ -59,7 +59,7 @@ export const ProfileEditSkillForm = ({
 
     const { data, error } = {};
 
-    if (error) handleError(error);
+    if (error) handleError(error, setError);
     else props.onSubmit();
   };
 

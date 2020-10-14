@@ -1,5 +1,12 @@
 import mongoose from "mongoose";
 
+export const DomainSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: "Veuillez saisir un libellé"
+  }
+});
+
 export const ParentSchema = new mongoose.Schema({
   firstname: {
     type: String,

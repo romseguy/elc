@@ -5,6 +5,7 @@ import { ErrorMessage } from "@hookform/error-message";
 import { useRouter } from "next/router";
 import { isStateTreeNode } from "mobx-state-tree";
 import { useStore } from "tree";
+import { ui2api } from "tree/skill/utils";
 import { format, subYears } from "date-fns";
 import {
   Input,
@@ -23,14 +24,14 @@ import { handleError } from "utils/form";
 import { ErrorMessageText } from "./error-message-text";
 
 export const ProfileForm = (props) => {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState();
-  const { profileType } = useStore();
-
   if (props.profile && !isStateTreeNode(props.profile)) {
     console.error("props.profile must be a model instance");
     return null;
   }
+
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState();
+  const { profileType } = useStore();
 
   const {
     control,
@@ -49,10 +50,11 @@ export const ProfileForm = (props) => {
   };
 
   const onSubmit = async (form) => {
+    const apiData = ui2api(form);
     const request = async (profile) =>
       profile
-        ? profile.edit(form).update()
-        : profileType.store.postProfile(form);
+        ? profile.edit(apiData).update()
+        : profileType.store.postProfile(apiData);
     const redirect = (profile) =>
       profile
         ? router.push("/fiches/[...slug]", `/fiches/${props.profile.slug}`)
@@ -61,6 +63,7 @@ export const ProfileForm = (props) => {
     setIsLoading(true);
     const { data, error } = await request(props.profile);
     setIsLoading(false);
+
     if (error) handleError(error, setError);
     else redirect(props.profile);
   };

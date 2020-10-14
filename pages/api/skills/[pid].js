@@ -41,7 +41,7 @@ handler.get(async function getSkill(req, res) {
   }
 });
 
-handler.put(async function editSkill(req, res) {
+handler.put(async function updateSkill(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
@@ -78,7 +78,7 @@ handler.put(async function editSkill(req, res) {
   }
 });
 
-handler.delete(async (req, res) => {
+handler.delete(async function removeSkill(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
@@ -95,10 +95,11 @@ handler.delete(async (req, res) => {
     } = req;
 
     try {
+      const skill = await req.models.Skill.findOne({ _id: pid });
       const { deletedCount } = await req.models.Skill.deleteOne({ _id: pid });
 
       if (deletedCount === 1) {
-        res.status(200);
+        res.status(200).json({ data: skill });
       } else {
         res
           .status(400)

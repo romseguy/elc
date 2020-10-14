@@ -78,7 +78,7 @@ handler.put(async function updateWorkshop(req, res) {
   }
 });
 
-handler.delete(async (req, res) => {
+handler.delete(async function removeWorkshop(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
@@ -95,12 +95,13 @@ handler.delete(async (req, res) => {
     } = req;
 
     try {
+      const workshop = await req.models.Workshop.findOne({ _id: pid });
       const { deletedCount } = await req.models.Workshop.deleteOne({
         _id: pid
       });
 
       if (deletedCount === 1) {
-        res.status(200);
+        res.status(200).json({ data: workshop });
       } else {
         res
           .status(400)

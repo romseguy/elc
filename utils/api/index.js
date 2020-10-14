@@ -29,14 +29,13 @@ async function request(endpoint, params, method = "GET") {
     if (response.status === 200) {
       const { data } = await response.json();
       // if (!process.env.NEXT_PUBLIC_IS_TEST)
-      console.log(`/${endpoint}`, data);
-
+      console.log(`${method} /${endpoint}`, data);
       return { data };
-    } else {
-      const error = await response.json();
-      console.log(`API ERROR /${endpoint}`, error);
-      return { error };
     }
+
+    const error = await response.json();
+    console.log(`API ERROR /${endpoint}`, error);
+    return { error };
   } catch (error) {
     return createHttpRequestError({ error });
   }

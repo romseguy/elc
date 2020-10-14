@@ -53,7 +53,7 @@ export default observer((props) => {
   return (
     <Layout>
       <PageTitle>
-        Liste des compétences et des observables
+        Liste des compétences de l'Éducation Nationale
         <Link href="/competences/ajouter">
           <Button variant="outline" ml={5}>
             Ajouter
@@ -92,7 +92,7 @@ export default observer((props) => {
                 >
                   <td>{skill.code}</td>
                   <td>{skill.description}</td>
-                  <td>{skill.domain}</td>
+                  <td>{skill.domain && skill.domain.name}</td>
                   <td>{skill.level}</td>
                 </tr>
               );

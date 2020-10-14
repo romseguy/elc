@@ -4,27 +4,99 @@ import {
   flow,
   getParent,
   destroy,
-  getSnapshot
+  getSnapshot,
+  getRoot
 } from "mobx-state-tree";
 import api from "utils/api";
 import { array2map } from "utils/array2map";
+import { levels, mapDomains, mapSkills } from "./utils";
 
-export const levels = ["CP", "CE1", "CE2", "CM1", "CM2"];
-export const domains = ["Français"];
-export const uiToApi = ({ code, description, domain, level }) => ({
-  code,
-  description,
-  domain: domain === "" ? null : domain,
-  level: level === "" ? null : level
+const DomainModel = t.model("DomainModel", {
+  _id: t.identifier,
+  name: t.string
 });
-const mapSkills = ({ ...rest }) => ({ ...rest });
+
+const DomainStore = t
+  .model("DomainStore", {
+    domains: t.map(DomainModel),
+    state: t.optional(t.enumeration(["pending", "done", "error"]), "pending")
+  })
+  .views((store) => ({
+    get isEmpty() {
+      return store.domains.size === 0;
+    },
+    get isLoading() {
+      return store.state === "pending";
+    }
+  }))
+  .actions((store) => ({
+    // CRUD API CALLS
+    getDomains: flow(function* getDomains() {
+      store.state = "pending";
+      const { error, data } = yield api.get("domains");
+
+      if (error || !Array.isArray(data)) {
+        store.state = "error";
+        return { error };
+      }
+
+      store.domains = array2map(data.map(mapDomains), "_id");
+      store.state = "done";
+    }),
+    postDomain: flow(function* postDomain(snapshot) {
+      store.state = "pending";
+      const { error, data } = yield api.post("domains", snapshot);
+
+      if (error) {
+        store.state = "error";
+        return { error };
+      }
+
+      const domain = mapDomains(data);
+      store.domains.put(domain);
+      store.state = "done";
+      return { data: domain };
+    }),
+    updateDomain: flow(function* updateDomain(domain) {
+      store.state = "pending";
+      const { error, data } = yield api.update(
+        `domains/${domain._id}`,
+        getSnapshot(domain)
+      );
+
+      if (error) {
+        store.state = "error";
+        return { error };
+      }
+
+      store.state = "done";
+      return { data };
+    }),
+    removeDomain: flow(function* removeDomain(domain) {
+      // destroy(domain);
+      store.state = "pending";
+      const { error, data } = yield api.remove(`domains/${domain._id}`);
+
+      if (error) {
+        store.state = "error";
+        return { error };
+      }
+
+      store.state = "done";
+      return { data };
+    })
+  }));
+
+const DomainType = t.model("DomainType", {
+  store: t.optional(DomainStore, {})
+});
 
 export const SkillModel = t
   .model("SkillModel", {
     _id: t.identifier,
     code: t.string,
     description: t.string,
-    domain: t.maybeNull(t.enumeration(domains)),
+    domain: t.maybeNull(t.reference(DomainModel)),
     level: t.maybeNull(t.enumeration(levels))
   })
   .views((skill) => ({
@@ -38,6 +110,9 @@ export const SkillModel = t
       skill.description = description;
       skill.domain = domain;
       skill.level = level;
+      return skill;
+    },
+    update() {
       return getParent(skill, 2).updateSkill(skill);
     },
     remove: function remove() {
@@ -68,6 +143,8 @@ const SkillStore = t
     },
     // CRUD API CALLS
     getSkills: flow(function* getSkills() {
+      yield getParent(store).domainType.store.getDomains();
+
       store.state = "pending";
       const { error, data } = yield api.get("skills");
 
@@ -123,5 +200,6 @@ const SkillStore = t
   }));
 
 export const SkillType = t.model("SkillType", {
-  store: t.optional(SkillStore, {})
+  store: t.optional(SkillStore, {}),
+  domainType: t.optional(DomainType, {})
 });

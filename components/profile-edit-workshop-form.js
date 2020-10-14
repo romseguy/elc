@@ -74,7 +74,7 @@ export const ProfileEditWorkshopForm = ({
     );
     setIsLoading(false);
 
-    if (error) handleError(error);
+    if (error) handleError(error, setError);
     else props.onSubmit();
   };
   const started = watch("started", currentWorkshopRef.started);

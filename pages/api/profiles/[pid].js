@@ -80,7 +80,7 @@ handler.put(async function updateProfile(req, res) {
   }
 });
 
-handler.delete(async (req, res) => {
+handler.delete(async function removeProfile(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
@@ -97,10 +97,11 @@ handler.delete(async (req, res) => {
     } = req;
 
     try {
+      const profile = await req.models.Profile.findOne({ _id: pid });
       const { deletedCount } = await req.models.Profile.deleteOne({ _id: pid });
 
       if (deletedCount === 1) {
-        res.status(200);
+        res.status(200).json({ data: profile });
       } else {
         res
           .status(400)

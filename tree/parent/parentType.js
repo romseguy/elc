@@ -3,7 +3,8 @@ import {
   flow,
   getParent,
   destroy,
-  getSnapshot
+  getSnapshot,
+  getRoot
 } from "mobx-state-tree";
 import { ProfileModel } from "tree";
 import api from "utils/api";
@@ -74,6 +75,8 @@ const ParentStore = t
     },
     // API
     getParents: flow(function* getParents() {
+      yield getRoot(store).profileType.store.getProfiles();
+
       store.state = "pending";
       const { error, data } = yield api.get("parents");
 
@@ -136,8 +139,7 @@ export const ParentType = t
     )
   })
   .actions((self) => ({
-    selectParent: flow(function* selectParent(slug) {
-      if (self.store.state === "pending") yield self.store.getParents();
+    selectParent(slug) {
       self.store.parents.forEach((parent) => {
         if (slug === parent.slug) {
           self.selectedParent = parent;
@@ -146,5 +148,5 @@ export const ParentType = t
       if (self.selectedParent === undefined) {
         self.selectedParent = null;
       }
-    })
+    }
   }));

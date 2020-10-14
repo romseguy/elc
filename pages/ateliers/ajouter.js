@@ -10,7 +10,7 @@ import { useStore } from "tree";
 
 export default function Page(props) {
   const [session = props.session] = useSession();
-  const { skillType } = useStore();
+  const { workshopType } = useStore();
 
   if (!session) {
     return (
@@ -21,10 +21,10 @@ export default function Page(props) {
   }
 
   useEffect(() => {
-    const fetchSkills = async () => {
-      await skillType.store.getSkills();
+    const fetchWorkshops = async () => {
+      await workshopType.store.getWorkshops();
     };
-    fetchSkills();
+    fetchWorkshops();
   }, []);
 
   return (
