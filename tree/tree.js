@@ -4,7 +4,13 @@ import { applySnapshot, onSnapshot, types as t } from "mobx-state-tree";
 import makeInspectable from "mobx-devtools-mst";
 import { isServer } from "utils/isServer";
 import { Counter } from "./counter";
-import { SkillType, ProfileType, ParentType, WorkshopType } from "./";
+import {
+  ObservationType,
+  ParentType,
+  ProfileType,
+  SkillType,
+  WorkshopType
+} from "./";
 
 useStaticRendering(isServer());
 let clientStore;
@@ -12,6 +18,7 @@ let clientStore;
 export const Tree = t
   .model({
     counter: t.optional(Counter, {}),
+    observationType: t.optional(ObservationType, {}),
     parentType: t.optional(ParentType, {}),
     profileType: t.optional(ProfileType, {}),
     skillType: t.optional(SkillType, {}),

@@ -8,11 +8,21 @@ import {
   getSnapshot,
   getRoot
 } from "mobx-state-tree";
-import { ParentModel, SkillModel, WorkshopModel } from "tree";
+import { ParentModel, ObservationModel, SkillModel, WorkshopModel } from "tree";
 import { array2map } from "utils/array2map";
 
-const mapProfiles = ({ birthdate, skills, workshops, ...rest }) => ({
+const mapProfiles = ({
+  birthdate,
+  observations,
+  skills,
+  workshops,
+  ...rest
+}) => ({
   birthdate: birthdate && new Date(birthdate),
+  observations: observations.map(({ date, ...rest }) => ({
+    date: new Date(date),
+    ...rest
+  })),
   skills: skills.map(({ date, ...rest }) => ({
     date: new Date(date),
     ...rest
@@ -24,6 +34,17 @@ const mapProfiles = ({ birthdate, skills, workshops, ...rest }) => ({
   })),
   ...rest
 });
+
+const ObservationRef = t
+  .model("ObservationRef", {
+    observation: t.reference(t.late(() => ObservationModel)),
+    date: t.Date
+  })
+  .actions((observationRef) => ({
+    fromUi(data) {
+      observationRef.date = data.date;
+    }
+  }));
 
 const SkillRef = t
   .model("SkillRef", {
@@ -57,6 +78,7 @@ export const ProfileModel = t
     firstname: t.string,
     lastname: t.string,
     birthdate: t.maybeNull(t.Date),
+    observations: t.array(ObservationRef),
     skills: t.array(SkillRef),
     workshops: t.array(WorkshopRef),
     parents: t.optional(
@@ -89,6 +111,23 @@ export const ProfileModel = t
     remove: function remove() {
       getParent(profile, 2).removeProfile(profile);
     },
+    addObservation: function addObservation({ observation, date }) {
+      const add = () =>
+        profile.observations.push(ObservationRef.create({ observation, date }));
+
+      if (!profile.observations.length) add();
+      else {
+        let found = false;
+        let i = 0;
+
+        while (!found && i < profile.observations.length)
+          profile.observations.get(i).observation._id === observation._id
+            ? (found = true)
+            : i++;
+
+        if (!found) add();
+      }
+    },
     addSkill: function addSkill({ skill, workshop, date }) {
       const add = () =>
         profile.skills.push(SkillRef.create({ skill, workshop, date }));
@@ -98,7 +137,7 @@ export const ProfileModel = t
         let found = false;
         let i = 0;
 
-        while (!found && i <= profile.skills.length - 1)
+        while (!found && i < profile.skills.length)
           profile.skills.get(i).skill._id === skill._id ? (found = true) : i++;
 
         if (!found) add();

@@ -1,9 +1,5 @@
 import { databaseErrorCodes } from "middlewares/errors";
 
-function createHttpRequestError(error) {
-  return error;
-}
-
 async function request(endpoint, params, method = "GET") {
   try {
     const options = {
@@ -37,7 +33,13 @@ async function request(endpoint, params, method = "GET") {
     console.log(`API ERROR /${endpoint}`, error);
     return { error };
   } catch (error) {
-    return createHttpRequestError({ error });
+    console.error(`API ERROR /${endpoint}`, error);
+    return {
+      error: {
+        message:
+          "Une erreur inconnue est survenue, merci de contacter le développeur"
+      }
+    };
   }
 }
 

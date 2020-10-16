@@ -5,13 +5,7 @@
 // });
 import nextConnect from "next-connect";
 import mongoose from "mongoose";
-import {
-  DomainSchema,
-  ParentSchema,
-  ProfileSchema,
-  SkillSchema,
-  WorkshopSchema
-} from "utils/mongoose/schemas";
+import * as Schemas from "utils/mongoose/schemas";
 
 const middleware = nextConnect();
 const connection = mongoose.createConnection(process.env.DATABASE_URL, {
@@ -28,13 +22,11 @@ middleware.use(async (req, res, next) => {
 
   req.dbClient = client;
   req.db = client.db();
-  req.models = {
-    Domain: connection.model("Domain", DomainSchema),
-    Parent: connection.model("Parent", ParentSchema),
-    Profile: connection.model("Profile", ProfileSchema),
-    Skill: connection.model("Skill", SkillSchema),
-    Workshop: connection.model("Workshop", WorkshopSchema)
-  };
+  const models = {};
+  Object.keys(Schemas).forEach(
+    (key) => (models[key] = connection.model(key, Schemas[key]))
+  );
+  req.models = models;
 
   return next();
 });

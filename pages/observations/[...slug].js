@@ -7,30 +7,30 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "tree";
 import { isServer } from "utils/isServer";
 import { Button, Spinner } from "@chakra-ui/core";
-import { AccessDenied, Layout, PageTitle, SkillForm } from "components";
+import { AccessDenied, Layout, PageTitle, ObservationForm } from "components";
 
 export default observer((props) => {
   const [session = props.session] = useSession();
   const router = useRouter();
-  const skillSlug = router.query.slug[0];
+  const observationSlug = router.query.slug[0];
   const action = router.query.slug[1];
-  const { skillType } = useStore();
-  const [selectedSkill, setSkill] = useState();
+  const { observationType } = useStore();
+  const [selectedObservation, setObservation] = useState();
   useEffect(() => {
-    const fetchSkills = async () => {
-      await skillType.store.getSkills();
+    const fetchObservations = async () => {
+      await observationType.store.getObservations();
 
       let found = false;
-      values(skillType.store.skills).forEach((skill) => {
-        if (skill.code === skillSlug) {
+      values(observationType.store.observations).forEach((observation) => {
+        if (observation._id === observationSlug) {
           found = true;
-          setSkill(skill);
+          setObservation(observation);
         }
       });
-      if (!found) setSkill(null);
+      if (!found) setObservation(null);
     };
 
-    fetchSkills();
+    fetchObservations();
   }, []);
 
   if (!session)
@@ -41,21 +41,21 @@ export default observer((props) => {
     );
 
   if (!isServer() && action && action !== "edit") {
-    router.push("/competences/[...slug]", `/competences/${skillSlug}`);
+    router.push("/observations/[...slug]", `/observations/${observationSlug}`);
     return null;
   }
 
-  if (skillType.store.isLoading)
+  if (observationType.store.isLoading)
     return (
       <Layout>
         <Spinner />
       </Layout>
     );
-  if (skillType.store.isEmpty)
-    return <Layout>Aucune compétence n'a été ajoutée à l'application</Layout>;
-  if (selectedSkill === null)
-    return <Layout>Nous n'avons pas pu trouver cette compétence</Layout>;
-  if (!selectedSkill)
+  if (observationType.store.isEmpty)
+    return <Layout>Aucune observation n'a été ajoutée à l'application</Layout>;
+  if (selectedObservation === null)
+    return <Layout>Nous n'avons pas pu trouver cette observation</Layout>;
+  if (!selectedObservation)
     return (
       <Layout>
         <Spinner />
@@ -65,27 +65,27 @@ export default observer((props) => {
   if (action === "edit") {
     return (
       <Layout>
-        <PageTitle>{`Modification de la compétence ${selectedSkill.code}`}</PageTitle>
-        <SkillForm skill={selectedSkill} />
+        <PageTitle>{`Modification de l'observation`}</PageTitle>
+        <ObservationForm observation={selectedObservation} />
       </Layout>
     );
   }
 
   const editAction = () => {
     router.push(
-      "/competences/[...slug]",
-      `/competences/${selectedSkill.slug}/edit`
+      "/observations/[...slug]",
+      `/observations/${selectedObservation.slug}/edit`
     );
   };
   const removeAction = async () => {
-    const removedSkill = await selectedSkill.remove();
-    router.push("/competences");
+    const removedObservation = await selectedObservation.remove();
+    router.push("/observations");
   };
 
   return (
     <Layout>
       <PageTitle>
-        {`Compétence ${selectedSkill.code}`}
+        {`Observation ${selectedObservation.code}`}
         <Button variant="outline" mx={5} onClick={editAction}>
           Modifier
         </Button>

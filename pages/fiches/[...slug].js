@@ -36,7 +36,8 @@ import {
   ProfileEditSkillForm,
   ProfileForm,
   StyledTable,
-  Table
+  Table,
+  ProfileAddObservationForm
 } from "components";
 
 export default observer(function ProfilePage(props) {
@@ -50,42 +51,61 @@ export default observer(function ProfilePage(props) {
     return null;
   }
 
-  const { parentType, profileType, skillType, workshopType } = useStore();
-  const [showParentForm, setShowParentForm] = useState(false);
-  const [showSkillForm, setShowSkillForm] = useState(false);
-  const [showWorkshopForm, setShowWorkshopForm] = useState(false);
+  const {
+    parentType,
+    profileType,
+    skillType,
+    workshopType,
+    observationType
+  } = useStore();
   const [showParents, setShowParents] = useState(false);
+  const [showParentForm, setShowParentForm] = useState(false);
+
   const [showSkills, setShowSkills] = useState(false);
-  const [showLevels, setShowLevels] = useState(false);
-  const [showWorkshops, setShowWorkshops] = useState(false);
+  const [showSkillForm, setShowSkillForm] = useState(false);
   const [currentSkillRef, setCurrentSkillRef] = useState();
+
+  const [showLevels, setShowLevels] = useState(false);
+
+  const [showWorkshops, setShowWorkshops] = useState(false);
+  const [showWorkshopForm, setShowWorkshopForm] = useState(false);
   const [currentWorkshopRef, setCurrentWorkshopRef] = useState();
+
+  const [showObservations, setShowObservations] = useState(false);
+  const [showObservationForm, setShowObservationForm] = useState(false);
+
+  const toggleShowParents = () => setShowParents(!showParents);
+  const toggleParentForm = (e) => {
+    e && e.stopPropagation();
+    setShowParentForm(!showParentForm);
+  };
+  const toggleShowSkills = () => setShowSkills(!showSkills);
+  const toggleAddSkillForm = (e) => {
+    e && e.stopPropagation();
+    setShowSkillForm(!showSkillForm);
+  };
+  const toggleShowLevels = () => setShowLevels(!showLevels);
+  const toggleShowWorkshops = () => setShowWorkshops(!showWorkshops);
+  const toggleAddWorkshopForm = (e) => {
+    e && e.stopPropagation();
+    setShowWorkshopForm(!showWorkshopForm);
+  };
+  const toggleShowObservations = () => setShowObservations(!showObservations);
+  const toggleAddObservationForm = (e) => {
+    e && e.stopPropagation();
+    setShowObservationForm(!showObservationForm);
+  };
+
   const boxProps = {
     bg: useColorModeValue("orange.200", "gray.800"),
     rounded: "lg",
     px: 5
   };
 
-  const toggleParentForm = (e) => {
-    e && e.stopPropagation();
-    setShowParentForm(!showParentForm);
-  };
-  const toggleAddSkillForm = (e) => {
-    e && e.stopPropagation();
-    setShowSkillForm(!showSkillForm);
-  };
-  const toggleAddWorkshopForm = (e) => {
-    e && e.stopPropagation();
-    setShowWorkshopForm(!showWorkshopForm);
-  };
-  const toggleShowParents = () => setShowParents(!showParents);
-  const toggleShowSkills = () => setShowSkills(!showSkills);
-  const toggleShowLevels = () => setShowLevels(!showLevels);
-  const toggleShowWorkshops = () => setShowWorkshops(!showWorkshops);
-
   useEffect(() => {
     const selectProfile = async () => {
       await parentType.store.getParents();
+      await observationType.store.getObservations();
       profileType.selectProfile(profileSlug);
     };
     selectProfile();
@@ -494,6 +514,106 @@ export default observer(function ProfilePage(props) {
                     Header: "Compétences",
                     accessor: "skills",
                     disableSortBy: true
+                  },
+                  {
+                    Header: "",
+                    accessor: "editButton",
+                    disableSortBy: true
+                  },
+                  {
+                    Header: "",
+                    accessor: "deleteButton",
+                    disableSortBy: true
+                  }
+                ]}
+              />
+            </>
+          )}
+        </Box>
+
+        <Box {...boxProps}>
+          <PageSubTitle
+            button={
+              <Button
+                variant="outline"
+                mx={5}
+                onClick={toggleAddObservationForm}
+              >
+                Associer une observation
+                {showObservationForm ? (
+                  <ArrowUpIcon ml={2} />
+                ) : (
+                  <ArrowDownIcon ml={2} />
+                )}
+              </Button>
+            }
+            togglable={selectedProfile.observations.length > 0}
+            toggled={showObservations}
+            onToggle={toggleShowObservations}
+            onClick={toggleShowObservations}
+          >
+            Observations
+          </PageSubTitle>
+
+          {showObservationForm && (
+            <ProfileAddObservationForm
+              profile={selectedProfile}
+              observations={observationType.store.observations}
+              onSubmit={() => {
+                setShowObservationForm(false);
+                setShowObservations(true);
+              }}
+            />
+          )}
+
+          {showObservations && selectedProfile.observations.length > 0 && (
+            <>
+              <Divider mb={5} />
+              <Table
+                css={{
+                  display: !showObservations
+                    ? "none"
+                    : selectedProfile.observations.length > 0
+                    ? "block"
+                    : "none"
+                }}
+                initialState={{
+                  sortBy: [
+                    {
+                      id: "date",
+                      desc: true
+                    }
+                  ]
+                }}
+                data={values(selectedProfile.observations).map(
+                  (observationRef) => {
+                    const { _id, observation, date } = observationRef;
+
+                    return {
+                      description: observation.description,
+                      date: isDate(date) && format(date, "dd/MM/yyyy"),
+                      editButton: (
+                        <IconButton
+                          id="editObservation"
+                          icon={<EditIcon />}
+                          //onClick={() => editObservationAction(observationRef)}
+                        />
+                      ),
+                      deleteButton: (
+                        <IconButton
+                          icon={<DeleteIcon />}
+                          colorScheme="red"
+                          //onClick={() => removeObservationRefAction(_id)}
+                        />
+                      )
+                    };
+                  }
+                )}
+                columns={[
+                  {
+                    Header: "Description",
+                    accessor: "description"
+                    //disableSortBy: disableSortByObservation
                   },
                   {
                     Header: "",

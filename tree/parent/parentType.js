@@ -8,6 +8,8 @@ import {
 } from "mobx-state-tree";
 import { ProfileModel } from "tree";
 import api from "utils/api";
+import { array2map } from "utils/array2map";
+import { mapParents } from "./utils";
 
 export const ParentModel = t
   .model("ParentModel", {
@@ -56,41 +58,24 @@ const ParentStore = t
     }
   }))
   .actions((store) => ({
-    setParents: async function setParents(data) {
-      return new Promise((resolve, reject) => {
-        if (!Array.isArray(data)) return reject();
-
-        const parents = {};
-        data.forEach(({ _id, firstname, lastname, email, children }) => {
-          parents[_id] = {
-            _id,
-            firstname,
-            lastname,
-            email,
-            children
-          };
-        });
-        resolve(parents);
-      });
-    },
-    // API
+    // CRUD API CALLS
     getParents: flow(function* getParents() {
       yield getRoot(store).profileType.store.getProfiles();
 
       store.state = "pending";
       const { error, data } = yield api.get("parents");
 
-      if (error) {
+      if (error || !Array.isArray(data)) {
         store.state = "error";
         return { error };
       }
 
-      store.parents = yield store.setParents(data);
+      store.parents = array2map(data.map(mapParents), "_id");
       store.state = "done";
     }),
-    postParent: flow(function* postParent(formData) {
+    postParent: flow(function* postParent(snapshot) {
       store.state = "pending";
-      const { error, data } = yield api.post("parents", formData);
+      const { error, data } = yield api.post("parents", snapshot);
 
       if (error) {
         store.state = "error";
@@ -98,7 +83,7 @@ const ParentStore = t
       }
 
       store.state = "done";
-      return { data: ParentModel.create(data) };
+      return { data: ParentModel.create(mapParents(data)) };
     }),
     updateParent: flow(function* updateParent(parent) {
       store.state = "pending";

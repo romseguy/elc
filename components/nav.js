@@ -110,6 +110,7 @@ export const Nav = (props) => {
             <Link href="/fiches">Élèves</Link>
             <Link href="/competences">Compétences</Link>
             <Link href="/ateliers">Ateliers</Link>
+            <Link href="/observations">Observations</Link>
             <Link href="/parents">Parents</Link>
           </>
         ) : (

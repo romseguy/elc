@@ -1,32 +1,12 @@
 import mongoose from "mongoose";
 
-export const DomainSchema = new mongoose.Schema({
-  name: {
+const ObservationRefSchema = new mongoose.Schema({
+  observation: {
     type: String,
-    required: "Veuillez saisir un libellé"
-  }
+    required: true
+  },
+  date: Date
 });
-
-export const ParentSchema = new mongoose.Schema({
-  firstname: {
-    type: String,
-    required: "Veuillez saisir un prénom"
-  },
-  lastname: {
-    type: String,
-    required: "Veuillez saisir un nom"
-  },
-  email: {
-    type: String,
-    required: "Veuillez saisir un email",
-    unique: true
-  },
-  children: {
-    type: [String],
-    default: []
-  }
-});
-
 const SkillRefSchema = new mongoose.Schema({
   skill: {
     type: String,
@@ -51,7 +31,41 @@ const WorkshopRefSchema = new mongoose.Schema({
   }
 });
 
-export const ProfileSchema = new mongoose.Schema({
+export const Domain = new mongoose.Schema({
+  name: {
+    type: String,
+    required: "Veuillez saisir un libellé"
+  }
+});
+
+export const Observation = new mongoose.Schema({
+  description: {
+    type: String,
+    required: "Veuillez saisir une description de ce qui a été observé"
+  }
+});
+
+export const Parent = new mongoose.Schema({
+  firstname: {
+    type: String,
+    required: "Veuillez saisir un prénom"
+  },
+  lastname: {
+    type: String,
+    required: "Veuillez saisir un nom"
+  },
+  email: {
+    type: String,
+    required: "Veuillez saisir un email",
+    unique: true
+  },
+  children: {
+    type: [String],
+    default: []
+  }
+});
+
+export const Profile = new mongoose.Schema({
   firstname: {
     type: String,
     required: true
@@ -64,6 +78,9 @@ export const ProfileSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
+  observations: {
+    type: [ObservationRefSchema]
+  },
   skills: {
     type: [SkillRefSchema]
   },
@@ -75,7 +92,7 @@ export const ProfileSchema = new mongoose.Schema({
   }
 });
 
-ProfileSchema.index(
+Profile.index(
   {
     firstname: 1,
     lastname: 1
@@ -83,7 +100,7 @@ ProfileSchema.index(
   { unique: true, background: true }
 );
 
-export const SkillSchema = new mongoose.Schema({
+export const Skill = new mongoose.Schema({
   code: {
     type: String,
     required: true,
@@ -103,7 +120,7 @@ export const SkillSchema = new mongoose.Schema({
   }
 });
 
-export const WorkshopSchema = new mongoose.Schema({
+export const Workshop = new mongoose.Schema({
   name: {
     type: String,
     unique: true,
