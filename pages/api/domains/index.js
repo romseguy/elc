@@ -47,7 +47,7 @@ handler.post(async function postDomain(req, res) {
       if (error.code && error.code === databaseErrorCodes.DUPLICATE_KEY) {
         res
           .status(400)
-          .json({ message: "Une matière avec ce libellé existe déjà" });
+          .json({ newDomain: "Une matière avec ce libellé existe déjà" });
       } else {
         res.status(400).json(createServerError(error));
       }

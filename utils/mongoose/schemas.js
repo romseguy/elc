@@ -34,7 +34,8 @@ const WorkshopRefSchema = new mongoose.Schema({
 export const Domain = new mongoose.Schema({
   name: {
     type: String,
-    required: "Veuillez saisir un libellé"
+    required: "Veuillez saisir un libellé",
+    unique: true
   }
 });
 

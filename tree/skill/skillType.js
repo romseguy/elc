@@ -30,6 +30,10 @@ const DomainStore = t
     }
   }))
   .actions((store) => ({
+    getById(id) {
+      for (const domain of values(store.domains))
+        if (domain._id === id) return domain;
+    },
     // CRUD API CALLS
     getDomains: flow(function* getDomains() {
       store.state = "pending";
@@ -72,16 +76,16 @@ const DomainStore = t
       store.state = "done";
       return { data };
     }),
-    removeDomain: flow(function* removeDomain(domain) {
-      // destroy(domain);
+    removeDomain: flow(function* removeDomain(snapshot) {
       store.state = "pending";
-      const { error, data } = yield api.remove(`domains/${domain._id}`);
+      const { error, data } = yield api.remove(`domains/${snapshot._id}`);
 
       if (error) {
         store.state = "error";
         return { error };
       }
 
+      destroy(store.getById(snapshot._id));
       store.state = "done";
       return { data };
     })
@@ -96,7 +100,7 @@ export const SkillModel = t
     _id: t.identifier,
     code: t.string,
     description: t.string,
-    domain: t.maybeNull(t.reference(DomainModel)),
+    domain: t.maybeNull(t.safeReference(DomainModel)),
     level: t.maybeNull(t.enumeration(levels))
   })
   .views((skill) => ({

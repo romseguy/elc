@@ -86,7 +86,7 @@ handler.delete(async function removeParent(req, res) {
     } = req;
 
     try {
-      // remove reference to the parent from her/his children' profiles
+      // remove references to this parent from her/his children' profiles
       const profiles = await req.models.Profile.find({});
 
       for (const profile of profiles) {

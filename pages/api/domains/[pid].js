@@ -24,6 +24,18 @@ handler.delete(async function removeDomain(req, res) {
     } = req;
 
     try {
+      // remove references to this domain from skills
+      const skills = await req.models.Skill.find({});
+      for (const skill of skills) {
+        if (skill.domain === pid) {
+          await req.models.Skill.updateOne(
+            { _id: skill._id },
+            {
+              domain: null
+            }
+          );
+        }
+      }
       const domain = await req.models.Domain.findOne({ _id: pid });
       const { deletedCount } = await req.models.Domain.deleteOne({ _id: pid });
 

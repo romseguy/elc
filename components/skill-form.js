@@ -20,7 +20,8 @@ import {
   FormErrorMessage,
   IconButton,
   InputGroup,
-  InputRightAddon
+  InputRightAddon,
+  Spinner
 } from "@chakra-ui/core";
 import { AddIcon, CheckIcon, MinusIcon, WarningIcon } from "@chakra-ui/icons";
 import { handleError } from "utils/form";
@@ -40,7 +41,6 @@ export const SkillForm = (props) => {
   const [showRemoveDomainForm, setShowRemoveDomainForm] = useState();
   const toggleShowRemoveDomainForm = () =>
     setShowRemoveDomainForm(!showRemoveDomainForm);
-  const [newDomain, setNewDomain] = useState();
   const [domainId, setDomainId] = useState();
   const { skillType } = useStore();
   const {
@@ -54,6 +54,9 @@ export const SkillForm = (props) => {
   } = useForm({
     mode: "onChange"
   });
+
+  const newDomainValue = watch("newDomain");
+  const oldDomainValue = watch("oldDomain");
 
   const onChange = () => {
     clearErrors("formErrorMessage");
@@ -135,8 +138,9 @@ export const SkillForm = (props) => {
       </Observer>
 
       {/* Add domain */}
-      <FormControl m={5} mt={0}>
+      <Box ml={5}>
         <Button
+          mb={2}
           variant="outline"
           size="xs"
           onClick={() => {
@@ -149,40 +153,49 @@ export const SkillForm = (props) => {
         </Button>
 
         {showAddDomainForm && (
-          <InputGroup>
-            <Input
-              id="newDomain"
-              size="xs"
-              ml={5}
-              width="50%"
-              placeholder="Français"
-              onChange={(e) => setNewDomain({ name: e.target.value })}
-            />
-            <InputRightAddon
-              children={
-                <IconButton
-                  id="newDomainSubmit"
-                  icon={<CheckIcon />}
-                  size="xs"
-                  onClick={async () => {
-                    const {
-                      data,
-                      error
-                    } = await skillType.domainType.store.postDomain(newDomain);
-                    if (error) handleError(error, setError);
-                    else setShowAddDomainForm(false);
-                  }}
-                />
-              }
-            />
-          </InputGroup>
+          <FormControl id="newDomain" my={2} isInvalid={!!errors.newDomain}>
+            <InputGroup>
+              <Input
+                id="newDomain"
+                name="newDomain"
+                ref={register({
+                  required: "Veuillez saisir un libellé de matière"
+                })}
+                size="xs"
+                width="50%"
+                placeholder="Français"
+              />
+              <InputRightAddon
+                children={
+                  <IconButton
+                    id="newDomainSubmit"
+                    icon={<CheckIcon />}
+                    size="xs"
+                    onClick={async () => {
+                      const {
+                        data,
+                        error
+                      } = await skillType.domainType.store.postDomain({
+                        name: newDomainValue
+                      });
+                      if (error) handleError(error, setError);
+                      else setShowAddDomainForm(false);
+                    }}
+                  />
+                }
+              />
+            </InputGroup>
+            <FormErrorMessage>
+              <ErrorMessage errors={errors} name="newDomain" />
+            </FormErrorMessage>
+          </FormControl>
         )}
-      </FormControl>
+      </Box>
 
       {/* Remove domain */}
       <Observer>
         {() => (
-          <FormControl m={5} mt={0}>
+          <Box ml={5} mb={5}>
             <Button
               variant="outline"
               size="xs"
@@ -194,48 +207,51 @@ export const SkillForm = (props) => {
               Supprimer une matière{" "}
               {showRemoveDomainForm ? <MinusIcon ml={2} /> : <AddIcon ml={2} />}
             </Button>
-
-            {showRemoveDomainForm && (
-              <InputGroup>
-                <Select
-                  size="xs"
-                  ml={5}
-                  width="50%"
-                  placeholder="Sélectionner une matière"
-                  onChange={(e) => setDomainId(e.target.value)}
-                >
-                  {values(skillType.domainType.domains).map((domain) => (
-                    <option key={domain._id} value={domain._id}>
-                      {domain.name}
-                    </option>
-                  ))}
-                </Select>
-                <InputRightAddon
-                  children={
-                    <IconButton
-                      icon={<CheckIcon />}
-                      size="xs"
-                      onClick={async () => {
-                        const {
-                          error,
-                          data
-                        } = await skillType.domainType.store.removeDomain(
-                          domainId
-                        );
-                        if (error) handleError(error, setError);
-                        else {
-                          domains.replace(
-                            domains.filter(({ _id }) => _id !== domainId)
-                          );
-                          setShowRemoveDomainForm(false);
-                        }
-                      }}
-                    />
-                  }
-                />
-              </InputGroup>
+            {showRemoveDomainForm && skillType.domainType.store.isLoading && (
+              <Spinner />
             )}
-          </FormControl>
+            {showRemoveDomainForm && !skillType.domainType.store.isLoading && (
+              <FormControl my={2} id="oldDomain" isInvalid={!!errors.oldDomain}>
+                <InputGroup>
+                  <Select
+                    name="oldDomain"
+                    ref={register()}
+                    size="xs"
+                    width="50%"
+                    placeholder="Sélectionner une matière"
+                  >
+                    {values(skillType.domainType.store.domains).map(
+                      (domain) => (
+                        <option key={domain._id} value={domain._id}>
+                          {domain.name}
+                        </option>
+                      )
+                    )}
+                  </Select>
+                  <InputRightAddon
+                    children={
+                      <IconButton
+                        icon={<CheckIcon />}
+                        size="xs"
+                        onClick={async () => {
+                          const {
+                            error,
+                            data
+                          } = await skillType.domainType.store.removeDomain({
+                            _id: oldDomainValue
+                          });
+                          if (error) handleError(error, setError);
+                          else {
+                            setShowRemoveDomainForm(false);
+                          }
+                        }}
+                      />
+                    }
+                  />
+                </InputGroup>
+              </FormControl>
+            )}
+          </Box>
         )}
       </Observer>
 
