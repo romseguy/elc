@@ -14,6 +14,7 @@ export * from "./parent-form";
 export * from "./profile-add-skill-form";
 export * from "./profile-edit-skill-form";
 export * from "./profile-add-observation-form";
+export * from "./profile-edit-observation-form";
 export * from "./profile-add-workshop-form";
 export * from "./profile-edit-workshop-form";
 export * from "./profile-form";

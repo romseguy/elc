@@ -43,7 +43,7 @@ export const ProfileAddWorkshopForm = (props) => {
 
   const onSubmit = async ({ workshop: workshopId }) => {
     setIsLoading(true);
-    props.profile.addWorkshop({ workshopId });
+    props.profile.addWorkshopRef({ workshopId });
     const { data, error } = await profileType.store.updateProfile(
       props.profile
     );

@@ -18,7 +18,8 @@ import {
   Spinner,
   Tag,
   useColorModeValue,
-  VStack
+  VStack,
+  Progress
 } from "@chakra-ui/core";
 import {
   ArrowDownIcon,
@@ -37,7 +38,8 @@ import {
   ProfileForm,
   StyledTable,
   Table,
-  ProfileAddObservationForm
+  ProfileAddObservationForm,
+  ProfileEditObservationForm
 } from "components";
 
 export default observer(function ProfilePage(props) {
@@ -73,6 +75,7 @@ export default observer(function ProfilePage(props) {
 
   const [showObservations, setShowObservations] = useState(false);
   const [showObservationForm, setShowObservationForm] = useState(false);
+  const [currentObservationRef, setCurrentObservationRef] = useState();
 
   const toggleShowParents = () => setShowParents(!showParents);
   const toggleParentForm = (e) => {
@@ -150,10 +153,10 @@ export default observer(function ProfilePage(props) {
 
   const disableSortBySkill = selectedProfile.skills.length <= 1;
   const removeSkillAction = (skill) => {
-    selectedProfile.removeSkill(skill);
+    selectedProfile.removeSkillRef(skill);
     profileType.store.updateProfile(selectedProfile);
   };
-  const editSkillAction = (skillRef) => {
+  const editSkillRefAction = (skillRef) => {
     setCurrentSkillRef(skillRef);
   };
 
@@ -162,8 +165,17 @@ export default observer(function ProfilePage(props) {
     selectedProfile.removeWorkshopRef(_id);
     profileType.store.updateProfile(selectedProfile);
   };
-  const editWorkshopAction = (workshopRef) => {
+  const editWorkshopRefAction = (workshopRef) => {
     setCurrentWorkshopRef(workshopRef);
+  };
+
+  const disableSortByObservation = selectedProfile.observations.length <= 1;
+  const removeObservationRefAction = (_id) => {
+    selectedProfile.removeObservationRef(_id);
+    profileType.store.updateProfile(selectedProfile);
+  };
+  const editObservationRefAction = (observationRef) => {
+    setCurrentObservationRef(observationRef);
   };
 
   return (
@@ -182,6 +194,13 @@ export default observer(function ProfilePage(props) {
         onSubmit={() => setCurrentWorkshopRef()}
       />
 
+      <ProfileEditObservationForm
+        currentObservationRef={currentObservationRef}
+        selectedProfile={selectedProfile}
+        onModalClose={() => setCurrentObservationRef()}
+        onSubmit={() => setCurrentObservationRef()}
+      />
+
       <PageTitle>
         {`Fiche de l'élève : ${selectedProfile.firstname} ${selectedProfile.lastname}`}
         <Button variant="outline" mx={5} onClick={editAction}>
@@ -193,9 +212,12 @@ export default observer(function ProfilePage(props) {
       </PageTitle>
 
       <List mb={5}>
-        <ListItem>
-          Date de naissance : {format(selectedProfile.birthdate, "dd/MM/yyyy")}
-        </ListItem>
+        {selectedProfile.birthdate && (
+          <ListItem>
+            Date de naissance :{" "}
+            {format(selectedProfile.birthdate, "dd/MM/yyyy")}
+          </ListItem>
+        )}
       </List>
 
       <VStack align="stretch" spacing={5}>
@@ -237,7 +259,7 @@ export default observer(function ProfilePage(props) {
 
           {showParents && selectedProfile.parents.length > 0 && (
             <>
-              <Divider mb={5} />
+              <Divider mb={5} borderColor="white" borderWidth={2} />
 
               <StyledTable>
                 <thead>
@@ -296,7 +318,7 @@ export default observer(function ProfilePage(props) {
 
           {showSkills && selectedProfile.skills.length > 0 && (
             <>
-              <Divider mb={5} />
+              <Divider mb={5} borderColor="white" borderWidth={2} />
               <Table
                 initialState={{
                   sortBy: [
@@ -318,7 +340,7 @@ export default observer(function ProfilePage(props) {
                     editButton: (
                       <IconButton
                         icon={<EditIcon />}
-                        onClick={() => editSkillAction(skillRef)}
+                        onClick={() => editSkillRefAction(skillRef)}
                       />
                     ),
                     deleteButton: (
@@ -388,28 +410,35 @@ export default observer(function ProfilePage(props) {
           </PageSubTitle>
 
           {showLevels && (
-            <StyledTable>
-              <thead>
-                <tr>
-                  <th>Niveau</th>
-                  <th>Progression</th>
-                </tr>
-              </thead>
-              <tbody>
-                {levels.map((level) => {
-                  return (
-                    <tr key={level}>
-                      <td>{level}</td>
-                      <td>
-                        {selectedProfile.getSkillsByLevel(level).length +
-                          "/" +
-                          skillType.store.getSkillsByLevel(level).length}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </StyledTable>
+            <>
+              <Divider mb={5} borderColor="white" borderWidth={2} />
+              <StyledTable>
+                <thead>
+                  <tr>
+                    <th>Niveau</th>
+                    <th>Progression</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {levels.map((level) => {
+                    return (
+                      <tr key={level}>
+                        <td>{level}</td>
+                        <td>
+                          <Progress
+                            value={
+                              selectedProfile.getSkillsByLevel(level).length
+                            }
+                            min={0}
+                            max={skillType.store.skills.size}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </StyledTable>
+            </>
           )}
         </Box>
 
@@ -446,7 +475,7 @@ export default observer(function ProfilePage(props) {
 
           {showWorkshops && selectedProfile.workshops.length > 0 && (
             <>
-              <Divider mb={5} />
+              <Divider mb={5} borderColor="white" borderWidth={2} />
               <Table
                 css={{
                   display: !showWorkshops
@@ -480,7 +509,7 @@ export default observer(function ProfilePage(props) {
                       <IconButton
                         id="editWorkshop"
                         icon={<EditIcon />}
-                        onClick={() => editWorkshopAction(workshopRef)}
+                        onClick={() => editWorkshopRefAction(workshopRef)}
                       />
                     ),
                     deleteButton: (
@@ -568,7 +597,7 @@ export default observer(function ProfilePage(props) {
 
           {showObservations && selectedProfile.observations.length > 0 && (
             <>
-              <Divider mb={5} />
+              <Divider mb={5} borderColor="white" borderWidth={2} />
               <Table
                 css={{
                   display: !showObservations
@@ -596,14 +625,16 @@ export default observer(function ProfilePage(props) {
                         <IconButton
                           id="editObservation"
                           icon={<EditIcon />}
-                          //onClick={() => editObservationAction(observationRef)}
+                          onClick={() =>
+                            editObservationRefAction(observationRef)
+                          }
                         />
                       ),
                       deleteButton: (
                         <IconButton
                           icon={<DeleteIcon />}
                           colorScheme="red"
-                          //onClick={() => removeObservationRefAction(_id)}
+                          onClick={() => removeObservationRefAction(_id)}
                         />
                       )
                     };
@@ -611,9 +642,15 @@ export default observer(function ProfilePage(props) {
                 )}
                 columns={[
                   {
+                    Header: "Date",
+                    accessor: "date",
+                    sortType: "basic",
+                    disableSortBy: disableSortBySkill
+                  },
+                  {
                     Header: "Description",
-                    accessor: "description"
-                    //disableSortBy: disableSortByObservation
+                    accessor: "description",
+                    disableSortBy: disableSortByObservation
                   },
                   {
                     Header: "",

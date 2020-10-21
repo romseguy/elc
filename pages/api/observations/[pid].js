@@ -95,6 +95,25 @@ handler.delete(async function removeObservation(req, res) {
     } = req;
 
     try {
+      // remove references to this observation from profiles
+      const profiles = await req.models.Profile.find({});
+
+      for (const profile of profiles) {
+        if (Array.isArray(profile.observations)) {
+          for (const observationRef of profile.observations) {
+            if (observationRef.observation === pid) {
+              await req.models.Profile.updateOne(
+                { _id: profile._id },
+                {
+                  observations: profile.observations.filter(
+                    (observationRef) => observationRef.observation !== pid
+                  )
+                }
+              );
+            }
+          }
+        }
+      }
       const observation = await req.models.Observation.findOne({ _id: pid });
       const { deletedCount } = await req.models.Observation.deleteOne({
         _id: pid

@@ -43,7 +43,7 @@ export const ProfileAddObservationForm = (props) => {
 
   const onSubmit = async ({ observation, date }) => {
     setIsLoading(true);
-    props.profile.addObservation({
+    props.profile.addObservationRef({
       observation: observationType.store.getById(observation),
       date
     });

@@ -85,7 +85,7 @@ export default observer((props) => {
   return (
     <Layout>
       <PageTitle>
-        {`Observation ${selectedObservation.code}`}
+        {`Observation : ${selectedObservation.description}`}
         <Button variant="outline" mx={5} onClick={editAction}>
           Modifier
         </Button>

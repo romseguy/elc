@@ -43,7 +43,7 @@ export const ProfileAddSkillForm = (props) => {
 
   const onSubmit = async ({ skill, date }) => {
     setIsLoading(true);
-    props.profile.addSkill({
+    props.profile.addSkillRef({
       skill: skillType.store.getById(skill),
       date
     });

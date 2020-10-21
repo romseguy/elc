@@ -95,6 +95,26 @@ handler.delete(async function removeSkill(req, res) {
     } = req;
 
     try {
+      // remove references to this skill from profiles
+      const profiles = await req.models.Profile.find({});
+
+      for (const profile of profiles) {
+        if (Array.isArray(profile.skills)) {
+          for (const skillRef of profile.skills) {
+            if (skillRef.skill === pid) {
+              await req.models.Profile.updateOne(
+                { _id: profile._id },
+                {
+                  skills: profile.skills.filter(
+                    (skillRef) => skillRef.skill !== pid
+                  )
+                }
+              );
+            }
+          }
+        }
+      }
+
       const skill = await req.models.Skill.findOne({ _id: pid });
       const { deletedCount } = await req.models.Skill.deleteOne({ _id: pid });
 

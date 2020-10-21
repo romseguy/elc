@@ -112,7 +112,7 @@ export default observer((props) => {
 
       <PageSubTitle>Enfants</PageSubTitle>
 
-      {!selectedParent.children ? (
+      {!selectedParent.children || !selectedParent.children.length ? (
         <Text>
           <Link textDecoration="underline" href={editLink}>
             Modifier la fiche du parent pour associer un ou plusieurs enfants

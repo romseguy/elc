@@ -72,7 +72,7 @@ export const ProfileEditWorkshopForm = ({
 
     if (formData.completed)
       workshop.skills.forEach((skill) =>
-        selectedProfile.addSkill({
+        selectedProfile.addSkillRef({
           skill,
           workshop,
           date: formData.completed

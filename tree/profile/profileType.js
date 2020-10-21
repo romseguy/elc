@@ -111,7 +111,33 @@ export const ProfileModel = t
     remove: function remove() {
       getParent(profile, 2).removeProfile(profile);
     },
-    addObservation: function addObservation({ observation, date }) {
+    addSkillRef({ skill, workshop, date }) {
+      const add = () =>
+        profile.skills.push(SkillRef.create({ skill, workshop, date }));
+
+      if (!profile.skills.length) add();
+      else {
+        let found = false;
+        let i = 0;
+
+        while (!found && i < profile.skills.length)
+          profile.skills.get(i).skill._id === skill._id ? (found = true) : i++;
+
+        if (!found) add();
+      }
+    },
+    removeSkillRef(_id) {
+      profile.skills = profile.skills.filter((ref) => ref.skill !== _id);
+    },
+    addWorkshopRef({ workshopId }) {
+      profile.workshops.push(WorkshopRef.create({ workshop: workshopId }));
+    },
+    removeWorkshopRef(_id) {
+      profile.workshops = profile.workshops.filter((ref) => {
+        return ref._id !== _id;
+      });
+    },
+    addObservationRef({ observation, date }) {
       const add = () =>
         profile.observations.push(ObservationRef.create({ observation, date }));
 
@@ -128,29 +154,8 @@ export const ProfileModel = t
         if (!found) add();
       }
     },
-    addSkill: function addSkill({ skill, workshop, date }) {
-      const add = () =>
-        profile.skills.push(SkillRef.create({ skill, workshop, date }));
-
-      if (!profile.skills.length) add();
-      else {
-        let found = false;
-        let i = 0;
-
-        while (!found && i < profile.skills.length)
-          profile.skills.get(i).skill._id === skill._id ? (found = true) : i++;
-
-        if (!found) add();
-      }
-    },
-    removeSkill: function removeSkill(skill) {
-      profile.skills = profile.skills.filter((ref) => ref.skill !== skill);
-    },
-    addWorkshop: function addWorkshop({ workshopId }) {
-      profile.workshops.push(WorkshopRef.create({ workshop: workshopId }));
-    },
-    removeWorkshopRef: function removeWorkshopRef(_id) {
-      profile.workshops = profile.workshops.filter((ref) => {
+    removeObservationRef(_id) {
+      profile.observations = profile.observations.filter((ref) => {
         return ref._id !== _id;
       });
     }

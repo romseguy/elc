@@ -21,6 +21,9 @@ export const ObservationModel = t
     },
     update() {
       return getParent(observation, 2).updateObservation(observation);
+    },
+    remove: function remove() {
+      getParent(observation, 2).removeObservation(observation);
     }
   }));
 const ObservationStore = t
@@ -73,6 +76,20 @@ const ObservationStore = t
       const { error, data } = yield api.update(
         `observations/${observation._id}`,
         getSnapshot(observation)
+      );
+
+      if (error) {
+        store.state = "error";
+        return { error };
+      }
+
+      store.state = "done";
+      return { data };
+    }),
+    removeObservation: flow(function* removeObservation(observation) {
+      store.state = "pending";
+      const { error, data } = yield api.remove(
+        `observations/${observation._id}`
       );
 
       if (error) {

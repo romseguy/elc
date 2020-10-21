@@ -47,10 +47,7 @@ export default observer((props) => {
     );
 
   const onRowClick = (observation) => {
-    router.push(
-      "/observations/[...slug]/edit",
-      `/observations/${observation.slug}/edit`
-    );
+    router.push("/observations/[...slug]", `/observations/${observation.slug}`);
   };
 
   return (
@@ -87,7 +84,7 @@ export default observer((props) => {
                 <tr
                   key={observation._id}
                   tabIndex={0}
-                  title={`Cliquez pour modifier l'observation`}
+                  title={`Cliquez pour afficher les détails de l'observation`}
                   onClick={() => onRowClick(observation)}
                 >
                   <td>{observation.description}</td>
