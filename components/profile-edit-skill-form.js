@@ -3,13 +3,13 @@ import { Controller, useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import {
   Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerHeader,
+  DrawerFooter,
+  DrawerBody,
+  DrawerCloseButton,
+  Drawer,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -17,21 +17,25 @@ import {
   Stack,
   useDisclosure
 } from "@chakra-ui/core";
-import { WarningIcon } from "@chakra-ui/icons";
-import { DatePicker } from "components";
+import { ArrowDownIcon, ArrowUpIcon, WarningIcon } from "@chakra-ui/icons";
+import { DatePicker, SkillForm } from "components";
 import { format, subYears } from "date-fns";
 import { ErrorMessageText } from "./error-message-text";
 import { handleError } from "utils/form";
 
 export const ProfileEditSkillForm = ({
   currentSkillRef,
-  onModalClose,
   selectedProfile,
   ...props
 }) => {
   if (!currentSkillRef) return null;
 
-  const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: false });
+  const [showSkillForm, setShowSkillForm] = useState();
+  const toggleShowSkillForm = (e) => setShowSkillForm(!showSkillForm);
+  const { isOpen, onOpen, ...disclosure } = useDisclosure({
+    defaultIsOpen: false
+  });
+  const onClose = () => (disclosure.onClose(), props.onClose());
   const [isLoading, setIsLoading] = useState(false);
   const {
     control,
@@ -64,43 +68,21 @@ export const ProfileEditSkillForm = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onModalClose}>
-      <ModalOverlay>
-        <ModalContent>
-          <ModalHeader>
+    <Drawer placement="bottom" isFullHeight isOpen={isOpen} onClose={onClose}>
+      <DrawerOverlay>
+        <DrawerContent>
+          <DrawerHeader>
             {/* Modification de la compétence acquise par
             {selectedProfile.firstname} {selectedProfile.lastname} */}
-          </ModalHeader>
-          <ModalCloseButton />
-          <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
-            <ModalBody>
-              {["code", "description"].map((name) => (
-                <FormControl
-                  key={name}
-                  id={name}
-                  isInvalid={!!errors[name]}
-                  ml={5}
-                  mb={5}
-                  isDisabled
-                >
-                  <FormLabel>
-                    {name.substr(0, 1).toUpperCase()}
-                    {name.substr(1, name.length)} de la compétence
-                  </FormLabel>
-
-                  <Input
-                    name={name}
-                    ref={register()}
-                    defaultValue={currentSkillRef.skill[name]}
-                  />
-                  <FormErrorMessage>
-                    <ErrorMessage errors={errors} name={name} />
-                  </FormErrorMessage>
-                </FormControl>
-              ))}
-
-              <FormControl id="date" isInvalid={!!errors["date"]} m={5} mt={0}>
-                <FormLabel>Date d'acquisition de la compétence</FormLabel>
+          </DrawerHeader>
+          <DrawerCloseButton />
+          <DrawerBody>
+            <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
+              <FormControl id="date" isInvalid={!!errors["date"]}>
+                <FormLabel>
+                  Date de la validation de la compétence{" "}
+                  {currentSkillRef.skill.code} :
+                </FormLabel>
                 <Controller
                   name="date"
                   control={control}
@@ -131,21 +113,39 @@ export const ProfileEditSkillForm = ({
                   </Stack>
                 )}
               />
-            </ModalBody>
 
-            <ModalFooter>
               <Button
-                colorScheme="blue"
                 type="submit"
                 isLoading={isLoading}
                 isDisabled={Object.keys(errors).length > 0}
+                my={5}
               >
                 Modifier
               </Button>
-            </ModalFooter>
-          </form>
-        </ModalContent>
-      </ModalOverlay>
-    </Modal>
+            </form>
+
+            <>
+              <Button
+                isLoading={isLoading}
+                isDisabled={Object.keys(errors).length > 0}
+                colorScheme="blue"
+                onClick={toggleShowSkillForm}
+                mb={5}
+              >
+                Modifier la compétence {currentSkillRef.skill.code}
+                {showSkillForm ? (
+                  <ArrowUpIcon ml={2} />
+                ) : (
+                  <ArrowDownIcon ml={2} />
+                )}
+              </Button>
+
+              {showSkillForm && <SkillForm skill={currentSkillRef.skill} />}
+            </>
+          </DrawerBody>
+          <DrawerFooter></DrawerFooter>
+        </DrawerContent>
+      </DrawerOverlay>
+    </Drawer>
   );
 };

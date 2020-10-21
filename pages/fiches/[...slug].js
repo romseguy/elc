@@ -99,10 +99,17 @@ export default observer(function ProfilePage(props) {
     setShowObservationForm(!showObservationForm);
   };
 
-  const boxProps = {
+  const sectionProps = {
+    as: "section",
     bg: useColorModeValue("orange.200", "gray.800"),
-    rounded: "lg",
-    px: 5
+    rounded: "lg"
+  };
+  const pageSubtitleProps = {
+    pl: 5,
+    _hover: {
+      bg: useColorModeValue("orange.300", "gray.700"),
+      rounded: "lg"
+    }
   };
 
   useEffect(() => {
@@ -183,21 +190,21 @@ export default observer(function ProfilePage(props) {
       <ProfileEditSkillForm
         currentSkillRef={currentSkillRef}
         selectedProfile={selectedProfile}
-        onModalClose={() => setCurrentSkillRef()}
+        onClose={() => setCurrentSkillRef()}
         onSubmit={() => setCurrentSkillRef()}
       />
 
       <ProfileEditWorkshopForm
         currentWorkshopRef={currentWorkshopRef}
         selectedProfile={selectedProfile}
-        onModalClose={() => setCurrentWorkshopRef()}
+        onClose={() => setCurrentWorkshopRef()}
         onSubmit={() => setCurrentWorkshopRef()}
       />
 
       <ProfileEditObservationForm
         currentObservationRef={currentObservationRef}
         selectedProfile={selectedProfile}
-        onModalClose={() => setCurrentObservationRef()}
+        onClose={() => setCurrentObservationRef()}
         onSubmit={() => setCurrentObservationRef()}
       />
 
@@ -221,13 +228,13 @@ export default observer(function ProfilePage(props) {
       </List>
 
       <VStack align="stretch" spacing={5}>
-        <Box {...boxProps}>
+        <Box {...sectionProps}>
           <PageSubTitle
             button={
               <Button
                 display="none"
                 variant="outline"
-                mx={5}
+                ml={5}
                 onClick={toggleParentForm}
               >
                 Associer un parent
@@ -242,6 +249,7 @@ export default observer(function ProfilePage(props) {
             toggled={showParents}
             onToggle={toggleShowParents}
             onClick={toggleShowParents}
+            {...pageSubtitleProps}
           >
             Parents
           </PageSubTitle>
@@ -288,10 +296,10 @@ export default observer(function ProfilePage(props) {
           )}
         </Box>
 
-        <Box {...boxProps}>
+        <Box {...sectionProps}>
           <PageSubTitle
             button={
-              <Button variant="outline" mx={5} onClick={toggleAddSkillForm}>
+              <Button variant="outline" ml={5} onClick={toggleAddSkillForm}>
                 Valider une compétence
                 {showSkillForm ? (
                   <ArrowUpIcon ml={2} />
@@ -304,6 +312,7 @@ export default observer(function ProfilePage(props) {
             toggled={showSkills}
             onToggle={toggleShowSkills}
             onClick={toggleShowSkills}
+            {...pageSubtitleProps}
           >
             Compétences acquises
           </PageSubTitle>
@@ -400,11 +409,12 @@ export default observer(function ProfilePage(props) {
           )}
         </Box>
 
-        <Box {...boxProps}>
+        <Box {...sectionProps}>
           <PageSubTitle
             toggled={showLevels}
             onToggle={toggleShowLevels}
             onClick={toggleShowLevels}
+            {...pageSubtitleProps}
           >
             Niveaux
           </PageSubTitle>
@@ -442,10 +452,10 @@ export default observer(function ProfilePage(props) {
           )}
         </Box>
 
-        <Box {...boxProps}>
+        <Box {...sectionProps}>
           <PageSubTitle
             button={
-              <Button variant="outline" mx={5} onClick={toggleAddWorkshopForm}>
+              <Button variant="outline" ml={5} onClick={toggleAddWorkshopForm}>
                 Associer un atelier
                 {showWorkshopForm ? (
                   <ArrowUpIcon ml={2} />
@@ -458,6 +468,7 @@ export default observer(function ProfilePage(props) {
             toggled={showWorkshops}
             onToggle={toggleShowWorkshops}
             onClick={toggleShowWorkshops}
+            {...pageSubtitleProps}
           >
             Ateliers
           </PageSubTitle>
@@ -560,12 +571,12 @@ export default observer(function ProfilePage(props) {
           )}
         </Box>
 
-        <Box {...boxProps}>
+        <Box {...sectionProps}>
           <PageSubTitle
             button={
               <Button
                 variant="outline"
-                mx={5}
+                ml={5}
                 onClick={toggleAddObservationForm}
               >
                 Associer une observation
@@ -580,6 +591,7 @@ export default observer(function ProfilePage(props) {
             toggled={showObservations}
             onToggle={toggleShowObservations}
             onClick={toggleShowObservations}
+            {...pageSubtitleProps}
           >
             Observations
           </PageSubTitle>

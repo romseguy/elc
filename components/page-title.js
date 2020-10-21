@@ -15,10 +15,11 @@ export const PageSubTitle = ({
   toggled,
   onToggle,
   onClick,
-  children
+  children,
+  ...props
 }) => {
   return (
-    <Flex alignItems="center" my={5} onClick={onClick} cursor="pointer">
+    <Flex alignItems="center" onClick={onClick} cursor="pointer" {...props}>
       <Heading size="md">{children}</Heading>
       {button}
       <Spacer />

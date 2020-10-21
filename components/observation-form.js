@@ -99,7 +99,7 @@ export const ObservationForm = (props) => {
         isLoading={isLoading}
         isDisabled={Object.keys(errors).length > 0}
       >
-        {props.observation ? "Modifier" : "Ajouter"}
+        {props.observation ? "Modifier l'observation" : "Ajouter"}
       </Button>
     </form>
   );

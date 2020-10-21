@@ -8,13 +8,13 @@ import { format, subYears } from "date-fns";
 import {
   Box,
   Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerHeader,
+  DrawerFooter,
+  DrawerBody,
+  DrawerCloseButton,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -25,19 +25,30 @@ import {
   InputRightAddon,
   IconButton
 } from "@chakra-ui/core";
-import { AddIcon, CheckIcon, MinusIcon, WarningIcon } from "@chakra-ui/icons";
-import { DatePicker, ErrorMessageText } from "components";
+import {
+  AddIcon,
+  ArrowDownIcon,
+  ArrowUpIcon,
+  CheckIcon,
+  MinusIcon,
+  WarningIcon
+} from "@chakra-ui/icons";
+import { DatePicker, ErrorMessageText, WorkshopForm } from "components";
 
 export const ProfileEditWorkshopForm = ({
   currentWorkshopRef,
   selectedProfile,
-  onModalClose,
   ...props
 }) => {
   if (!currentWorkshopRef || !currentWorkshopRef.workshop) return null;
 
   const { profileType, observationType } = useStore();
-  const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: false });
+  const [showWorkshopForm, setShowWorkshopForm] = useState();
+  const toggleShowWorkshopForm = (e) => setShowWorkshopForm(!showWorkshopForm);
+  const { isOpen, onOpen, ...disclosure } = useDisclosure({
+    defaultIsOpen: false
+  });
+  const onClose = () => (disclosure.onClose(), props.onClose());
   const [isLoading, setIsLoading] = useState(false);
   const [
     showAddObservationControls,
@@ -92,39 +103,18 @@ export const ProfileEditWorkshopForm = ({
   const completed = watch("completed", currentWorkshopRef.completed);
 
   return (
-    <Modal isOpen={isOpen} onClose={onModalClose}>
-      <ModalOverlay>
-        <ModalContent>
-          <ModalHeader></ModalHeader>
-          <ModalCloseButton />
-          <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
-            <ModalBody>
-              <FormControl
-                id="name"
-                isInvalid={!!errors["name"]}
-                ml={5}
-                mb={5}
-                isDisabled
-              >
-                <FormLabel>Nom de l'atelier</FormLabel>
-
-                <Input
-                  name="name"
-                  ref={register()}
-                  defaultValue={currentWorkshopRef.workshop.name}
-                />
-                <FormErrorMessage>
-                  <ErrorMessage errors={errors} name="name" />
-                </FormErrorMessage>
-              </FormControl>
-
-              <FormControl
-                id="started"
-                isInvalid={!!errors["started"]}
-                m={5}
-                mt={0}
-              >
-                <FormLabel>Date à laquelle l'atelier a été commencé</FormLabel>
+    <Drawer placement="bottom" isOpen={isOpen} onClose={onClose}>
+      <DrawerOverlay>
+        <DrawerContent>
+          <DrawerHeader></DrawerHeader>
+          <DrawerCloseButton />
+          <DrawerBody>
+            <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
+              <FormControl id="started" isInvalid={!!errors["started"]}>
+                <FormLabel>
+                  Date à laquelle l'atelier {currentWorkshopRef.workshop.name} a
+                  été commencé :
+                </FormLabel>
                 <Controller
                   name="started"
                   control={control}
@@ -147,10 +137,12 @@ export const ProfileEditWorkshopForm = ({
                 id="completed"
                 isInvalid={!!errors["completed"]}
                 isDisabled={!started}
-                m={5}
-                mt={0}
+                mt={2}
               >
-                <FormLabel>Date à laquelle l'atelier a été terminé</FormLabel>
+                <FormLabel>
+                  Date à laquelle l'atelier {currentWorkshopRef.workshop.name} a
+                  été terminé :
+                </FormLabel>
                 <Controller
                   name="completed"
                   control={control}
@@ -292,14 +284,11 @@ export const ProfileEditWorkshopForm = ({
                   </Stack>
                 )}
               />
-            </ModalBody>
-
-            <ModalFooter>
               <Button
-                colorScheme="blue"
                 type="submit"
                 isLoading={isLoading}
                 isDisabled={Object.keys(errors).length > 0}
+                my={5}
               >
                 {completed
                   ? "Terminer l'atelier"
@@ -307,10 +296,32 @@ export const ProfileEditWorkshopForm = ({
                   ? "Commencer l'atelier"
                   : "Modifier"}
               </Button>
-            </ModalFooter>
-          </form>
-        </ModalContent>
-      </ModalOverlay>
-    </Modal>
+            </form>
+
+            <>
+              <Button
+                isLoading={isLoading}
+                isDisabled={Object.keys(errors).length > 0}
+                colorScheme="blue"
+                onClick={toggleShowWorkshopForm}
+                mb={5}
+              >
+                Modifier l'atelier {currentWorkshopRef.workshop.name}
+                {showWorkshopForm ? (
+                  <ArrowUpIcon ml={2} />
+                ) : (
+                  <ArrowDownIcon ml={2} />
+                )}
+              </Button>
+
+              {showWorkshopForm && (
+                <WorkshopForm workshop={currentWorkshopRef.workshop} />
+              )}
+            </>
+          </DrawerBody>
+          <DrawerFooter></DrawerFooter>
+        </DrawerContent>
+      </DrawerOverlay>
+    </Drawer>
   );
 };

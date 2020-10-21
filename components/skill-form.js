@@ -23,7 +23,14 @@ import {
   InputRightAddon,
   Spinner
 } from "@chakra-ui/core";
-import { AddIcon, CheckIcon, MinusIcon, WarningIcon } from "@chakra-ui/icons";
+import {
+  AddIcon,
+  ArrowDownIcon,
+  ArrowUpIcon,
+  CheckIcon,
+  MinusIcon,
+  WarningIcon
+} from "@chakra-ui/icons";
 import { handleError } from "utils/form";
 import { ErrorMessageText } from "components";
 
@@ -149,7 +156,11 @@ export const SkillForm = (props) => {
           }}
         >
           Ajouter une matière
-          {showAddDomainForm ? <MinusIcon ml={2} /> : <AddIcon ml={2} />}
+          {showAddDomainForm ? (
+            <ArrowUpIcon ml={2} />
+          ) : (
+            <ArrowDownIcon ml={2} />
+          )}
         </Button>
 
         {showAddDomainForm && (
@@ -205,7 +216,11 @@ export const SkillForm = (props) => {
               }}
             >
               Supprimer une matière{" "}
-              {showRemoveDomainForm ? <MinusIcon ml={2} /> : <AddIcon ml={2} />}
+              {showRemoveDomainForm ? (
+                <ArrowUpIcon ml={2} />
+              ) : (
+                <ArrowDownIcon ml={2} />
+              )}
             </Button>
             {showRemoveDomainForm && skillType.domainType.store.isLoading && (
               <Spinner />
@@ -289,7 +304,7 @@ export const SkillForm = (props) => {
         isLoading={isLoading}
         isDisabled={Object.keys(errors).length > 0}
       >
-        {props.skill ? "Modifier" : "Ajouter"}
+        {props.skill ? "Modifier la compétence" : "Ajouter"}
       </Button>
     </form>
   );

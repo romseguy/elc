@@ -3,13 +3,13 @@ import { Controller, useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import {
   Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerHeader,
+  DrawerFooter,
+  DrawerBody,
+  DrawerCloseButton,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -17,21 +17,26 @@ import {
   Stack,
   useDisclosure
 } from "@chakra-ui/core";
-import { WarningIcon } from "@chakra-ui/icons";
-import { DatePicker } from "components";
+import { ArrowDownIcon, ArrowUpIcon, WarningIcon } from "@chakra-ui/icons";
+import { DatePicker, ObservationForm } from "components";
 import { format, subYears } from "date-fns";
 import { ErrorMessageText } from "./error-message-text";
 import { handleError } from "utils/form";
 
 export const ProfileEditObservationForm = ({
   currentObservationRef,
-  onModalClose,
   selectedProfile,
   ...props
 }) => {
   if (!currentObservationRef) return null;
 
-  const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: false });
+  const [showObservationForm, setShowObservationForm] = useState();
+  const toggleShowObservationForm = (e) =>
+    setShowObservationForm(!showObservationForm);
+  const { isOpen, onOpen, ...disclosure } = useDisclosure({
+    defaultIsOpen: false
+  });
+  const onClose = () => (disclosure.onClose(), props.onClose());
   const [isLoading, setIsLoading] = useState(false);
   const {
     control,
@@ -64,17 +69,17 @@ export const ProfileEditObservationForm = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onModalClose}>
-      <ModalOverlay>
-        <ModalContent>
-          <ModalHeader>
+    <Drawer placement="bottom" isOpen={isOpen} onClose={onClose}>
+      <DrawerOverlay>
+        <DrawerContent>
+          <DrawerHeader>
             {/* Modification de l'observation acquise par
             {selectedProfile.firstname} {selectedProfile.lastname} */}
-          </ModalHeader>
-          <ModalCloseButton />
-          <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
-            <ModalBody>
-              {["description"].map((name) => (
+          </DrawerHeader>
+          <DrawerCloseButton />
+          <DrawerBody>
+            <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
+              {/* {["description"].map((name) => (
                 <FormControl
                   key={name}
                   id={name}
@@ -97,9 +102,9 @@ export const ProfileEditObservationForm = ({
                     <ErrorMessage errors={errors} name={name} />
                   </FormErrorMessage>
                 </FormControl>
-              ))}
+              ))} */}
 
-              <FormControl id="date" isInvalid={!!errors["date"]} m={5} mt={0}>
+              <FormControl id="date" isInvalid={!!errors["date"]}>
                 <FormLabel>Date de l'observation</FormLabel>
                 <Controller
                   name="date"
@@ -131,21 +136,43 @@ export const ProfileEditObservationForm = ({
                   </Stack>
                 )}
               />
-            </ModalBody>
 
-            <ModalFooter>
               <Button
-                colorScheme="blue"
                 type="submit"
                 isLoading={isLoading}
                 isDisabled={Object.keys(errors).length > 0}
+                my={5}
               >
                 Modifier
               </Button>
-            </ModalFooter>
-          </form>
-        </ModalContent>
-      </ModalOverlay>
-    </Modal>
+            </form>
+
+            <>
+              <Button
+                isLoading={isLoading}
+                isDisabled={Object.keys(errors).length > 0}
+                colorScheme="blue"
+                onClick={toggleShowObservationForm}
+                mb={5}
+              >
+                Modifier l'observation
+                {showObservationForm ? (
+                  <ArrowUpIcon ml={2} />
+                ) : (
+                  <ArrowDownIcon ml={2} />
+                )}
+              </Button>
+
+              {showObservationForm && (
+                <ObservationForm
+                  observation={currentObservationRef.observation}
+                />
+              )}
+            </>
+          </DrawerBody>
+          <DrawerFooter></DrawerFooter>
+        </DrawerContent>
+      </DrawerOverlay>
+    </Drawer>
   );
 };

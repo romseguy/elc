@@ -91,7 +91,7 @@ export const Nav = (props) => {
     ${useColorModeValue(
       //tw`h-24 bg-gradient-to-r from-red-600 via-white to-purple-600`,
       tw`h-24 bg-gradient-to-b from-orange-100 via-orange-400 to-orange-100`,
-      tw`h-24 bg-gradient-to-b from-gray-800 via-black to-gray-800`
+      tw`h-24 bg-gradient-to-b from-gray-700 via-gray-900 to-gray-700`
     )}
   `;
 

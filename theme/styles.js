@@ -58,7 +58,7 @@ export default {
       "html, body, #__next": {
         lineHeight: "normal",
         height: "100%",
-        backgroundColor: mode("orange.50", "gray.700")(props),
+        backgroundColor: mode("orange.50", "gray.600")(props),
         color: mode("black", "white")(props)
       },
       "body, #__next": {

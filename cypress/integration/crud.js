@@ -178,7 +178,7 @@ describe("CRUD", () => {
       cy.get("input#code").type("M01");
       cy.get("input#description").type("K");
       cy.get("select#level").select("CE1");
-      cy.findByRole("button", { name: "Modifier" }).click();
+      cy.findByRole("button", { name: "Modifier la compétence" }).click();
       cy.visit("http://localhost:3004/competences");
       cy.findByText("L01M01");
       cy.findByText("JK");
@@ -204,7 +204,7 @@ describe("CRUD", () => {
       cy.visit("http://localhost:3004/ateliers/ABC/edit");
       cy.get(".react-select-container").click();
       cy.get(".react-select__option").contains("L02").click();
-      cy.findByRole("button", { name: "Modifier" }).click();
+      cy.findByRole("button", { name: "Modifier l'atelier" }).click();
       cy.visit("http://localhost:3004/fiches/1-2");
       cy.findByRole("heading", {
         name: "Ateliers"

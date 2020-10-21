@@ -139,7 +139,7 @@ export const WorkshopForm = (props) => {
         isLoading={isLoading}
         isDisabled={Object.keys(errors).length > 0}
       >
-        {props.workshop ? "Modifier" : "Ajouter"}
+        {props.workshop ? "Modifier l'atelier" : "Ajouter"}
       </Button>
       {/* <DevTool control={control} /> */}
     </form>

@@ -13,11 +13,11 @@ const MenuItem = styled.li`
 `;
 
 export const Footer = (props) => {
-  const bg = useColorModeValue("gray.400", "gray.700");
+  const bg = useColorModeValue("gray.400", "gray.600");
   const styles = css`
     ${useColorModeValue(
       tw`h-24 bg-gradient-to-b from-orange-100 via-orange-400 to-orange-100`,
-      tw`h-24 bg-gradient-to-b from-gray-800 via-black to-gray-800`
+      tw`h-24 bg-gradient-to-b from-gray-700 via-gray-900 to-gray-700`
     )}
   `;
 
