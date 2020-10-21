@@ -1,6 +1,7 @@
 export * from "./access-denied";
 export * from "./button";
 export * from "./chakra";
+export * from "./confirm";
 export * from "./datepicker";
 export * from "./error-message-text";
 export * from "./footer";

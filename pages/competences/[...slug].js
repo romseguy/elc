@@ -14,7 +14,8 @@ export default observer((props) => {
   const router = useRouter();
   const skillSlug = router.query.slug[0];
   const action = router.query.slug[1];
-  const { skillType } = useStore();
+  const { confirm, skillType } = useStore();
+  const withConfirm = (props) => (e) => confirm.onOpen(props);
   const [selectedSkill, setSkill] = useState();
   useEffect(() => {
     const fetchSkills = async () => {
@@ -89,7 +90,14 @@ export default observer((props) => {
         <Button variant="outline" mx={5} onClick={editAction}>
           Modifier
         </Button>
-        <Button variant="outline" onClick={removeAction}>
+        <Button
+          variant="outline"
+          onClick={withConfirm({
+            header: `Êtes vous sûr(e) ?`,
+            body: `Veuillez confirmer la suppression de la compétence ${selectedSkill.code} :`,
+            onConfirm: removeAction
+          })}
+        >
           Supprimer
         </Button>
       </PageTitle>

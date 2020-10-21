@@ -37,7 +37,7 @@ import { DatePicker, ErrorMessageText, WorkshopForm } from "components";
 
 export const ProfileEditWorkshopForm = ({
   currentWorkshopRef,
-  selectedProfile,
+  profile,
   ...props
 }) => {
   if (!currentWorkshopRef || !currentWorkshopRef.workshop) return null;
@@ -83,7 +83,7 @@ export const ProfileEditWorkshopForm = ({
 
     if (formData.completed)
       workshop.skills.forEach((skill) =>
-        selectedProfile.addSkillRef({
+        profile.addSkillRef({
           skill,
           workshop,
           date: formData.completed
@@ -91,9 +91,7 @@ export const ProfileEditWorkshopForm = ({
       );
 
     currentWorkshopRef.edit(formData);
-    const { data, error } = await profileType.store.updateProfile(
-      selectedProfile
-    );
+    const { data, error } = await profileType.store.updateProfile(profile);
     setIsLoading(false);
 
     if (error) handleError(error, setError);
@@ -103,7 +101,7 @@ export const ProfileEditWorkshopForm = ({
   const completed = watch("completed", currentWorkshopRef.completed);
 
   return (
-    <Drawer placement="bottom" isOpen={isOpen} onClose={onClose}>
+    <Drawer placement="bottom" isFullHeight isOpen={isOpen} onClose={onClose}>
       <DrawerOverlay>
         <DrawerContent>
           <DrawerHeader></DrawerHeader>

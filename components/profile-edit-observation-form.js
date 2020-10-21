@@ -25,7 +25,7 @@ import { handleError } from "utils/form";
 
 export const ProfileEditObservationForm = ({
   currentObservationRef,
-  selectedProfile,
+  profile,
   ...props
 }) => {
   if (!currentObservationRef) return null;
@@ -74,7 +74,7 @@ export const ProfileEditObservationForm = ({
         <DrawerContent>
           <DrawerHeader>
             {/* Modification de l'observation acquise par
-            {selectedProfile.firstname} {selectedProfile.lastname} */}
+            {profile.firstname} {profile.lastname} */}
           </DrawerHeader>
           <DrawerCloseButton />
           <DrawerBody>

@@ -177,6 +177,7 @@ const ProfileStore = t
   .actions((store) => ({
     // CRUD API CALLS
     getProfiles: flow(function* getProfiles() {
+      yield getRoot(store).observationType.store.getObservations();
       yield getRoot(store).workshopType.store.getWorkshops();
 
       store.state = "pending";

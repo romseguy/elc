@@ -19,7 +19,9 @@ import {
 export default observer((props) => {
   const [session = props.session] = useSession();
   const router = useRouter();
-  const { workshopType } = useStore();
+  const { confirm, workshopType } = useStore();
+  const withConfirm = (props) => (e) => confirm.onOpen(props);
+
   useEffect(() => {
     const selectWorkshop = async () => {
       await workshopType.store.getWorkshops();
@@ -89,7 +91,14 @@ export default observer((props) => {
         <Button variant="outline" mx={5} onClick={editAction}>
           Modifier
         </Button>
-        <Button variant="outline" onClick={removeAction}>
+        <Button
+          variant="outline"
+          onClick={withConfirm({
+            header: `Êtes vous sûr(e) ?`,
+            body: `Veuillez confirmer la suppression de l'atelier ${selectedWorkshop.name} :`,
+            onConfirm: removeAction
+          })}
+        >
           Supprimer
         </Button>
       </PageTitle>

@@ -25,7 +25,7 @@ import { handleError } from "utils/form";
 
 export const ProfileEditSkillForm = ({
   currentSkillRef,
-  selectedProfile,
+  profile,
   ...props
 }) => {
   if (!currentSkillRef) return null;
@@ -73,7 +73,7 @@ export const ProfileEditSkillForm = ({
         <DrawerContent>
           <DrawerHeader>
             {/* Modification de la compétence acquise par
-            {selectedProfile.firstname} {selectedProfile.lastname} */}
+            {profile.firstname} {profile.lastname} */}
           </DrawerHeader>
           <DrawerCloseButton />
           <DrawerBody>

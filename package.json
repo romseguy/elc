@@ -11,6 +11,7 @@
     "build": "next build",
     "start": "next start",
     "test": "cypress run --config video=false",
+    "test:video": "cypress run",
     "test:open": "cypress open"
   },
   "author": "Romain Séguy <rom.seguy@lilo.org>",

@@ -1,8 +1,7 @@
 import { getSession } from "next-auth/client";
 import { useObserver, observer } from "mobx-react-lite";
-import { getSnapshot } from "mobx-state-tree";
-import { initializeStore, useStore } from "tree";
-import { AccessDenied, Layout } from "components";
+import { initializeStore, useStore, getSnapshot } from "tree";
+import { AccessDenied, Layout, StyledTable } from "components";
 import { Button, useColorMode } from "@chakra-ui/core";
 
 const Counter = observer(() => {
@@ -51,9 +50,26 @@ export default function Page(props) {
   //   </Layout>
   // );
 
+  // return (
+  //   <Layout>
+  //     <Counter />
+  //   </Layout>
+  // );
+
   return (
     <Layout>
-      <Counter />
+      <StyledTable css={{ background: "red", width: "100%" }}>
+        <thead>
+          <tr>
+            <td>test</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>test</td>
+          </tr>
+        </tbody>
+      </StyledTable>
     </Layout>
   );
 }
@@ -73,14 +89,14 @@ export async function getServerSideProps(context) {
   //   }
   // }
 
-  const store = initializeStore({ counter: { count: 1 } });
-  const snapshot = getSnapshot(store);
+  // const store = initializeStore({ counter: { count: 1 } });
+  // const snapshot = getSnapshot(store);
 
   return {
     props: {
-      snapshot,
+      // snapshot
       // session,
       // content,
-    },
+    }
   };
 }

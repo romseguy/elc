@@ -14,8 +14,10 @@ export default observer((props) => {
   const router = useRouter();
   const observationSlug = router.query.slug[0];
   const action = router.query.slug[1];
-  const { observationType } = useStore();
+  const { confirm, observationType } = useStore();
+  const withConfirm = (props) => (e) => confirm.onOpen(props);
   const [selectedObservation, setObservation] = useState();
+
   useEffect(() => {
     const fetchObservations = async () => {
       await observationType.store.getObservations();
@@ -89,7 +91,14 @@ export default observer((props) => {
         <Button variant="outline" mx={5} onClick={editAction}>
           Modifier
         </Button>
-        <Button variant="outline" onClick={removeAction}>
+        <Button
+          variant="outline"
+          onClick={withConfirm({
+            header: `Êtes vous sûr(e) ?`,
+            body: `Veuillez confirmer la suppression de l'observation :`,
+            onConfirm: removeAction
+          })}
+        >
           Supprimer
         </Button>
       </PageTitle>

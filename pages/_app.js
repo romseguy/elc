@@ -10,12 +10,17 @@ import {
   ChakraProvider,
   ColorModeProvider,
   ThemeProvider,
-  useColorMode,
+  useColorMode
 } from "@chakra-ui/core";
-import { Chakra } from "components";
+import { Chakra, Confirm } from "components";
 
 const Root = ({ Component, ...pageProps }) => {
-  return <Component {...pageProps} />;
+  return (
+    <>
+      <Confirm />
+      <Component {...pageProps} />
+    </>
+  );
 };
 
 const App = ({ Component, pageProps, cookies }) => {
@@ -38,7 +43,7 @@ const App = ({ Component, pageProps, cookies }) => {
       <AuthProvider
         options={{
           clientMaxAge: 0,
-          keepAlive: 0,
+          keepAlive: 0
         }}
         session={session}
       >

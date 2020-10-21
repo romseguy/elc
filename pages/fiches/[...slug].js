@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getSession, useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 import { values } from "mobx";
@@ -19,7 +19,8 @@ import {
   Tag,
   useColorModeValue,
   VStack,
-  Progress
+  Progress,
+  Text
 } from "@chakra-ui/core";
 import {
   ArrowDownIcon,
@@ -42,6 +43,338 @@ import {
   ProfileEditObservationForm
 } from "components";
 
+const SkillTable = ({
+  withConfirm,
+  editAction,
+  removeAction,
+  profile,
+  display
+}) => {
+  const disableSortBy = useMemo(
+    () => profile.skills.length <= 1,
+    profile.skills
+  );
+
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Date",
+        accessor: "date",
+        sortType: "log",
+        disableSortBy
+      },
+      {
+        Header: "Code",
+        accessor: "code",
+        disableSortBy
+      },
+      {
+        Header: "Description",
+        accessor: "description",
+        disableSortBy
+      },
+      {
+        Header: "Matière",
+        accessor: "domain",
+        disableSortBy
+      },
+      {
+        Header: "Niveau",
+        accessor: "level",
+        disableSortBy
+      },
+      {
+        Header: "Atelier",
+        accessor: "workshop",
+        disableSortBy
+      },
+      {
+        Header: "",
+        accessor: "editButton",
+        disableSortBy: true
+      },
+      {
+        Header: "",
+        accessor: "deleteButton",
+        disableSortBy: true
+      }
+    ],
+    [disableSortBy]
+  );
+
+  const data = useMemo(
+    () =>
+      values(profile.skills).map((skillRef) => {
+        const { skill, workshop, date } = skillRef;
+
+        return {
+          date: format(date, "dd/MM/yyyy"),
+          code: skill.code,
+          description: skill.description,
+          domain: skill.domain && skill.domain.name,
+          level: skill.level,
+          workshop: workshop && workshop.name,
+          editButton: (
+            <IconButton
+              icon={<EditIcon />}
+              onClick={() => editAction(skillRef)}
+            />
+          ),
+          deleteButton: (
+            <IconButton
+              icon={<DeleteIcon />}
+              colorScheme="red"
+              onClick={withConfirm({
+                header: `Êtes vous sûr(e) ?`,
+                body: (
+                  <Text>
+                    Veuillez confirmer la suppression de la compétence{" "}
+                    <strong>{skill.code}</strong> de la fiche élève de{" "}
+                    <strong>
+                      {profile.firstname} {profile.lastname}
+                    </strong>{" "}
+                    :
+                  </Text>
+                ),
+                onConfirm: () => removeAction(skillRef)
+              })}
+            />
+          )
+        };
+      }),
+    [profile.skills]
+  );
+
+  return (
+    <Table
+      css={{ display }}
+      initialState={{
+        sortBy: [
+          {
+            id: "date",
+            desc: true
+          }
+        ]
+      }}
+      data={data}
+      columns={columns}
+      fullWidth
+    />
+  );
+};
+
+const WorkshopTable = ({
+  withConfirm,
+  editAction,
+  removeAction,
+  profile,
+  display
+}) => {
+  const disableSortBy = useMemo(() => profile.workshops.length <= 1, [
+    profile.workshops
+  ]);
+
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Nom",
+        accessor: "name",
+        disableSortBy
+      },
+      {
+        Header: "Date de début",
+        accessor: "started",
+        sortType: "basic",
+        disableSortBy
+      },
+      {
+        Header: "Date de fin",
+        accessor: "completed",
+        sortType: "basic",
+        disableSortBy
+      },
+      {
+        Header: "Compétences",
+        accessor: "skills",
+        disableSortBy: true
+      },
+      {
+        Header: "",
+        accessor: "editButton",
+        disableSortBy: true
+      },
+      {
+        Header: "",
+        accessor: "deleteButton",
+        disableSortBy: true
+      }
+    ],
+    [disableSortBy]
+  );
+
+  const data = useMemo(
+    () =>
+      values(profile.workshops).map((workshopRef) => {
+        const { _id, workshop, started, completed } = workshopRef;
+
+        return {
+          name: workshop.name,
+          started: isDate(started) && format(started, "dd/MM/yyyy"),
+          completed: isDate(completed) && format(completed, "dd/MM/yyyy"),
+          skills: workshop.skills.map((skill) => (
+            <Tag key={skill._id} mr={2}>
+              {skill.code}
+            </Tag>
+          )),
+          editButton: (
+            <IconButton
+              id="editWorkshop"
+              icon={<EditIcon />}
+              onClick={() => editAction(workshopRef)}
+            />
+          ),
+          deleteButton: (
+            <IconButton
+              icon={<DeleteIcon />}
+              colorScheme="red"
+              onClick={withConfirm({
+                header: `Êtes vous sûr(e) ?`,
+                body: (
+                  <Text>
+                    Veuillez confirmer la suppression de l'atelier{" "}
+                    <strong>{workshopRef.workshop.name}</strong> de la fiche
+                    élève de{" "}
+                    <strong>
+                      {profile.firstname} {profile.lastname}
+                    </strong>{" "}
+                    :
+                  </Text>
+                ),
+                onConfirm: () => removeAction(workshopRef)
+              })}
+            />
+          )
+        };
+      }),
+    [profile.workshops]
+  );
+
+  return (
+    <Table
+      css={{
+        display
+      }}
+      initialState={{
+        sortBy: [
+          {
+            id: "name",
+            desc: true
+          }
+        ]
+      }}
+      data={data}
+      columns={columns}
+    />
+  );
+};
+
+const ObservationTable = ({
+  withConfirm,
+  editAction,
+  removeAction,
+  profile,
+  display
+}) => {
+  const disableSortBy = useMemo(() => profile.observations.length <= 1, [
+    profile.observations
+  ]);
+
+  const columns = useMemo(() => [
+    {
+      Header: "Date",
+      accessor: "date",
+      sortType: "basic",
+      disableSortBy
+    },
+    {
+      Header: "Description",
+      accessor: "description",
+      disableSortBy
+    },
+    {
+      Header: "",
+      accessor: "editButton",
+      disableSortBy: true
+    },
+    {
+      Header: "",
+      accessor: "deleteButton",
+      disableSortBy: true
+    }
+  ]);
+
+  const data = useMemo(() =>
+    values(profile.observations).map((observationRef) => {
+      const { _id, observation, date } = observationRef;
+
+      return {
+        description: observation.description,
+        date: isDate(date) && format(date, "dd/MM/yyyy"),
+        editButton: (
+          <IconButton
+            id="editObservation"
+            icon={<EditIcon />}
+            onClick={() => editAction(observationRef)}
+          />
+        ),
+        deleteButton: (
+          <IconButton
+            icon={<DeleteIcon />}
+            colorScheme="red"
+            onClick={withConfirm({
+              header: `Êtes vous sûr(e) ?`,
+              body: (
+                <>
+                  <Text>
+                    Veuillez confirmer la suppression de l'observation :
+                  </Text>
+                  <Text my={2}>
+                    <strong>{observationRef.observation.description}</strong>
+                  </Text>
+                  <Text>
+                    {" "}
+                    de la fiche élève de {profile.firstname} {profile.lastname}{" "}
+                    :
+                  </Text>
+                </>
+              ),
+              onConfirm: () => removeAction(observationRef)
+            })}
+          />
+        )
+      };
+    })
+  );
+
+  return (
+    <Table
+      css={{
+        display
+      }}
+      initialState={{
+        sortBy: [
+          {
+            id: "date",
+            desc: true
+          }
+        ]
+      }}
+      data={data}
+      columns={columns}
+    />
+  );
+};
+
 export default observer(function ProfilePage(props) {
   const [session = props.session] = useSession();
   const router = useRouter();
@@ -54,56 +387,114 @@ export default observer(function ProfilePage(props) {
   }
 
   const {
+    confirm,
     parentType,
     profileType,
     skillType,
     workshopType,
     observationType
   } = useStore();
+
+  const withConfirm = (props) => (e) => confirm.onOpen(props);
+
+  const selectedProfile = profileType.selectedProfile;
+  const editAction = () => {
+    router.push("/fiches/[...slug]", `/fiches/${selectedProfile.slug}/edit`);
+  };
+  const removeAction = async () => {
+    const removedProfile = await selectedProfile.remove();
+    router.push("/fiches");
+  };
+
+  // parents
   const [showParents, setShowParents] = useState(false);
-  const [showParentForm, setShowParentForm] = useState(false);
-
-  const [showSkills, setShowSkills] = useState(false);
-  const [showSkillForm, setShowSkillForm] = useState(false);
-  const [currentSkillRef, setCurrentSkillRef] = useState();
-
-  const [showLevels, setShowLevels] = useState(false);
-
-  const [showWorkshops, setShowWorkshops] = useState(false);
-  const [showWorkshopForm, setShowWorkshopForm] = useState(false);
-  const [currentWorkshopRef, setCurrentWorkshopRef] = useState();
-
-  const [showObservations, setShowObservations] = useState(false);
-  const [showObservationForm, setShowObservationForm] = useState(false);
-  const [currentObservationRef, setCurrentObservationRef] = useState();
-
   const toggleShowParents = () => setShowParents(!showParents);
+  const [showParentForm, setShowParentForm] = useState(false);
   const toggleParentForm = (e) => {
     e && e.stopPropagation();
     setShowParentForm(!showParentForm);
   };
+  const onParentRowClick = (parent) => {
+    router.push("/parents/[...slug]", `/parents/${parent.slug}`);
+  };
+
+  // skills
+  const [showSkills, setShowSkills] = useState(false);
   const toggleShowSkills = () => setShowSkills(!showSkills);
-  const toggleAddSkillForm = (e) => {
+  const [showSkillForm, setShowSkillForm] = useState(false);
+  const toggleSkillForm = (e) => {
     e && e.stopPropagation();
     setShowSkillForm(!showSkillForm);
   };
+  const [currentSkillRef, setCurrentSkillRef] = useState();
+  const displaySkills = !showSkills
+    ? "none"
+    : selectedProfile.skills.length > 0
+    ? "block"
+    : "none";
+  const editSkillRefAction = (skillRef) => {
+    setCurrentSkillRef(skillRef);
+  };
+  const removeSkillRefAction = (skillRef) => {
+    selectedProfile.removeSkillRef(skillRef._id);
+    profileType.store.updateProfile(selectedProfile);
+  };
+
+  // levels
+  const [showLevels, setShowLevels] = useState(false);
   const toggleShowLevels = () => setShowLevels(!showLevels);
+
+  // workshops
+  const [showWorkshops, setShowWorkshops] = useState(false);
   const toggleShowWorkshops = () => setShowWorkshops(!showWorkshops);
-  const toggleAddWorkshopForm = (e) => {
+  const [showWorkshopForm, setShowWorkshopForm] = useState(false);
+  const toggleWorkshopForm = (e) => {
     e && e.stopPropagation();
     setShowWorkshopForm(!showWorkshopForm);
   };
+  const [currentWorkshopRef, setCurrentWorkshopRef] = useState();
+  const displayWorkshops = !showWorkshops
+    ? "none"
+    : selectedProfile.workshops.length > 0
+    ? "block"
+    : "none";
+  const removeWorkshopRefAction = (workshopRef) => {
+    selectedProfile.removeWorkshopRef(workshopRef._id);
+    profileType.store.updateProfile(selectedProfile);
+  };
+  const editWorkshopRefAction = (workshopRef) => {
+    setCurrentWorkshopRef(workshopRef);
+  };
+
+  // observations
+  const [showObservations, setShowObservations] = useState(false);
   const toggleShowObservations = () => setShowObservations(!showObservations);
-  const toggleAddObservationForm = (e) => {
+  const [showObservationForm, setShowObservationForm] = useState(false);
+  const toggleObservationForm = (e) => {
     e && e.stopPropagation();
     setShowObservationForm(!showObservationForm);
   };
+  const [currentObservationRef, setCurrentObservationRef] = useState();
+  const removeObservationRefAction = (_id) => {
+    selectedProfile.removeObservationRef(_id);
+    profileType.store.updateProfile(selectedProfile);
+  };
+  const editObservationRefAction = (observationRef) => {
+    setCurrentObservationRef(observationRef);
+  };
+  const displayObservations = !showObservations
+    ? "none"
+    : selectedProfile.observations.length > 0
+    ? "block"
+    : "none";
 
+  // rendering
   const sectionProps = {
     as: "section",
     bg: useColorModeValue("orange.200", "gray.800"),
     rounded: "lg"
   };
+
   const pageSubtitleProps = {
     pl: 5,
     _hover: {
@@ -115,13 +506,10 @@ export default observer(function ProfilePage(props) {
   useEffect(() => {
     const selectProfile = async () => {
       await parentType.store.getParents();
-      await observationType.store.getObservations();
       profileType.selectProfile(profileSlug);
     };
     selectProfile();
   }, []);
-
-  const selectedProfile = profileType.selectedProfile;
 
   if (!profileType.store.isLoading && profileType.store.isEmpty)
     return <Layout>Aucune fiche élève n'a été ajoutée à l'application</Layout>;
@@ -146,64 +534,25 @@ export default observer(function ProfilePage(props) {
       </Layout>
     );
 
-  const editAction = () => {
-    router.push("/fiches/[...slug]", `/fiches/${selectedProfile.slug}/edit`);
-  };
-  const removeAction = async () => {
-    const removedProfile = await selectedProfile.remove();
-    router.push("/fiches");
-  };
-
-  const onParentRowClick = (parent) => {
-    router.push("/parents/[...slug]", `/parents/${parent.slug}`);
-  };
-
-  const disableSortBySkill = selectedProfile.skills.length <= 1;
-  const removeSkillAction = (skill) => {
-    selectedProfile.removeSkillRef(skill);
-    profileType.store.updateProfile(selectedProfile);
-  };
-  const editSkillRefAction = (skillRef) => {
-    setCurrentSkillRef(skillRef);
-  };
-
-  const disableSortByWorkshop = selectedProfile.workshops.length <= 1;
-  const removeWorkshopRefAction = (_id) => {
-    selectedProfile.removeWorkshopRef(_id);
-    profileType.store.updateProfile(selectedProfile);
-  };
-  const editWorkshopRefAction = (workshopRef) => {
-    setCurrentWorkshopRef(workshopRef);
-  };
-
-  const disableSortByObservation = selectedProfile.observations.length <= 1;
-  const removeObservationRefAction = (_id) => {
-    selectedProfile.removeObservationRef(_id);
-    profileType.store.updateProfile(selectedProfile);
-  };
-  const editObservationRefAction = (observationRef) => {
-    setCurrentObservationRef(observationRef);
-  };
-
   return (
     <Layout>
       <ProfileEditSkillForm
         currentSkillRef={currentSkillRef}
-        selectedProfile={selectedProfile}
+        profile={selectedProfile}
         onClose={() => setCurrentSkillRef()}
         onSubmit={() => setCurrentSkillRef()}
       />
 
       <ProfileEditWorkshopForm
         currentWorkshopRef={currentWorkshopRef}
-        selectedProfile={selectedProfile}
+        profile={selectedProfile}
         onClose={() => setCurrentWorkshopRef()}
         onSubmit={() => setCurrentWorkshopRef()}
       />
 
       <ProfileEditObservationForm
         currentObservationRef={currentObservationRef}
-        selectedProfile={selectedProfile}
+        profile={selectedProfile}
         onClose={() => setCurrentObservationRef()}
         onSubmit={() => setCurrentObservationRef()}
       />
@@ -213,7 +562,14 @@ export default observer(function ProfilePage(props) {
         <Button variant="outline" mx={5} onClick={editAction}>
           Modifier
         </Button>
-        <Button variant="outline" onClick={removeAction}>
+        <Button
+          variant="outline"
+          onClick={withConfirm({
+            header: `Êtes vous sûr(e) ?`,
+            body: `Veuillez confirmer la suppression de la fiche élève de ${selectedProfile.firstname} ${selectedProfile.lastname} :`,
+            onConfirm: removeAction
+          })}
+        >
           Supprimer
         </Button>
       </PageTitle>
@@ -299,7 +655,7 @@ export default observer(function ProfilePage(props) {
         <Box {...sectionProps}>
           <PageSubTitle
             button={
-              <Button variant="outline" ml={5} onClick={toggleAddSkillForm}>
+              <Button variant="outline" ml={5} onClick={toggleSkillForm}>
                 Valider une compétence
                 {showSkillForm ? (
                   <ArrowUpIcon ml={2} />
@@ -321,89 +677,20 @@ export default observer(function ProfilePage(props) {
             <ProfileAddSkillForm
               profile={selectedProfile}
               skills={skillType.store.skills}
-              onSubmit={toggleAddSkillForm}
+              onSubmit={toggleSkillForm}
             />
           )}
 
           {showSkills && selectedProfile.skills.length > 0 && (
             <>
               <Divider mb={5} borderColor="white" borderWidth={2} />
-              <Table
-                initialState={{
-                  sortBy: [
-                    {
-                      id: "date",
-                      desc: true
-                    }
-                  ]
-                }}
-                data={values(selectedProfile.skills).map((skillRef) => {
-                  const { skill, workshop, date } = skillRef;
-                  return {
-                    date: format(date, "dd/MM/yyyy"),
-                    code: skill.code,
-                    description: skill.description,
-                    domain: skill.domain && skill.domain.name,
-                    level: skill.level,
-                    workshop: workshop && workshop.name,
-                    editButton: (
-                      <IconButton
-                        icon={<EditIcon />}
-                        onClick={() => editSkillRefAction(skillRef)}
-                      />
-                    ),
-                    deleteButton: (
-                      <IconButton
-                        icon={<DeleteIcon />}
-                        colorScheme="red"
-                        onClick={() => removeSkillAction(skill)}
-                      />
-                    )
-                  };
-                })}
-                columns={[
-                  {
-                    Header: "Date",
-                    accessor: "date",
-                    sortType: "basic",
-                    disableSortBy: disableSortBySkill
-                  },
-                  {
-                    Header: "Code",
-                    accessor: "code",
-                    disableSortBy: disableSortBySkill
-                  },
-                  {
-                    Header: "Description",
-                    accessor: "description",
-                    disableSortBy: disableSortBySkill
-                  },
-                  {
-                    Header: "Matière",
-                    accessor: "domain",
-                    disableSortBy: disableSortBySkill
-                  },
-                  {
-                    Header: "Niveau",
-                    accessor: "level",
-                    disableSortBy: disableSortBySkill
-                  },
-                  {
-                    Header: "Atelier",
-                    accessor: "workshop",
-                    disableSortBy: disableSortBySkill
-                  },
-                  {
-                    Header: "",
-                    accessor: "editButton",
-                    disableSortBy: true
-                  },
-                  {
-                    Header: "",
-                    accessor: "deleteButton",
-                    disableSortBy: true
-                  }
-                ]}
+              <SkillTable
+                editAction={editSkillRefAction}
+                removeAction={removeSkillRefAction}
+                withConfirm={withConfirm}
+                profileType={profileType}
+                profile={selectedProfile}
+                display={displaySkills}
               />
             </>
           )}
@@ -455,7 +742,7 @@ export default observer(function ProfilePage(props) {
         <Box {...sectionProps}>
           <PageSubTitle
             button={
-              <Button variant="outline" ml={5} onClick={toggleAddWorkshopForm}>
+              <Button variant="outline" ml={5} onClick={toggleWorkshopForm}>
                 Associer un atelier
                 {showWorkshopForm ? (
                   <ArrowUpIcon ml={2} />
@@ -487,85 +774,12 @@ export default observer(function ProfilePage(props) {
           {showWorkshops && selectedProfile.workshops.length > 0 && (
             <>
               <Divider mb={5} borderColor="white" borderWidth={2} />
-              <Table
-                css={{
-                  display: !showWorkshops
-                    ? "none"
-                    : selectedProfile.workshops.length > 0
-                    ? "block"
-                    : "none"
-                }}
-                initialState={{
-                  sortBy: [
-                    {
-                      id: "name",
-                      desc: true
-                    }
-                  ]
-                }}
-                data={values(selectedProfile.workshops).map((workshopRef) => {
-                  const { _id, workshop, started, completed } = workshopRef;
-
-                  return {
-                    name: workshop.name,
-                    started: isDate(started) && format(started, "dd/MM/yyyy"),
-                    completed:
-                      isDate(completed) && format(completed, "dd/MM/yyyy"),
-                    skills: workshop.skills.map((skill) => (
-                      <Tag key={skill._id} mr={2}>
-                        {skill.code}
-                      </Tag>
-                    )),
-                    editButton: (
-                      <IconButton
-                        id="editWorkshop"
-                        icon={<EditIcon />}
-                        onClick={() => editWorkshopRefAction(workshopRef)}
-                      />
-                    ),
-                    deleteButton: (
-                      <IconButton
-                        icon={<DeleteIcon />}
-                        colorScheme="red"
-                        onClick={() => removeWorkshopRefAction(_id)}
-                      />
-                    )
-                  };
-                })}
-                columns={[
-                  {
-                    Header: "Nom",
-                    accessor: "name",
-                    disableSortBy: disableSortByWorkshop
-                  },
-                  {
-                    Header: "Date de début",
-                    accessor: "started",
-                    sortType: "basic",
-                    disableSortBy: disableSortByWorkshop
-                  },
-                  {
-                    Header: "Date de fin",
-                    accessor: "completed",
-                    sortType: "basic",
-                    disableSortBy: disableSortByWorkshop
-                  },
-                  {
-                    Header: "Compétences",
-                    accessor: "skills",
-                    disableSortBy: true
-                  },
-                  {
-                    Header: "",
-                    accessor: "editButton",
-                    disableSortBy: true
-                  },
-                  {
-                    Header: "",
-                    accessor: "deleteButton",
-                    disableSortBy: true
-                  }
-                ]}
+              <WorkshopTable
+                withConfirm={withConfirm}
+                editAction={editWorkshopRefAction}
+                removeAction={removeWorkshopRefAction}
+                profile={selectedProfile}
+                display={displayWorkshops}
               />
             </>
           )}
@@ -574,11 +788,7 @@ export default observer(function ProfilePage(props) {
         <Box {...sectionProps}>
           <PageSubTitle
             button={
-              <Button
-                variant="outline"
-                ml={5}
-                onClick={toggleAddObservationForm}
-              >
+              <Button variant="outline" ml={5} onClick={toggleObservationForm}>
                 Associer une observation
                 {showObservationForm ? (
                   <ArrowUpIcon ml={2} />
@@ -610,71 +820,12 @@ export default observer(function ProfilePage(props) {
           {showObservations && selectedProfile.observations.length > 0 && (
             <>
               <Divider mb={5} borderColor="white" borderWidth={2} />
-              <Table
-                css={{
-                  display: !showObservations
-                    ? "none"
-                    : selectedProfile.observations.length > 0
-                    ? "block"
-                    : "none"
-                }}
-                initialState={{
-                  sortBy: [
-                    {
-                      id: "date",
-                      desc: true
-                    }
-                  ]
-                }}
-                data={values(selectedProfile.observations).map(
-                  (observationRef) => {
-                    const { _id, observation, date } = observationRef;
-
-                    return {
-                      description: observation.description,
-                      date: isDate(date) && format(date, "dd/MM/yyyy"),
-                      editButton: (
-                        <IconButton
-                          id="editObservation"
-                          icon={<EditIcon />}
-                          onClick={() =>
-                            editObservationRefAction(observationRef)
-                          }
-                        />
-                      ),
-                      deleteButton: (
-                        <IconButton
-                          icon={<DeleteIcon />}
-                          colorScheme="red"
-                          onClick={() => removeObservationRefAction(_id)}
-                        />
-                      )
-                    };
-                  }
-                )}
-                columns={[
-                  {
-                    Header: "Date",
-                    accessor: "date",
-                    sortType: "basic",
-                    disableSortBy: disableSortBySkill
-                  },
-                  {
-                    Header: "Description",
-                    accessor: "description",
-                    disableSortBy: disableSortByObservation
-                  },
-                  {
-                    Header: "",
-                    accessor: "editButton",
-                    disableSortBy: true
-                  },
-                  {
-                    Header: "",
-                    accessor: "deleteButton",
-                    disableSortBy: true
-                  }
-                ]}
+              <ObservationTable
+                withConfirm={withConfirm}
+                editAction={editObservationRefAction}
+                removeAction={removeObservationRefAction}
+                profile={selectedProfile}
+                display={displayObservations}
               />
             </>
           )}

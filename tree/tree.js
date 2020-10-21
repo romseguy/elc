@@ -4,6 +4,7 @@ import { applySnapshot, onSnapshot, types as t } from "mobx-state-tree";
 import makeInspectable from "mobx-devtools-mst";
 import { isServer } from "utils/isServer";
 import { Counter } from "./counter";
+import { Confirm } from "./confirm";
 import {
   ObservationType,
   ParentType,
@@ -18,6 +19,7 @@ let clientStore;
 export const Tree = t
   .model({
     counter: t.optional(Counter, {}),
+    confirm: t.optional(Confirm, {}),
     observationType: t.optional(ObservationType, {}),
     parentType: t.optional(ParentType, {}),
     profileType: t.optional(ProfileType, {}),
@@ -66,3 +68,14 @@ export function useStore() {
   }
   return store;
 }
+
+// make instance JSON serializable
+// export const getSnapshot = (instance) => {
+//   console.log(instance);
+//   // filter undefined values
+//   let o = {};
+//   Object.keys(instance).forEach((key) => {
+//     if (instance[key] !== undefined) o[key] = instance[key];
+//   });
+//   return o;
+// };

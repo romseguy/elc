@@ -45,7 +45,9 @@ export default observer((props) => {
     return null;
   }
 
-  const { parentType } = useStore();
+  const { confirm, parentType } = useStore();
+  const withConfirm = (props) => (e) => confirm.onOpen(props);
+
   useEffect(() => {
     const selectParent = async () => {
       await parentType.store.getParents();
@@ -105,7 +107,14 @@ export default observer((props) => {
         <Button variant="outline" mx={5} onClick={editAction}>
           Modifier
         </Button>
-        <Button variant="outline" onClick={removeAction}>
+        <Button
+          variant="outline"
+          onClick={withConfirm({
+            header: `Êtes vous sûr(e) ?`,
+            body: `Veuillez confirmer la suppression de la fiche parent ${selectedParent.firstname} ${selectedParent.lastname} :`,
+            onConfirm: removeAction
+          })}
+        >
           Supprimer
         </Button>
       </PageTitle>

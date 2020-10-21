@@ -115,6 +115,24 @@ handler.delete(async function removeSkill(req, res) {
         }
       }
 
+      // remove references to this skill from workshops
+      const workshops = await req.models.Workshop.find({});
+
+      for (const workshop of workshops) {
+        if (Array.isArray(workshop.skills)) {
+          for (const skill of workshop.skills) {
+            if (skill === pid) {
+              await req.models.Workshop.updateOne(
+                { _id: workshop._id },
+                {
+                  skills: workshop.skills.filter((skill) => skill !== pid)
+                }
+              );
+            }
+          }
+        }
+      }
+
       const skill = await req.models.Skill.findOne({ _id: pid });
       const { deletedCount } = await req.models.Skill.deleteOne({ _id: pid });
 
