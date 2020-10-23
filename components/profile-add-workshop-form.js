@@ -60,11 +60,12 @@ export const ProfileAddWorkshopForm = (props) => {
         isInvalid={!!errors.workshop}
         mb={5}
       >
-        <FormLabel>Atelier</FormLabel>
+        <FormLabel>Atelier :</FormLabel>
         <Select
           name="workshop"
           placeholder="Sélectionner un atelier"
           ref={register({ required: "Veuillez sélectionner un atelier" })}
+          color="gray.400"
         >
           {values(props.workshops).map((workshop) => {
             return (
@@ -98,7 +99,7 @@ export const ProfileAddWorkshopForm = (props) => {
         isDisabled={Object.keys(errors).length > 0}
         mb={5}
       >
-        Ajouter
+        Associer
       </Button>
     </form>
   );

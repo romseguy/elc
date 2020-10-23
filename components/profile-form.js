@@ -83,8 +83,8 @@ export const ProfileForm = (props) => {
         </FormLabel>
         <Input
           name="firstname"
-          placeholder="Prénom"
-          ref={register({ required: "Veuillez saisir un prénom" })}
+          placeholder="Entrez le prénom de l'élève"
+          ref={register({ required: "Veuillez saisir le prénom de l'élève" })}
           defaultValue={props.profile && props.profile.firstname}
         />
         <FormErrorMessage>
@@ -102,8 +102,10 @@ export const ProfileForm = (props) => {
         <FormLabel>Nom</FormLabel>
         <Input
           name="lastname"
-          placeholder="Nom"
-          ref={register({ required: "Veuillez saisir un nom de famille" })}
+          placeholder="Entrez le nom de l'élève"
+          ref={register({
+            required: "Veuillez saisir le nom de famille de l'élève"
+          })}
           defaultValue={props.profile && props.profile.lastname}
         />
         <FormErrorMessage>
@@ -126,7 +128,7 @@ export const ProfileForm = (props) => {
             <DatePicker
               minDate={subYears(new Date(), 11)}
               maxDate={subYears(new Date(), 1)}
-              placeholderText={format(new Date(), "dd/MM/yyyy")}
+              placeholderText="Entrez la date d'anniversaire de l'élève"
               {...props}
             />
           )}

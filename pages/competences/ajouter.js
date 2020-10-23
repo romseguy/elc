@@ -29,7 +29,9 @@ export default function Page(props) {
   return (
     <>
       <Layout>
-        <PageTitle>Ajouter une nouvelle compétence</PageTitle>
+        <PageTitle>
+          Ajouter une nouvelle compétence de l'Éducation Nationale
+        </PageTitle>
         <SkillForm />
       </Layout>
       {/* <DevTool control={control} /> */}

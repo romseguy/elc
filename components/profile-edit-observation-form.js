@@ -69,7 +69,7 @@ export const ProfileEditObservationForm = ({
   };
 
   return (
-    <Drawer placement="bottom" isOpen={isOpen} onClose={onClose}>
+    <Drawer placement="bottom" isFullHeight isOpen={isOpen} onClose={onClose}>
       <DrawerOverlay>
         <DrawerContent>
           <DrawerHeader>
@@ -105,7 +105,7 @@ export const ProfileEditObservationForm = ({
               ))} */}
 
               <FormControl id="date" isInvalid={!!errors["date"]}>
-                <FormLabel>Date de l'observation</FormLabel>
+                <FormLabel>Date de l'observation :</FormLabel>
                 <Controller
                   name="date"
                   control={control}

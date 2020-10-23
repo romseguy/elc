@@ -58,16 +58,17 @@ export const ProfileAddSkillForm = (props) => {
   return (
     <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
       <FormControl id="skill" isRequired isInvalid={!!errors.skill} mb={5}>
-        <FormLabel>Compétence</FormLabel>
+        <FormLabel>Compétence :</FormLabel>
         <Select
           name="skill"
           placeholder="Sélectionner une compétence"
           ref={register({ required: "Veuillez sélectionner une compétence" })}
+          color="gray.400"
         >
           {values(props.skills).map((skill) => {
             return (
               <option key={skill._id} value={skill._id}>
-                {skill.code}
+                {skill.description} ({skill.code})
               </option>
             );
           })}
@@ -78,7 +79,10 @@ export const ProfileAddSkillForm = (props) => {
       </FormControl>
 
       <FormControl id="date" isRequired isInvalid={!!errors.date} mb={5}>
-        <FormLabel>Date</FormLabel>
+        <FormLabel>
+          Date à laquelle {props.profile.firstname} {props.profile.lastname} a
+          validé cette compétence :
+        </FormLabel>
         <Controller
           name="date"
           control={control}
@@ -118,7 +122,7 @@ export const ProfileAddSkillForm = (props) => {
         isDisabled={Object.keys(errors).length > 0}
         mb={5}
       >
-        Ajouter
+        Valider
       </Button>
     </form>
   );

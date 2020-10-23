@@ -1,4 +1,5 @@
 cypress/screenshots
+cypress/videos
 # Backup files
 *.bak
 

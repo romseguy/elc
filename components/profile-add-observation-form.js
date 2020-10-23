@@ -63,11 +63,12 @@ export const ProfileAddObservationForm = (props) => {
         isInvalid={!!errors.observation}
         mb={5}
       >
-        <FormLabel>Observation</FormLabel>
+        <FormLabel>Observation :</FormLabel>
         <Select
           name="observation"
           placeholder="Sélectionner une observation"
           ref={register({ required: "Veuillez sélectionner une observation" })}
+          color="gray.400"
         >
           {values(props.observations).map((observation) => {
             return (
@@ -83,13 +84,13 @@ export const ProfileAddObservationForm = (props) => {
       </FormControl>
 
       <FormControl id="date" isRequired isInvalid={!!errors.date} mb={5}>
-        <FormLabel>Date</FormLabel>
+        <FormLabel>Date :</FormLabel>
         <Controller
           name="date"
           control={control}
           defaultValue={new Date()}
           rules={{
-            required: "Veuillez saisir la date d'obtention de l'observation"
+            required: "Veuillez saisir la date d'observation"
           }}
           render={(props) => (
             <DatePicker
@@ -123,7 +124,7 @@ export const ProfileAddObservationForm = (props) => {
         isDisabled={Object.keys(errors).length > 0}
         mb={5}
       >
-        Ajouter
+        Associer
       </Button>
     </form>
   );

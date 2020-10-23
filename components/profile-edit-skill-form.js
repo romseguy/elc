@@ -71,17 +71,14 @@ export const ProfileEditSkillForm = ({
     <Drawer placement="bottom" isFullHeight isOpen={isOpen} onClose={onClose}>
       <DrawerOverlay>
         <DrawerContent>
-          <DrawerHeader>
-            {/* Modification de la compétence acquise par
-            {profile.firstname} {profile.lastname} */}
-          </DrawerHeader>
+          <DrawerHeader>Compétence {currentSkillRef.skill.code}</DrawerHeader>
           <DrawerCloseButton />
           <DrawerBody>
             <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
               <FormControl id="date" isInvalid={!!errors["date"]}>
                 <FormLabel>
-                  Date de la validation de la compétence{" "}
-                  {currentSkillRef.skill.code} :
+                  Date à laquelle {profile.firstname} {profile.lastname} a
+                  validé cette compétence :
                 </FormLabel>
                 <Controller
                   name="date"

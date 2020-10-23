@@ -37,7 +37,9 @@ export const Confirm = observer(() => {
             <Button variant="outline" onClick={onClose}>
               Annuler
             </Button>
-            <Button onClick={onConfirm}>Confirmer</Button>
+            <Button ml={5} onClick={onConfirm}>
+              Confirmer
+            </Button>
           </ModalFooter>
         </ModalContent>
       </ModalOverlay>

@@ -1,379 +1,38 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { getSession, useSession } from "next-auth/client";
 import { useRouter } from "next/router";
-import { values } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useStore } from "tree";
-import { levels } from "tree/skill/utils";
-import tw, { styled } from "twin.macro";
-import { format, isDate } from "date-fns";
+import { format } from "date-fns";
 import { isServer } from "utils/isServer";
 import {
   Box,
   Button,
   Divider,
-  IconButton,
   List,
   ListItem,
   Spinner,
-  Tag,
   useColorModeValue,
-  VStack,
-  Progress,
-  Text
+  VStack
 } from "@chakra-ui/core";
+import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
 import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  DeleteIcon,
-  EditIcon
-} from "@chakra-ui/icons";
-import {
-  ProfileEditWorkshopForm,
   Layout,
   PageSubTitle,
   PageTitle,
-  ProfileAddSkillForm,
-  ProfileAddWorkshopForm,
-  ProfileEditSkillForm,
   ProfileForm,
-  StyledTable,
-  Table,
+  ParentTable,
+  SkillTable,
+  ProfileAddSkillForm,
+  ProfileEditSkillForm,
+  LevelTable,
+  WorkshopTable,
+  ProfileAddWorkshopForm,
+  ProfileEditWorkshopForm,
+  ObservationTable,
   ProfileAddObservationForm,
   ProfileEditObservationForm
 } from "components";
-
-const SkillTable = ({
-  withConfirm,
-  editAction,
-  removeAction,
-  profile,
-  display
-}) => {
-  const disableSortBy = useMemo(
-    () => profile.skills.length <= 1,
-    profile.skills
-  );
-
-  const columns = useMemo(
-    () => [
-      {
-        Header: "Date",
-        accessor: "date",
-        sortType: "log",
-        disableSortBy
-      },
-      {
-        Header: "Code",
-        accessor: "code",
-        disableSortBy
-      },
-      {
-        Header: "Description",
-        accessor: "description",
-        disableSortBy
-      },
-      {
-        Header: "Matière",
-        accessor: "domain",
-        disableSortBy
-      },
-      {
-        Header: "Niveau",
-        accessor: "level",
-        disableSortBy
-      },
-      {
-        Header: "Atelier",
-        accessor: "workshop",
-        disableSortBy
-      },
-      {
-        Header: "",
-        accessor: "editButton",
-        disableSortBy: true
-      },
-      {
-        Header: "",
-        accessor: "deleteButton",
-        disableSortBy: true
-      }
-    ],
-    [disableSortBy]
-  );
-
-  const data = useMemo(
-    () =>
-      values(profile.skills).map((skillRef) => {
-        const { skill, workshop, date } = skillRef;
-
-        return {
-          date: format(date, "dd/MM/yyyy"),
-          code: skill.code,
-          description: skill.description,
-          domain: skill.domain && skill.domain.name,
-          level: skill.level,
-          workshop: workshop && workshop.name,
-          editButton: (
-            <IconButton
-              icon={<EditIcon />}
-              onClick={() => editAction(skillRef)}
-            />
-          ),
-          deleteButton: (
-            <IconButton
-              icon={<DeleteIcon />}
-              colorScheme="red"
-              onClick={withConfirm({
-                header: `Êtes vous sûr(e) ?`,
-                body: (
-                  <Text>
-                    Veuillez confirmer la suppression de la compétence{" "}
-                    <strong>{skill.code}</strong> de la fiche élève de{" "}
-                    <strong>
-                      {profile.firstname} {profile.lastname}
-                    </strong>{" "}
-                    :
-                  </Text>
-                ),
-                onConfirm: () => removeAction(skillRef)
-              })}
-            />
-          )
-        };
-      }),
-    [profile.skills]
-  );
-
-  return (
-    <Table
-      css={{ display }}
-      initialState={{
-        sortBy: [
-          {
-            id: "date",
-            desc: true
-          }
-        ]
-      }}
-      data={data}
-      columns={columns}
-      fullWidth
-    />
-  );
-};
-
-const WorkshopTable = ({
-  withConfirm,
-  editAction,
-  removeAction,
-  profile,
-  display
-}) => {
-  const disableSortBy = useMemo(() => profile.workshops.length <= 1, [
-    profile.workshops
-  ]);
-
-  const columns = useMemo(
-    () => [
-      {
-        Header: "Nom",
-        accessor: "name",
-        disableSortBy
-      },
-      {
-        Header: "Date de début",
-        accessor: "started",
-        sortType: "basic",
-        disableSortBy
-      },
-      {
-        Header: "Date de fin",
-        accessor: "completed",
-        sortType: "basic",
-        disableSortBy
-      },
-      {
-        Header: "Compétences",
-        accessor: "skills",
-        disableSortBy: true
-      },
-      {
-        Header: "",
-        accessor: "editButton",
-        disableSortBy: true
-      },
-      {
-        Header: "",
-        accessor: "deleteButton",
-        disableSortBy: true
-      }
-    ],
-    [disableSortBy]
-  );
-
-  const data = useMemo(
-    () =>
-      values(profile.workshops).map((workshopRef) => {
-        const { _id, workshop, started, completed } = workshopRef;
-
-        return {
-          name: workshop.name,
-          started: isDate(started) && format(started, "dd/MM/yyyy"),
-          completed: isDate(completed) && format(completed, "dd/MM/yyyy"),
-          skills: workshop.skills.map((skill) => (
-            <Tag key={skill._id} mr={2}>
-              {skill.code}
-            </Tag>
-          )),
-          editButton: (
-            <IconButton
-              id="editWorkshop"
-              icon={<EditIcon />}
-              onClick={() => editAction(workshopRef)}
-            />
-          ),
-          deleteButton: (
-            <IconButton
-              icon={<DeleteIcon />}
-              colorScheme="red"
-              onClick={withConfirm({
-                header: `Êtes vous sûr(e) ?`,
-                body: (
-                  <Text>
-                    Veuillez confirmer la suppression de l'atelier{" "}
-                    <strong>{workshopRef.workshop.name}</strong> de la fiche
-                    élève de{" "}
-                    <strong>
-                      {profile.firstname} {profile.lastname}
-                    </strong>{" "}
-                    :
-                  </Text>
-                ),
-                onConfirm: () => removeAction(workshopRef)
-              })}
-            />
-          )
-        };
-      }),
-    [profile.workshops]
-  );
-
-  return (
-    <Table
-      css={{
-        display
-      }}
-      initialState={{
-        sortBy: [
-          {
-            id: "name",
-            desc: true
-          }
-        ]
-      }}
-      data={data}
-      columns={columns}
-    />
-  );
-};
-
-const ObservationTable = ({
-  withConfirm,
-  editAction,
-  removeAction,
-  profile,
-  display
-}) => {
-  const disableSortBy = useMemo(() => profile.observations.length <= 1, [
-    profile.observations
-  ]);
-
-  const columns = useMemo(() => [
-    {
-      Header: "Date",
-      accessor: "date",
-      sortType: "basic",
-      disableSortBy
-    },
-    {
-      Header: "Description",
-      accessor: "description",
-      disableSortBy
-    },
-    {
-      Header: "",
-      accessor: "editButton",
-      disableSortBy: true
-    },
-    {
-      Header: "",
-      accessor: "deleteButton",
-      disableSortBy: true
-    }
-  ]);
-
-  const data = useMemo(() =>
-    values(profile.observations).map((observationRef) => {
-      const { _id, observation, date } = observationRef;
-
-      return {
-        description: observation.description,
-        date: isDate(date) && format(date, "dd/MM/yyyy"),
-        editButton: (
-          <IconButton
-            id="editObservation"
-            icon={<EditIcon />}
-            onClick={() => editAction(observationRef)}
-          />
-        ),
-        deleteButton: (
-          <IconButton
-            icon={<DeleteIcon />}
-            colorScheme="red"
-            onClick={withConfirm({
-              header: `Êtes vous sûr(e) ?`,
-              body: (
-                <>
-                  <Text>
-                    Veuillez confirmer la suppression de l'observation :
-                  </Text>
-                  <Text my={2}>
-                    <strong>{observationRef.observation.description}</strong>
-                  </Text>
-                  <Text>
-                    {" "}
-                    de la fiche élève de {profile.firstname} {profile.lastname}{" "}
-                    :
-                  </Text>
-                </>
-              ),
-              onConfirm: () => removeAction(observationRef)
-            })}
-          />
-        )
-      };
-    })
-  );
-
-  return (
-    <Table
-      css={{
-        display
-      }}
-      initialState={{
-        sortBy: [
-          {
-            id: "date",
-            desc: true
-          }
-        ]
-      }}
-      data={data}
-      columns={columns}
-    />
-  );
-};
 
 export default observer(function ProfilePage(props) {
   const [session = props.session] = useSession();
@@ -408,7 +67,10 @@ export default observer(function ProfilePage(props) {
 
   // parents
   const [showParents, setShowParents] = useState(false);
-  const toggleShowParents = () => setShowParents(!showParents);
+  const toggleShowParents = () => {
+    setShowParentForm(false);
+    setShowParents(!showParents);
+  };
   const [showParentForm, setShowParentForm] = useState(false);
   const toggleParentForm = (e) => {
     e && e.stopPropagation();
@@ -420,7 +82,10 @@ export default observer(function ProfilePage(props) {
 
   // skills
   const [showSkills, setShowSkills] = useState(false);
-  const toggleShowSkills = () => setShowSkills(!showSkills);
+  const toggleShowSkills = () => {
+    setShowSkillForm(false);
+    setShowSkills(!showSkills);
+  };
   const [showSkillForm, setShowSkillForm] = useState(false);
   const toggleSkillForm = (e) => {
     e && e.stopPropagation();
@@ -446,7 +111,10 @@ export default observer(function ProfilePage(props) {
 
   // workshops
   const [showWorkshops, setShowWorkshops] = useState(false);
-  const toggleShowWorkshops = () => setShowWorkshops(!showWorkshops);
+  const toggleShowWorkshops = () => {
+    setShowWorkshopForm(false);
+    setShowWorkshops(!showWorkshops);
+  };
   const [showWorkshopForm, setShowWorkshopForm] = useState(false);
   const toggleWorkshopForm = (e) => {
     e && e.stopPropagation();
@@ -468,7 +136,10 @@ export default observer(function ProfilePage(props) {
 
   // observations
   const [showObservations, setShowObservations] = useState(false);
-  const toggleShowObservations = () => setShowObservations(!showObservations);
+  const toggleShowObservations = () => {
+    setShowObservationForm(false);
+    setShowObservations(!showObservations);
+  };
   const [showObservationForm, setShowObservationForm] = useState(false);
   const toggleObservationForm = (e) => {
     e && e.stopPropagation();
@@ -496,7 +167,7 @@ export default observer(function ProfilePage(props) {
   };
 
   const pageSubtitleProps = {
-    pl: 5,
+    p: 2,
     _hover: {
       bg: useColorModeValue("orange.300", "gray.700"),
       rounded: "lg"
@@ -624,30 +295,10 @@ export default observer(function ProfilePage(props) {
           {showParents && selectedProfile.parents.length > 0 && (
             <>
               <Divider mb={5} borderColor="white" borderWidth={2} />
-
-              <StyledTable>
-                <thead>
-                  <tr>
-                    <th>Prénom </th>
-                    <th>Nom </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {values(selectedProfile.parents).map((parent) => {
-                    return (
-                      <tr
-                        key={parent._id}
-                        tabIndex={0}
-                        title={`Cliquez pour ouvrir la fiche de ${parent.firstname} ${parent.lastname}`}
-                        onClick={() => onParentRowClick(parent)}
-                      >
-                        <td>{parent.firstname}</td>
-                        <td>{parent.lastname}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </StyledTable>
+              <ParentTable
+                profile={selectedProfile}
+                css={{ marginLeft: "1rem" }}
+              />
             </>
           )}
         </Box>
@@ -674,11 +325,13 @@ export default observer(function ProfilePage(props) {
           </PageSubTitle>
 
           {showSkillForm && (
-            <ProfileAddSkillForm
-              profile={selectedProfile}
-              skills={skillType.store.skills}
-              onSubmit={toggleSkillForm}
-            />
+            <Box ml={5}>
+              <ProfileAddSkillForm
+                profile={selectedProfile}
+                skills={skillType.store.skills}
+                onSubmit={toggleSkillForm}
+              />
+            </Box>
           )}
 
           {showSkills && selectedProfile.skills.length > 0 && (
@@ -691,6 +344,7 @@ export default observer(function ProfilePage(props) {
                 profileType={profileType}
                 profile={selectedProfile}
                 display={displaySkills}
+                css={{ marginLeft: "1rem" }}
               />
             </>
           )}
@@ -709,32 +363,11 @@ export default observer(function ProfilePage(props) {
           {showLevels && (
             <>
               <Divider mb={5} borderColor="white" borderWidth={2} />
-              <StyledTable>
-                <thead>
-                  <tr>
-                    <th>Niveau</th>
-                    <th>Progression</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {levels.map((level) => {
-                    return (
-                      <tr key={level}>
-                        <td>{level}</td>
-                        <td>
-                          <Progress
-                            value={
-                              selectedProfile.getSkillsByLevel(level).length
-                            }
-                            min={0}
-                            max={skillType.store.skills.size}
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </StyledTable>
+              <LevelTable
+                profile={selectedProfile}
+                maxProgress={skillType.store.skills.size}
+                css={{ marginLeft: "1rem" }}
+              />
             </>
           )}
         </Box>
@@ -761,14 +394,16 @@ export default observer(function ProfilePage(props) {
           </PageSubTitle>
 
           {showWorkshopForm && (
-            <ProfileAddWorkshopForm
-              profile={selectedProfile}
-              workshops={workshopType.store.workshops}
-              onSubmit={() => {
-                setShowWorkshopForm(false);
-                setShowWorkshops(true);
-              }}
-            />
+            <Box ml={5}>
+              <ProfileAddWorkshopForm
+                profile={selectedProfile}
+                workshops={workshopType.store.workshops}
+                onSubmit={() => {
+                  setShowWorkshopForm(false);
+                  setShowWorkshops(true);
+                }}
+              />
+            </Box>
           )}
 
           {showWorkshops && selectedProfile.workshops.length > 0 && (
@@ -780,6 +415,7 @@ export default observer(function ProfilePage(props) {
                 removeAction={removeWorkshopRefAction}
                 profile={selectedProfile}
                 display={displayWorkshops}
+                css={{ marginLeft: "1rem" }}
               />
             </>
           )}
@@ -807,14 +443,16 @@ export default observer(function ProfilePage(props) {
           </PageSubTitle>
 
           {showObservationForm && (
-            <ProfileAddObservationForm
-              profile={selectedProfile}
-              observations={observationType.store.observations}
-              onSubmit={() => {
-                setShowObservationForm(false);
-                setShowObservations(true);
-              }}
-            />
+            <Box ml={5}>
+              <ProfileAddObservationForm
+                profile={selectedProfile}
+                observations={observationType.store.observations}
+                onSubmit={() => {
+                  setShowObservationForm(false);
+                  setShowObservations(true);
+                }}
+              />
+            </Box>
           )}
 
           {showObservations && selectedProfile.observations.length > 0 && (
@@ -826,6 +464,7 @@ export default observer(function ProfilePage(props) {
                 removeAction={removeObservationRefAction}
                 profile={selectedProfile}
                 display={displayObservations}
+                css={{ marginLeft: "1rem" }}
               />
             </>
           )}

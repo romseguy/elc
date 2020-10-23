@@ -92,8 +92,10 @@ export const SkillForm = (props) => {
         <FormLabel>Code</FormLabel>
         <Input
           name="code"
-          placeholder="L01"
-          ref={register({ required: "Veuillez saisir un code" })}
+          placeholder="Entrez le code de la compétence"
+          ref={register({
+            required: "Veuillez saisir le code de la compétence"
+          })}
           defaultValue={props.skill && props.skill.code}
         />
         <FormErrorMessage>
@@ -111,8 +113,10 @@ export const SkillForm = (props) => {
         <FormLabel>Description</FormLabel>
         <Input
           name="description"
-          placeholder="J'écoute et je comprends des consignes"
-          ref={register({ required: "Veuillez saisir une description" })}
+          placeholder="Entrez la description de la compétence"
+          ref={register({
+            required: "Veuillez saisir la description de la compétence"
+          })}
           defaultValue={props.skill && props.skill.description}
         />
         <FormErrorMessage>
@@ -128,11 +132,12 @@ export const SkillForm = (props) => {
 
             <Select
               name="domain"
-              placeholder="Sélectionner une matière"
+              placeholder="Sélectionnez la matière de la compétence"
               ref={register()}
               defaultValue={
                 props.skill && props.skill.domain && props.skill.domain._id
               }
+              color="gray.400"
             >
               {values(skillType.domainType.store.domains).map((domain) => (
                 <option key={domain._id} value={domain._id}>
@@ -174,7 +179,7 @@ export const SkillForm = (props) => {
                 })}
                 size="xs"
                 width="50%"
-                placeholder="Français"
+                placeholder="Mathématiques"
               />
               <InputRightAddon
                 children={
@@ -233,7 +238,9 @@ export const SkillForm = (props) => {
                     ref={register()}
                     size="xs"
                     width="50%"
-                    placeholder="Sélectionner une matière"
+                    placeholder="Sélectionnez la matière à supprimer"
+                    color="gray.400"
+                    // css={{ "&:first-child": { color: "orange" } }}
                   >
                     {values(skillType.domainType.store.domains).map(
                       (domain) => (
@@ -274,9 +281,10 @@ export const SkillForm = (props) => {
         <FormLabel>Niveau</FormLabel>
         <Select
           name="level"
-          placeholder="Sélectionner un niveau"
+          placeholder="Sélectionnez le niveau de la compétence"
           ref={register()}
           defaultValue={props.skill && props.skill.level}
+          color="gray.400"
         >
           {levels.map((level) => (
             <option key={level} value={level}>

@@ -1,6 +1,6 @@
 import { useColorModeValue } from "@chakra-ui/core";
 import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
-import { useSortBy, useTable } from "react-table";
+import { useSortBy, useTable, useFlexLayout  } from "react-table";
 import tw, { styled } from "twin.macro";
 
 export const StyledTable = (props) => {
@@ -58,16 +58,15 @@ export const Table = (props) => {
       },
     },
     useSortBy
+    // useFlexLayout
   );
 
   return (
-    <StyledTable {...getTableProps()} {...props}>
+    <StyledTable css={{width: "100%"}} {...getTableProps()} {...props}>
       <thead>
         {headerGroups.map((headerGroup) => (
           <tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column) => {
-              //console.log(column);
-
               return (
                 <th
                   {...column.getHeaderProps(column.getSortByToggleProps())}

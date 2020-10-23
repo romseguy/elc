@@ -20,9 +20,30 @@ export const PageSubTitle = ({
 }) => {
   return (
     <Flex alignItems="center" onClick={onClick} cursor="pointer" {...props}>
+      {togglable && onToggle && (
+        <>
+          {toggled ? (
+            <IconButton
+              colorScheme="blue"
+              size="lg"
+              icon={<ArrowUpIcon />}
+              onClick={onToggle}
+              mr={2}
+            />
+          ) : (
+            <IconButton
+              colorScheme="blue"
+              size="lg"
+              icon={<ArrowDownIcon />}
+              onClick={onToggle}
+              mr={2}
+            />
+          )}
+        </>
+      )}
       <Heading size="md">{children}</Heading>
       {button}
-      <Spacer />
+      {/* <Spacer />
       {togglable && onToggle && (
         <>
           {toggled ? (
@@ -41,7 +62,7 @@ export const PageSubTitle = ({
             />
           )}
         </>
-      )}
+      )} */}
     </Flex>
   );
 };

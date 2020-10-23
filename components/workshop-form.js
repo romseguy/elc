@@ -75,11 +75,11 @@ export const WorkshopForm = (props) => {
         mt={0}
         isInvalid={!!errors["name"]}
       >
-        <FormLabel>Nom</FormLabel>
+        <FormLabel>Nom de l'atelier :</FormLabel>
         <Input
           name="name"
-          placeholder="Compter jusqu'à 10"
-          ref={register({ required: "Veuillez saisir un nom" })}
+          placeholder="Entrez le nom de l'atelier"
+          ref={register({ required: "Veuillez saisir le nom de l'atelier" })}
           defaultValue={props.workshop && props.workshop.name}
         />
         <FormErrorMessage>
@@ -91,7 +91,7 @@ export const WorkshopForm = (props) => {
         {() => (
           <FormControl m={5} mt={0} id="skills" isInvalid={!!errors["skills"]}>
             <FormLabel>
-              Compétences pouvant être acquises au cours de cet atelier
+              Compétences acquises une fois l'atelier terminé :
             </FormLabel>
             {skillType.store.isLoading ? (
               <Spinner />

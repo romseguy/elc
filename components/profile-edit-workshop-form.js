@@ -18,21 +18,10 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Input,
   Stack,
-  useDisclosure,
-  InputGroup,
-  InputRightAddon,
-  IconButton
+  useDisclosure
 } from "@chakra-ui/core";
-import {
-  AddIcon,
-  ArrowDownIcon,
-  ArrowUpIcon,
-  CheckIcon,
-  MinusIcon,
-  WarningIcon
-} from "@chakra-ui/icons";
+import { ArrowDownIcon, ArrowUpIcon, WarningIcon } from "@chakra-ui/icons";
 import { DatePicker, ErrorMessageText, WorkshopForm } from "components";
 
 export const ProfileEditWorkshopForm = ({
@@ -104,14 +93,16 @@ export const ProfileEditWorkshopForm = ({
     <Drawer placement="bottom" isFullHeight isOpen={isOpen} onClose={onClose}>
       <DrawerOverlay>
         <DrawerContent>
-          <DrawerHeader></DrawerHeader>
+          <DrawerHeader>
+            Atelier {currentWorkshopRef.workshop.name}
+          </DrawerHeader>
           <DrawerCloseButton />
           <DrawerBody>
             <form onChange={onChange} onSubmit={handleSubmit(onSubmit)}>
               <FormControl id="started" isInvalid={!!errors["started"]}>
                 <FormLabel>
-                  Date à laquelle l'atelier {currentWorkshopRef.workshop.name} a
-                  été commencé :
+                  Date à laquelle {profile.firstname} {profile.lastname} a
+                  commencé cet atelier :
                 </FormLabel>
                 <Controller
                   name="started"
@@ -138,8 +129,8 @@ export const ProfileEditWorkshopForm = ({
                 mt={2}
               >
                 <FormLabel>
-                  Date à laquelle l'atelier {currentWorkshopRef.workshop.name} a
-                  été terminé :
+                  Date à laquelle {profile.firstname} {profile.lastname} a
+                  terminé l'atelier :
                 </FormLabel>
                 <Controller
                   name="completed"
@@ -158,117 +149,6 @@ export const ProfileEditWorkshopForm = ({
                   <ErrorMessage errors={errors} name="completed" />
                 </FormErrorMessage>
               </FormControl>
-
-              {/* Add observation */}
-              {/* <Box m={5} mt={0}>
-                <Button
-                  variant="outline"
-                  size="xs"
-                  onClick={() => {
-                    //setShowRemoveObservationControls(false);
-                    toggleShowAddObservationControls();
-                  }}
-                >
-                  Ajouter une observation
-                  {showAddObservationControls ? (
-                    <MinusIcon ml={2} />
-                  ) : (
-                    <AddIcon ml={2} />
-                  )}
-                </Button>
-                {showAddObservationControls && (
-                  <>
-                    <InputGroup mt={2}>
-                      <Input
-                        id="newObservation"
-                        ml={5}
-                        width="75%"
-                        fontSize="sm"
-                        placeholder="Entrez ici ce qui a été observé"
-                        onChange={(e) =>
-                          setNewObservation({ description: e.target.value })
-                        }
-                      />
-                      <InputRightAddon
-                        children={
-                          <IconButton
-                            id="newObservationSubmit"
-                            icon={<CheckIcon />}
-                            size="xs"
-                            onClick={async () => {
-                              const {
-                                data,
-                                error
-                              } = await observationType.store.postObservation(
-                                newObservation
-                              );
-                              if (error) handleError(error, setError);
-                              else setShowAddObservationControls(false);
-                            }}
-                          />
-                        }
-                      />
-                    </InputGroup>
-                    <FormControl
-                      m={5}
-                      mt={0}
-                      id="observations"
-                      isInvalid={!!errors["observations"]}
-                    >
-                      <FormLabel>Observations au cours de l'atelier</FormLabel>
-                      {observationType.store.isLoading ? (
-                        <Spinner />
-                      ) : (
-                        <Controller
-                          className="react-select-container"
-                          classNamePrefix="react-select"
-                          as={ReactSelect}
-                          name="observations"
-                          control={control}
-                          defaultValue={[]}
-                          placeholder="Sélectionner une ou plusieurs observations"
-                          menuPlacement="top"
-                          isClearable
-                          isMulti
-                          isSearchable
-                          closeMenuOnSelect
-                          options={values(observationType.store.observations)}
-                          getOptionLabel={(option) => `${option.description}`}
-                          getOptionValue={(option) => option._id}
-                          onChange={([option]) => option._id}
-                        />
-                      )}
-                    </FormControl>
-                    <FormControl
-                      id="date"
-                      isRequired
-                      isInvalid={!!errors.date}
-                      mb={5}
-                    >
-                      <FormLabel>Date</FormLabel>
-                      <Controller
-                        name="date"
-                        control={control}
-                        defaultValue={new Date()}
-                        rules={{
-                          required:
-                            "Veuillez saisir la date d'obtention de la compétence"
-                        }}
-                        render={(props) => (
-                          <DatePicker
-                            minDate={subYears(new Date(), 11)}
-                            maxDate={new Date()}
-                            {...props}
-                          />
-                        )}
-                      />
-                      <FormErrorMessage>
-                        <ErrorMessage errors={errors} name="date" />
-                      </FormErrorMessage>
-                    </FormControl>
-                  </>
-                )}
-              </Box> */}
 
               <ErrorMessage
                 errors={errors}
