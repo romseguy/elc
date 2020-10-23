@@ -22,3 +22,8 @@ export * from "./profile-form";
 export * from "./skill-form";
 export * from "./table";
 export * from "./workshop-form";
+export * from "./fiches/parent-table";
+export * from "./fiches/skill-table";
+export * from "./fiches/level-table";
+export * from "./fiches/observation-table";
+export * from "./fiches/workshop-table";

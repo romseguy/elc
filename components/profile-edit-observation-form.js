@@ -69,7 +69,7 @@ export const ProfileEditObservationForm = ({
   };
 
   return (
-    <Drawer placement="bottom" isOpen={isOpen} onClose={onClose}>
+    <Drawer placement="bottom" isFullHeight isOpen={isOpen} onClose={onClose}>
       <DrawerOverlay>
         <DrawerContent>
           <DrawerHeader>

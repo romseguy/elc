@@ -7,15 +7,17 @@ import styles from "./styles.js";
 // import border from "./borders"
 
 // Component style overrides
-import { Button, Divider } from "./components";
+import { Button, Divider, Select } from "./components";
 
 const overrides = {
   styles,
   // borders,
   // Other foundational style overrides go here
   components: {
-    Button,
-    Divider
+    Button
+    // FIXME w/ chakra-ui 1.0 stable
+    // Divider,
+    // Select
     // Other components go here
   }
 };

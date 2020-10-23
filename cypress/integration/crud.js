@@ -20,7 +20,6 @@ describe("CRUD", () => {
     before(() => {
       cy.request("http://localhost:3004/api/reset-db");
     });
-
     it("check empty profile store", () => {
       cy.visit("http://localhost:3004/fiches/13-244");
       cy.findByText("Aucune fiche élève n'a été ajoutée à l'application");
@@ -73,7 +72,6 @@ describe("CRUD", () => {
       cy.findByRole("cell", { name: "L01" }).should("be.visible");
       cy.findByRole("cell", { name: "J" }).should("be.visible");
     });
-
     it("add workshop", () => {
       cy.visit("http://localhost:3004/ateliers/ajouter");
       cy.get("input#name").type("ABC");
@@ -114,7 +112,6 @@ describe("CRUD", () => {
       }).click();
       cy.findByRole("cell", { name: "T" }).should("be.visible");
     });
-
     it("add parent", () => {
       cy.visit("http://localhost:3004/parents/ajouter");
       cy.get("input#firstname").type("p1");
@@ -124,7 +121,6 @@ describe("CRUD", () => {
       cy.get(".react-select__option").contains("1 2").click();
       cy.findByRole("button", { name: "Ajouter le parent" }).click();
     });
-
     it("check parent has been added to profile", () => {
       cy.visit("http://localhost:3004/fiches/1-2");
       cy.get("h2").contains("Parents").click();
@@ -156,7 +152,7 @@ describe("CRUD", () => {
   });
 
   describe("UPDATE", () => {
-    it("update profile back and forth", () => {
+    it("update profile back & forth", () => {
       cy.visit("http://localhost:3004/fiches/1-2/edit");
       cy.get("input#firstname").type("3");
       cy.get("input#lastname").type("4");
@@ -173,7 +169,7 @@ describe("CRUD", () => {
       cy.get("input#lastname").clear().type("2");
       cy.findByRole("button", { name: "Modifier" }).click();
     });
-    it("update skill", () => {
+    it("update skill back & forth", () => {
       cy.visit("http://localhost:3004/competences/L01/edit");
       cy.get("input#code").type("M01");
       cy.get("input#description").type("K");
@@ -183,8 +179,11 @@ describe("CRUD", () => {
       cy.findByText("L01M01");
       cy.findByText("JK");
       cy.findByText("CE1");
+      cy.visit("http://localhost:3004/competences/L01M01/edit");
+      cy.get("input#code").clear().type("L01");
+      cy.findByRole("button", { name: "Modifier la compétence" }).click();
     });
-    it("update parent", () => {
+    it("update parent back & forth", () => {
       cy.visit("http://localhost:3004/parents/p1-p2/edit");
       cy.get("input#firstname").type("3");
       cy.get("input#lastname").type("4");
@@ -194,6 +193,10 @@ describe("CRUD", () => {
       cy.findByTitle("Cliquez pour ouvrir la fiche de 1 2").should(
         "not.be.visible"
       );
+      cy.visit("http://localhost:3004/parents/p13-p24/edit");
+      cy.get("input#firstname").clear().type("1");
+      cy.get("input#lastname").clear().type("2");
+      cy.findByRole("button", { name: "Modifier le parent" }).click();
     });
     it("update workshop with new skill and completes it", () => {
       cy.visit("http://localhost:3004/competences/ajouter");
@@ -232,6 +235,7 @@ describe("CRUD", () => {
     it("remove skill associated with profile", () => {
       cy.visit("http://localhost:3004/competences/L01");
       cy.findByRole("button", { name: "Supprimer" }).click();
+      cy.findByRole("button", { name: "Confirmer" }).click();
       cy.visit("http://localhost:3004/fiches/1-2");
       cy.findByRole("heading", {
         name: "Compétences acquises"
@@ -242,6 +246,7 @@ describe("CRUD", () => {
       cy.visit("http://localhost:3004/observations");
       cy.findByText("T").click();
       cy.findByRole("button", { name: "Supprimer" }).click();
+      cy.findByRole("button", { name: "Confirmer" }).click();
       cy.visit("http://localhost:3004/fiches/1-2");
       cy.findByRole("heading", {
         name: "Observations"
@@ -251,6 +256,7 @@ describe("CRUD", () => {
     it("remove profile with parent", () => {
       cy.visit("http://localhost:3004/fiches/1-2");
       cy.findByRole("button", { name: "Supprimer" }).click();
+      cy.findByRole("button", { name: "Confirmer" }).click();
       cy.visit("http://localhost:3004/parents/p1-p2");
       cy.findByText(
         "Modifier la fiche du parent pour associer un ou plusieurs enfants"

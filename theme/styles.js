@@ -7,12 +7,16 @@ const formStyles = (props) => ({
   },
   ".react-select-container": {
     ".react-select__control": {
-      backgroundColor: mode("white", "gray.600")(props),
-      border: 0
+      backgroundColor: mode("white", "whiteAlpha.100")(props),
+      //border: 0,
+      borderColor: mode("gray.200", "whiteAlpha.100")(props),
+      ".react-select__placeholder": {
+        color: mode("gray.400", "gray.400")(props)
+      }
     },
 
     ".react-select__multi-value": {
-      backgroundColor: mode("gray.400", "gray.700")(props),
+      backgroundColor: mode("gray.400", "whiteAlpha.400")(props),
       borderRadius: "md",
       ".react-select__multi-value__label": {
         color: mode("black", "white")(props)
@@ -36,14 +40,15 @@ const formStyles = (props) => ({
 
     ".react-select__menu": {
       ".react-select__menu-list": {
-        backgroundColor: mode("white", "black")(props),
+        backgroundColor: mode("orange.300", "black")(props),
         color: mode("black", "white")(props),
         ".react-select__option": {
-          backgroundColor: mode("white", "black")(props),
+          backgroundColor: mode("white", "gray.700")(props),
           "&:hover": {
             cursor: "pointer",
-            backgroundColor: mode("black", "white")(props),
-            color: mode("white", "black")(props)
+            backgroundColor: mode("orange.200", "gray.500")(props),
+            color: mode("black", "white")(props)
+            //color: mode("white", "black")(props)
           }
         }
       }

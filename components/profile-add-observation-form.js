@@ -68,6 +68,7 @@ export const ProfileAddObservationForm = (props) => {
           name="observation"
           placeholder="Sélectionner une observation"
           ref={register({ required: "Veuillez sélectionner une observation" })}
+          color="gray.400"
         >
           {values(props.observations).map((observation) => {
             return (
@@ -123,7 +124,7 @@ export const ProfileAddObservationForm = (props) => {
         isDisabled={Object.keys(errors).length > 0}
         mb={5}
       >
-        Ajouter
+        Associer
       </Button>
     </form>
   );

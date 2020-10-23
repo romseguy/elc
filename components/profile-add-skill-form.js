@@ -63,6 +63,7 @@ export const ProfileAddSkillForm = (props) => {
           name="skill"
           placeholder="Sélectionner une compétence"
           ref={register({ required: "Veuillez sélectionner une compétence" })}
+          color="gray.400"
         >
           {values(props.skills).map((skill) => {
             return (
@@ -118,7 +119,7 @@ export const ProfileAddSkillForm = (props) => {
         isDisabled={Object.keys(errors).length > 0}
         mb={5}
       >
-        Ajouter
+        Valider
       </Button>
     </form>
   );
