@@ -19,7 +19,7 @@ import {
 import { WarningIcon } from "@chakra-ui/icons";
 import { DatePicker } from "components";
 import { handleError } from "utils/form";
-import { ErrorMessageText } from "./error-message-text";
+import { ErrorMessageText } from "components";
 
 export const ProfileAddSkillForm = (props) => {
   const router = useRouter();

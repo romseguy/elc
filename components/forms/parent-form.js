@@ -20,7 +20,7 @@ import {
 import { WarningIcon } from "@chakra-ui/icons";
 import { useStore } from "tree";
 import { handleError } from "utils/form";
-import { ErrorMessageText } from "./error-message-text";
+import { ErrorMessageText } from "components";
 
 export const ParentForm = (props) => {
   if (props.parent && !isStateTreeNode(props.parent)) {

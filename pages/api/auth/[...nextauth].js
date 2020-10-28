@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 import { AccountTypes } from "utils/useAuth";
+import api from "utils/api";
 
 // https://next-auth.js.org/configuration/options
 let options = {
@@ -26,7 +27,7 @@ let options = {
             ? {
                 id: 2,
                 name: "parent",
-                email: "parent@email.org"
+                email: "p@e.com"
               }
             : username === "romseguy" && password === "wxcv"
             ? {
@@ -104,12 +105,23 @@ let options = {
     // }
     // redirect: async (url, baseUrl) => { return Promise.resolve(baseUrl) },
     session: async (session, user) => {
-      if (user.email === "parent@email.org") {
-        return Promise.resolve({ ...session, type: AccountTypes.PARENT });
-      } else if (user.email === "rom.seguy@lilo.org") {
+      if (user.email === "rom.seguy@lilo.org") {
         return Promise.resolve({ ...session, type: AccountTypes.ADMIN });
       }
-      return Promise.resolve(session);
+
+      const { error, data: parents } = await api.get("parents");
+
+      if (error) {
+        return Promise.reject(error);
+      }
+
+      for (const parent of parents) {
+        if (user.email === parent.email) {
+          return Promise.resolve({ ...session, type: AccountTypes.PARENT });
+        }
+      }
+
+      return Promise.resolve({ ...session, type: AccountTypes.USER });
     }
     // jwt: async (token, user, account, profile, isNewUser) => { return Promise.resolve(token) }
   },

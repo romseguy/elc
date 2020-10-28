@@ -125,15 +125,15 @@ export const WorkshopType = t
       undefined
     )
   })
-  .actions((self) => ({
+  .actions((type) => ({
     selectWorkshop(slug) {
-      self.store.workshops.forEach((workshop) => {
+      type.store.workshops.forEach((workshop) => {
         if (slug === workshop.slug) {
-          self.selectedWorkshop = workshop;
+          type.selectedWorkshop = workshop;
         }
       });
-      if (self.selectedWorkshop === undefined) {
-        self.selectedWorkshop = null;
+      if (type.selectedWorkshop === undefined) {
+        type.selectedWorkshop = null;
       }
     }
   }));

@@ -46,7 +46,7 @@ export default observer(function ProfilePage(props) {
   }
 
   const {
-    confirm,
+    confirmType,
     parentType,
     profileType,
     skillType,
@@ -54,7 +54,7 @@ export default observer(function ProfilePage(props) {
     observationType
   } = useStore();
 
-  const withConfirm = (props) => (e) => confirm.onOpen(props);
+  const withConfirm = (props) => (e) => confirmType.onOpen(props);
 
   const selectedProfile = profileType.selectedProfile;
   const editAction = () => {

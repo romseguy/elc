@@ -19,8 +19,8 @@ import {
 export default observer((props) => {
   const [session = props.session] = useSession();
   const router = useRouter();
-  const { confirm, workshopType } = useStore();
-  const withConfirm = (props) => (e) => confirm.onOpen(props);
+  const { confirmType, workshopType } = useStore();
+  const withConfirm = (props) => (e) => confirmType.onOpen(props);
 
   useEffect(() => {
     const selectWorkshop = async () => {

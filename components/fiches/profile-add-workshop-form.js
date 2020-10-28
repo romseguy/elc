@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
 import { DatePicker } from "components";
-import { ErrorMessageText } from "./error-message-text";
+import { ErrorMessageText } from "components";
 
 export const ProfileAddWorkshopForm = (props) => {
   const router = useRouter();

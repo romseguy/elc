@@ -4,11 +4,11 @@ let onConfirm = () => {};
 let header = null;
 let body = null;
 
-export const Confirm = t
+export const ConfirmType = t
   .model({
     isOpen: t.optional(t.boolean, false)
   })
-  .actions((confirm) => ({
+  .actions((type) => ({
     getBody() {
       return body;
     },
@@ -20,16 +20,16 @@ export const Confirm = t
       header = props.header;
       body = props.body;
 
-      applySnapshot(confirm, { isOpen: true, ...props });
+      applySnapshot(type, { isOpen: true, ...props });
     },
     onClose() {
-      confirm.reset();
+      type.reset();
     },
     onConfirm() {
-      confirm.reset();
+      type.reset();
       onConfirm();
     },
     reset() {
-      applySnapshot(confirm, { isOpen: false });
+      applySnapshot(type, { isOpen: false });
     }
   }));

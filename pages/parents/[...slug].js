@@ -45,8 +45,8 @@ export default observer((props) => {
     return null;
   }
 
-  const { confirm, parentType } = useStore();
-  const withConfirm = (props) => (e) => confirm.onOpen(props);
+  const { confirmType, parentType } = useStore();
+  const withConfirm = (props) => (e) => confirmType.onOpen(props);
 
   useEffect(() => {
     const selectParent = async () => {

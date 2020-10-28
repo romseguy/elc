@@ -22,7 +22,7 @@ import {
 } from "@chakra-ui/core";
 import { WarningIcon } from "@chakra-ui/icons";
 import { handleError } from "utils/form";
-import { ErrorMessageText } from "./error-message-text";
+import { ErrorMessageText } from "components";
 
 export const WorkshopForm = (props) => {
   if (props.workshop && !isStateTreeNode(props.workshop)) {

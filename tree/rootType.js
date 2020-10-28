@@ -1,6 +1,6 @@
 import { types as t } from "mobx-state-tree";
 import { Counter } from "./counter";
-import { Confirm } from "./confirm";
+import { ConfirmType } from "./confirm/confirmType";
 import { ObservationType } from "./observation/observationType";
 import { ParentType } from "./parent/parentType";
 import { ProfileType } from "./profile/profileType";
@@ -9,7 +9,7 @@ import { WorkshopType } from "./workshop/workshopType";
 
 const rootTypes = {
   counter: t.optional(Counter, {}),
-  confirm: t.optional(Confirm, {}),
+  confirmType: t.optional(ConfirmType, {}),
   observationType: t.optional(ObservationType, {}),
   parentType: t.optional(ParentType, {}),
   profileType: t.optional(ProfileType, {}),

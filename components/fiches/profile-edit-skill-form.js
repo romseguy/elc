@@ -20,7 +20,7 @@ import {
 import { ArrowDownIcon, ArrowUpIcon, WarningIcon } from "@chakra-ui/icons";
 import { DatePicker, SkillForm } from "components";
 import { format, subYears } from "date-fns";
-import { ErrorMessageText } from "./error-message-text";
+import { ErrorMessageText } from "components";
 import { handleError } from "utils/form";
 
 export const ProfileEditSkillForm = ({

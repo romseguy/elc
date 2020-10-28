@@ -14,8 +14,8 @@ export default observer((props) => {
   const router = useRouter();
   const skillSlug = router.query.slug[0];
   const action = router.query.slug[1];
-  const { confirm, skillType } = useStore();
-  const withConfirm = (props) => (e) => confirm.onOpen(props);
+  const { confirmType, skillType } = useStore();
+  const withConfirm = (props) => (e) => confirmType.onOpen(props);
   const [selectedSkill, setSkill] = useState();
   useEffect(() => {
     const fetchSkills = async () => {

@@ -15,7 +15,7 @@ export async function getSession(options) {
 
 export function useSession() {
   if (process.env.NEXT_PUBLIC_IS_TEST) {
-    return [session];
+    return [session, false];
   }
 
   return useNextAuthSession();
@@ -23,5 +23,6 @@ export function useSession() {
 
 export const AccountTypes = {
   PARENT: "PARENT",
-  ADMIN: "ADMIN"
+  ADMIN: "ADMIN",
+  USER: "USER"
 };

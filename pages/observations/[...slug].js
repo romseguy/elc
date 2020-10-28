@@ -14,8 +14,8 @@ export default observer((props) => {
   const router = useRouter();
   const observationSlug = router.query.slug[0];
   const action = router.query.slug[1];
-  const { confirm, observationType } = useStore();
-  const withConfirm = (props) => (e) => confirm.onOpen(props);
+  const { confirmType, observationType } = useStore();
+  const withConfirm = (props) => (e) => confirmType.onOpen(props);
   const [selectedObservation, setObservation] = useState();
 
   useEffect(() => {

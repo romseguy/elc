@@ -123,15 +123,15 @@ export const ParentType = t
       undefined
     )
   })
-  .actions((self) => ({
+  .actions((type) => ({
     selectParent(slug) {
-      self.store.parents.forEach((parent) => {
+      type.store.parents.forEach((parent) => {
         if (slug === parent.slug) {
-          self.selectedParent = parent;
+          type.selectedParent = parent;
         }
       });
-      if (self.selectedParent === undefined) {
-        self.selectedParent = null;
+      if (type.selectedParent === undefined) {
+        type.selectedParent = null;
       }
     }
   }));

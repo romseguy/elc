@@ -1,4 +1,5 @@
 import { databaseErrorCodes } from "middlewares/errors";
+import { isServer } from "utils/isServer";
 
 async function request(endpoint, params, method = "GET") {
   try {
@@ -25,7 +26,7 @@ async function request(endpoint, params, method = "GET") {
     if (response.status === 200) {
       const { data } = await response.json();
       // if (!process.env.NEXT_PUBLIC_IS_TEST)
-      console.log(`${method} /${endpoint}`, data);
+      if (!isServer()) console.log(`${method} /${endpoint}`, data);
       return { data };
     }
 

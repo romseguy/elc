@@ -1,4 +1,4 @@
-import { version } from "../package.json";
+import { version } from "package.json";
 import { Box, Flex, useColorModeValue } from "@chakra-ui/core";
 import tw, { styled, css } from "twin.macro";
 

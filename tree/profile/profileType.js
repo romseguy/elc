@@ -242,15 +242,15 @@ export const ProfileType = t
       undefined
     )
   })
-  .actions((self) => ({
+  .actions((type) => ({
     selectProfile(slug) {
-      self.store.profiles.forEach((profile) => {
+      type.store.profiles.forEach((profile) => {
         if (slug === profile.slug) {
-          self.selectedProfile = profile;
+          type.selectedProfile = profile;
         }
       });
-      if (self.selectedProfile === undefined) {
-        self.selectedProfile = null;
+      if (type.selectedProfile === undefined) {
+        type.selectedProfile = null;
       }
     }
   }));

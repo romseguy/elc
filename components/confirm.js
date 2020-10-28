@@ -14,25 +14,25 @@ import {
 } from "@chakra-ui/core";
 
 export const Confirm = observer(() => {
-  const { confirm } = useStore();
+  const { confirmType } = useStore();
   const disclosure = useDisclosure({
-    defaultIsOpen: confirm.isOpen
+    defaultIsOpen: confirmType.isOpen
   });
-  const onClose = () => confirm.onClose();
-  const onConfirm = () => confirm.onConfirm();
+  const onClose = () => confirmType.onClose();
+  const onConfirm = () => confirmType.onConfirm();
 
   useEffect(() => {
-    if (confirm.isOpen) disclosure.onOpen();
+    if (confirmType.isOpen) disclosure.onOpen();
     else disclosure.onClose();
-  }, [confirm.isOpen]);
+  }, [confirmType.isOpen]);
 
   return (
     <Modal isOpen={disclosure.isOpen} onClose={onClose}>
       <ModalOverlay>
         <ModalContent>
-          <ModalHeader>{confirm.getHeader()}</ModalHeader>
+          <ModalHeader>{confirmType.getHeader()}</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>{confirm.getBody()}</ModalBody>
+          <ModalBody>{confirmType.getBody()}</ModalBody>
           <ModalFooter>
             <Button variant="outline" onClick={onClose}>
               Annuler
