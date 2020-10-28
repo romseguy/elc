@@ -2,19 +2,55 @@ import "theme/styles.css";
 import { description } from "package.json";
 import Head from "next/head";
 import { Provider as AuthProvider } from "next-auth/client";
+import { useStaticRendering } from "mobx-react-lite";
 import { initializeStore, Provider as StateProvider } from "tree";
 import { GlobalStyles } from "twin.macro";
 import customTheme from "theme";
 import { isServer } from "utils/isServer";
+import { useSession } from "utils/useAuth";
 import {
+  Box,
   ChakraProvider,
   ColorModeProvider,
+  Flex,
+  Spinner,
   ThemeProvider,
-  useColorMode
+  useColorMode,
+  Text,
+  VStack
 } from "@chakra-ui/core";
-import { Chakra, Confirm } from "components";
+import { Chakra, Confirm, Header } from "components";
+
+useStaticRendering(isServer());
 
 const Root = ({ Component, ...pageProps }) => {
+  const [_, isLoading] = useSession();
+
+  if (isLoading) {
+    return (
+      <Flex
+        flexGrow="1"
+        alignItems="center"
+        justifyContent="center"
+        flexDirection="column"
+      >
+        <VStack spacing={5}>
+          <Box>
+            <Header />
+          </Box>
+          <Box>
+            <Text>
+              Merci de patienter pendant le chargement de l'application...
+            </Text>
+          </Box>
+          <Box>
+            <Spinner />
+          </Box>
+        </VStack>
+      </Flex>
+    );
+  }
+
   return (
     <>
       <Confirm />

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { signIn, signOut } from "next-auth/client";
-import { useSession } from "utils/useAuth";
+import { AccountTypes, useSession } from "utils/useAuth";
 import md5 from "blueimp-md5";
 import tw, { styled, css } from "twin.macro";
 import {
@@ -38,6 +38,7 @@ import {
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import { Link } from "components";
 import { ErrorMessageText } from "./error-message-text";
+import { TYPES } from "tree";
 
 const linkList = css`
   a {
@@ -106,16 +107,20 @@ export const Nav = (props) => {
     >
       <Box css={linkList} ml={10}>
         {session ? (
-          <>
-            <Link href="/fiches">Élèves</Link>
-            <Link href="/competences">Compétences</Link>
-            <Link href="/ateliers">Ateliers</Link>
-            <Link href="/observations">Observations</Link>
-            <Link href="/parents">Parents</Link>
-          </>
-        ) : (
-          <></>
-        )}
+          session.type === AccountTypes.ADMIN ? (
+            <>
+              <Link href="/fiches">Élèves</Link>
+              <Link href="/competences">Compétences</Link>
+              <Link href="/ateliers">Ateliers</Link>
+              <Link href="/observations">Observations</Link>
+              <Link href="/parents">Parents</Link>
+            </>
+          ) : session.type === AccountTypes.PARENT ? (
+            <>
+              <Link href="/fiches">Élèves</Link>
+            </>
+          ) : null
+        ) : null}
       </Box>
 
       {session ? (

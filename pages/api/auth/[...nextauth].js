@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
+import { AccountTypes } from "utils/useAuth";
 
 // https://next-auth.js.org/configuration/options
 let options = {
@@ -19,9 +20,15 @@ let options = {
         username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" }
       },
-      authorize: async (credentials) => {
+      authorize: async ({ username, password }) => {
         const user =
-          credentials.username === "romseguy" && credentials.password === "wxcv"
+          username === "parent" && password === "parent"
+            ? {
+                id: 2,
+                name: "parent",
+                email: "parent@email.org"
+              }
+            : username === "romseguy" && password === "wxcv"
             ? {
                 id: 1,
                 name: "Romain Séguy",
@@ -92,12 +99,18 @@ let options = {
   // when an action is performed.
   // https://next-auth.js.org/configuration/callbacks
   callbacks: {
-    signIn: async (user, account, profile) => {
-      console.log(user);
-      return Promise.resolve(true);
-    }
+    // signIn: async (user, account, profile) => {
+    //   return Promise.resolve(true);
+    // }
     // redirect: async (url, baseUrl) => { return Promise.resolve(baseUrl) },
-    // session: async (session, user) => { return Promise.resolve(session) },
+    session: async (session, user) => {
+      if (user.email === "parent@email.org") {
+        return Promise.resolve({ ...session, type: AccountTypes.PARENT });
+      } else if (user.email === "rom.seguy@lilo.org") {
+        return Promise.resolve({ ...session, type: AccountTypes.ADMIN });
+      }
+      return Promise.resolve(session);
+    }
     // jwt: async (token, user, account, profile, isNewUser) => { return Promise.resolve(token) }
   },
 

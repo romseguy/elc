@@ -20,3 +20,8 @@ export function useSession() {
 
   return useNextAuthSession();
 }
+
+export const AccountTypes = {
+  PARENT: "PARENT",
+  ADMIN: "ADMIN"
+};
