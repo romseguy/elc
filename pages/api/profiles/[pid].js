@@ -10,35 +10,35 @@ handler.use(middleware);
 handler.get(async function getProfile(req, res) {
   const session = await getSession({ req });
 
-  // if (!session) {
-  //   res
-  //     .status(403)
-  //     .json(
-  //       createServerError(
-  //         new Error("Vous devez être identifié pour accéder à ce contenu.")
-  //       )
-  //     );
-  // } else {
-  const {
-    query: { pid }
-  } = req;
+  if (!session) {
+    res
+      .status(403)
+      .json(
+        createServerError(
+          new Error("Vous devez être identifié pour accéder à ce contenu.")
+        )
+      );
+  } else {
+    const {
+      query: { pid }
+    } = req;
 
-  try {
-    const profile = await req.models.Profile.findOne({ _id: pid });
+    try {
+      const profile = await req.models.Profile.findOne({ _id: pid });
 
-    if (profile) {
-      res.status(200).json({ data: profile });
-    } else {
-      res
-        .status(400)
-        .json(
-          createServerError(new Error("Le document n'a pas pu être trouvé"))
-        );
+      if (profile) {
+        res.status(200).json({ data: profile });
+      } else {
+        res
+          .status(400)
+          .json(
+            createServerError(new Error("Le document n'a pas pu être trouvé"))
+          );
+      }
+    } catch (error) {
+      createServerError(error);
     }
-  } catch (error) {
-    createServerError(error);
   }
-  //}
 });
 
 handler.put(async function updateProfile(req, res) {

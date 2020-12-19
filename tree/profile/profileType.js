@@ -126,8 +126,10 @@ export const ProfileModel = t
         if (!found) add();
       }
     },
-    removeSkillRef(_id) {
-      profile.skills = profile.skills.filter((ref) => ref.skill !== _id);
+    removeSkillRef(skillRef) {
+      profile.skills = profile.skills.filter(
+        (ref) => ref.skill._id !== skillRef.skill._id
+      );
     },
     addWorkshopRef({ workshopId }) {
       profile.workshops.push(WorkshopRef.create({ workshop: workshopId }));
@@ -154,9 +156,9 @@ export const ProfileModel = t
         if (!found) add();
       }
     },
-    removeObservationRef(_id) {
+    removeObservationRef(observationRef) {
       profile.observations = profile.observations.filter((ref) => {
-        return ref._id !== _id;
+        return ref.observation._id !== observationRef.observation._id;
       });
     }
   }));

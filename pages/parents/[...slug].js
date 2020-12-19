@@ -99,6 +99,7 @@ export default observer((props) => {
   const onRowClick = (profile) => {
     router.push("/fiches/[...slug]", `/fiches/${profile.slug}`);
   };
+  console.log(selectedParent.children);
 
   return (
     <Layout>

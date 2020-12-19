@@ -1,7 +1,7 @@
 import { values } from "mobx";
 import { StyledTable } from "components";
 
-export const ParentTable = ({ profile, ...props }) => {
+export const ParentTable = ({ profile, onParentRowClick, ...props }) => {
   return (
     <StyledTable {...props}>
       <thead>

@@ -117,11 +117,18 @@ let options = {
 
       for (const parent of parents) {
         if (user.email === parent.email) {
-          return Promise.resolve({ ...session, type: AccountTypes.PARENT });
+          return Promise.resolve({
+            ...session,
+            user: {
+              ...user,
+              _id: parent._id
+            },
+            type: AccountTypes.PARENT
+          });
         }
       }
 
-      return Promise.resolve({ ...session, type: AccountTypes.USER });
+      return Promise.resolve({ ...session, user, type: AccountTypes.USER });
     }
     // jwt: async (token, user, account, profile, isNewUser) => { return Promise.resolve(token) }
   },

@@ -143,7 +143,13 @@ export const Nav = (props) => {
           <MenuList border={0} p={0}>
             <MenuItem>Paramètres</MenuItem>
             <MenuItem onClick={toggleColorMode}>{icon}</MenuItem>
-            <MenuItem onClick={() => signOut()}>Déconnexion</MenuItem>
+            <MenuItem
+              onClick={async () =>
+                await signOut({ callbackUrl: "http://localhost:3000" })
+              }
+            >
+              Déconnexion
+            </MenuItem>
           </MenuList>
         </Menu>
       ) : (

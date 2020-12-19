@@ -62,7 +62,7 @@ describe("CRUD", () => {
     it("add skill to profile", () => {
       cy.visit("http://localhost:3004/fiches/1-2");
       cy.findByRole("button", { name: "Valider une compétence" }).click();
-      cy.get("select#skill").select("L01");
+      cy.get("select#skill").select("J (L01)");
       cy.get("form").submit();
     });
     it("check skill has been added to profile", () => {
@@ -194,8 +194,8 @@ describe("CRUD", () => {
         "not.be.visible"
       );
       cy.visit("http://localhost:3004/parents/p13-p24/edit");
-      cy.get("input#firstname").clear().type("1");
-      cy.get("input#lastname").clear().type("2");
+      cy.get("input#firstname").clear().type("p1");
+      cy.get("input#lastname").clear().type("p2");
       cy.findByRole("button", { name: "Modifier le parent" }).click();
     });
     it("update workshop with new skill and completes it", () => {

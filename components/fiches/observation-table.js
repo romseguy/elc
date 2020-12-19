@@ -47,51 +47,52 @@ export const ObservationTable = ({
     [disableSortBy]
   );
 
-  const data = useMemo(
-    () =>
-      values(profile.observations).map((observationRef) => {
-        const { _id, observation, date } = observationRef;
+  const data =
+    /* useMemo(
+    () => */
+    values(profile.observations).map((observationRef) => {
+      const { _id, observation, date } = observationRef;
 
-        return {
-          description: observation.description,
-          date: isDate(date) && format(date, "dd/MM/yyyy"),
-          editButton: (
-            <IconButton
-              id="editObservation"
-              icon={<EditIcon />}
-              onClick={() => editAction(observationRef)}
-            />
-          ),
-          deleteButton: (
-            <IconButton
-              icon={<DeleteIcon />}
-              colorScheme="red"
-              onClick={withConfirm({
-                header: `Êtes vous sûr(e) ?`,
-                body: (
-                  <>
-                    <Text>
-                      Veuillez confirmer la suppression de l'observation :
-                    </Text>
-                    <Text my={2}>
-                      <strong>{observationRef.observation.description}</strong>
-                    </Text>
-                    <Text>
-                      {" "}
-                      de la fiche élève de {profile.firstname}{" "}
-                      {profile.lastname} :
-                    </Text>
-                  </>
-                ),
-                onConfirm: () => removeAction(observationRef)
-              })}
-            />
-          )
-        };
-      }),
+      return {
+        description: observation.description,
+        date: isDate(date) && format(date, "dd/MM/yyyy"),
+        editButton: (
+          <IconButton
+            id="editObservation"
+            icon={<EditIcon />}
+            onClick={() => editAction(observationRef)}
+          />
+        ),
+        deleteButton: (
+          <IconButton
+            icon={<DeleteIcon />}
+            colorScheme="red"
+            onClick={withConfirm({
+              header: `Êtes vous sûr(e) ?`,
+              body: (
+                <>
+                  <Text>
+                    Veuillez confirmer la suppression de l'observation :
+                  </Text>
+                  <Text my={2}>
+                    <strong>{observationRef.observation.description}</strong>
+                  </Text>
+                  <Text>
+                    {" "}
+                    de la fiche élève de {profile.firstname} {profile.lastname}{" "}
+                    :
+                  </Text>
+                </>
+              ),
+              onConfirm: () => removeAction(observationRef)
+            })}
+          />
+        )
+      };
+    }); /* ,
     [profile]
   );
-
+ */
   return (
     <Table
       css={{

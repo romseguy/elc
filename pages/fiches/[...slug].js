@@ -100,9 +100,12 @@ export default observer(function ProfilePage(props) {
   const editSkillRefAction = (skillRef) => {
     setCurrentSkillRef(skillRef);
   };
-  const removeSkillRefAction = (skillRef) => {
-    selectedProfile.removeSkillRef(skillRef._id);
-    profileType.store.updateProfile(selectedProfile);
+  const removeSkillRefAction = async (skillRef) => {
+    selectedProfile.removeSkillRef(skillRef);
+    const { data, error } = await profileType.store.updateProfile(
+      selectedProfile
+    );
+    // TODO: handle error
   };
 
   // levels
@@ -146,9 +149,12 @@ export default observer(function ProfilePage(props) {
     setShowObservationForm(!showObservationForm);
   };
   const [currentObservationRef, setCurrentObservationRef] = useState();
-  const removeObservationRefAction = (_id) => {
-    selectedProfile.removeObservationRef(_id);
-    profileType.store.updateProfile(selectedProfile);
+  const removeObservationRefAction = async (observationRef) => {
+    selectedProfile.removeObservationRef(observationRef);
+    const { data, error } = await profileType.store.updateProfile(
+      selectedProfile
+    );
+    // TODO: handle error
   };
   const editObservationRefAction = (observationRef) => {
     setCurrentObservationRef(observationRef);
@@ -296,6 +302,7 @@ export default observer(function ProfilePage(props) {
             <>
               <Divider mb={5} borderColor="white" borderWidth={2} />
               <ParentTable
+                onParentRowClick={onParentRowClick}
                 profile={selectedProfile}
                 css={{ marginLeft: "1rem" }}
               />

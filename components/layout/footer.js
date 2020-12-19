@@ -1,15 +1,15 @@
 import { version } from "package.json";
 import { Box, Flex, useColorModeValue } from "@chakra-ui/core";
 import tw, { styled, css } from "twin.macro";
+import { Link } from "components";
 
-const Menu = styled.ul`
+const Menu = styled.div`
+  display: block;
   padding: 0;
-  list-style: none;
 `;
 
-const MenuItem = styled.li`
-  display: inline-block;
-  margin-right: 1rem;
+const MenuRight = styled.div`
+  display: flex;
 `;
 
 export const Footer = (props) => {
@@ -25,16 +25,18 @@ export const Footer = (props) => {
     <Flex
       as="footer"
       alignItems="center"
-      justifyContent="center"
+      justifyContent="space-between"
       py={5}
+      px={10}
       {...props}
       css={styles}
     >
       <Menu>
-        <MenuItem>
-          <em>{version}</em>
-        </MenuItem>
+        <Link href="/admin">Administration</Link>
       </Menu>
+      <MenuRight>
+        <Link href="https://github.com/romseguy/elc">{version}</Link>
+      </MenuRight>
     </Flex>
   );
 };

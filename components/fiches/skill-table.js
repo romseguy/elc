@@ -65,48 +65,41 @@ export const SkillTable = ({
     [disableSortBy]
   );
 
-  const data = useMemo(
-    () =>
-      values(profile.skills).map((skillRef) => {
-        const { skill, workshop, date } = skillRef;
+  const data = values(profile.skills).map((skillRef) => {
+    const { skill, workshop, date } = skillRef;
 
-        return {
-          date: format(date, "dd/MM/yyyy"),
-          code: skill.code,
-          description: skill.description,
-          domain: skill.domain && skill.domain.name,
-          level: skill.level,
-          workshop: workshop && workshop.name,
-          editButton: (
-            <IconButton
-              icon={<EditIcon />}
-              onClick={() => editAction(skillRef)}
-            />
-          ),
-          deleteButton: (
-            <IconButton
-              icon={<DeleteIcon />}
-              colorScheme="red"
-              onClick={withConfirm({
-                header: `Êtes vous sûr(e) ?`,
-                body: (
-                  <Text>
-                    Veuillez confirmer la suppression de la compétence{" "}
-                    <strong>{skill.code}</strong> de la fiche élève de{" "}
-                    <strong>
-                      {profile.firstname} {profile.lastname}
-                    </strong>{" "}
-                    :
-                  </Text>
-                ),
-                onConfirm: () => removeAction(skillRef)
-              })}
-            />
-          )
-        };
-      }),
-    [profile]
-  );
+    return {
+      date: format(date, "dd/MM/yyyy"),
+      code: skill.code,
+      description: skill.description,
+      domain: skill.domain && skill.domain.name,
+      level: skill.level,
+      workshop: workshop && workshop.name,
+      editButton: (
+        <IconButton icon={<EditIcon />} onClick={() => editAction(skillRef)} />
+      ),
+      deleteButton: (
+        <IconButton
+          icon={<DeleteIcon />}
+          colorScheme="red"
+          onClick={withConfirm({
+            header: `Êtes vous sûr(e) ?`,
+            body: (
+              <Text>
+                Veuillez confirmer la suppression de la compétence{" "}
+                <strong>{skill.code}</strong> de la fiche élève de{" "}
+                <strong>
+                  {profile.firstname} {profile.lastname}
+                </strong>{" "}
+                :
+              </Text>
+            ),
+            onConfirm: () => removeAction(skillRef)
+          })}
+        />
+      )
+    };
+  });
 
   return (
     <Table

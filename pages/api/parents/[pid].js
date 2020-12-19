@@ -35,7 +35,7 @@ handler.get(async function getParent(req, res) {
   }
 });
 
-handler.put(async function editParent(req, res) {
+handler.put(async function updateParent(req, res) {
   const session = await getSession({ req });
 
   if (!session) {
@@ -43,15 +43,38 @@ handler.put(async function editParent(req, res) {
   } else {
     try {
       const {
-        query: { pid },
-        body: { children }
+        query: { pid }
+        // body: { children }
       } = req;
 
-      if (Array.isArray(children)) {
-        for (const _id of children) {
-          const childProfile = await req.models.Profile.findOne({ _id });
-          childProfile.parents = childProfile.parents.concat([pid]);
-          await childProfile.save();
+      if (Array.isArray(req.body.children)) {
+        if (!req.body.children.length) {
+          // children have been removed from parent
+          // => remove parents from children
+          const parent = await req.models.Parent.findOne({ _id: pid });
+
+          for (const childId of parent.children) {
+            const childProfile = await req.models.Profile.findOne({
+              _id: childId
+            });
+
+            childProfile.parents = childProfile.parents.filter((parentId) => {
+              if (parentId === pid) return false;
+              return true;
+            });
+
+            await childProfile.save();
+          }
+        } else {
+          for (const _id of req.body.children) {
+            const childProfile = await req.models.Profile.findOne({ _id });
+
+            if (childProfile.parents.indexOf(pid) === -1) {
+              childProfile.parents = childProfile.parents.concat([pid]);
+            }
+
+            await childProfile.save();
+          }
         }
       }
 
