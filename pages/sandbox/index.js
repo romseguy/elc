@@ -2,7 +2,7 @@ import { getSession } from "next-auth/client";
 import { useObserver, observer } from "mobx-react-lite";
 import { initializeStore, useStore, getSnapshot } from "tree";
 import { AccessDenied, Layout, StyledTable } from "components";
-import { Button, useColorMode } from "@chakra-ui/core";
+import { Button, useColorMode } from "@chakra-ui/react";
 
 const Counter = observer(() => {
   const { counter } = useStore();

@@ -1,4 +1,3 @@
-import theme from "@chakra-ui/theme";
 import { mode } from "@chakra-ui/theme-tools";
 
 const formStyles = (props) => ({

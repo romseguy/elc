@@ -6,7 +6,7 @@ import { values } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useStore } from "tree";
 import { isServer } from "utils/isServer";
-import { Button, Spinner } from "@chakra-ui/core";
+import { Button, Spinner } from "@chakra-ui/react";
 import { AccessDenied, Layout, PageTitle, SkillForm } from "components";
 
 export default observer((props) => {

@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { values } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useStore } from "tree";
-import { Button, Spinner } from "@chakra-ui/core";
+import { Button, Spinner } from "@chakra-ui/react";
 import {
   AccessDenied,
   Layout,

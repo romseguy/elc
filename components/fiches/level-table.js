@@ -1,5 +1,5 @@
 import { levels } from "tree/skill/utils";
-import { Progress } from "@chakra-ui/core";
+import { Progress } from "@chakra-ui/react";
 import { StyledTable } from "components";
 
 export const LevelTable = ({ profile, maxProgress, ...props }) => {

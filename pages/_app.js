@@ -1,24 +1,14 @@
 import "theme/styles.css";
 import { description } from "package.json";
+import { getSession } from "next-auth/client";
 import Head from "next/head";
 import { Provider as AuthProvider } from "next-auth/client";
 import { useStaticRendering } from "mobx-react-lite";
 import { initializeStore, Provider as StateProvider } from "tree";
 import { GlobalStyles } from "twin.macro";
-import customTheme from "theme";
 import { isServer } from "utils/isServer";
 import { useSession } from "utils/useAuth";
-import {
-  Box,
-  ChakraProvider,
-  ColorModeProvider,
-  Flex,
-  Spinner,
-  ThemeProvider,
-  useColorMode,
-  Text,
-  VStack
-} from "@chakra-ui/core";
+import { Box, Flex, Spinner, Text, VStack } from "@chakra-ui/react";
 import { Chakra, Confirm, Header } from "components";
 
 useStaticRendering(isServer());
@@ -84,39 +74,30 @@ const App = ({ Component, pageProps, cookies }) => {
         session={session}
       >
         <StateProvider value={store}>
-          {/* <Chakra cookies={cookies}> */}
-          <ChakraProvider resetCSS theme={customTheme}>
-            {/* <ThemeProvider theme={customTheme}> */}
-            {/* <ColorModeProvider> */}
+          <Chakra cookies={cookies}>
             <Root Component={Component} {...pageProps} />
-            {/* </ColorModeProvider> */}
-            {/* </ThemeProvider> */}
-          </ChakraProvider>
-          {/* </Chakra> */}
+          </Chakra>
         </StateProvider>
       </AuthProvider>
     </>
   );
 };
 
-// App.getInitialProps = async ({ Component, ctx }) => {
-//   let pageProps = {};
-//   if (Component.getInitialProps) {
-//     pageProps = await Component.getInitialProps(ctx);
-//   }
-//   return {
-//     pageProps,
-//   };
-// };
+App.getInitialProps = async ({ Component, ctx }) => {
+  const session = await getSession(ctx);
+  let pageProps = {};
 
-// export function getServerSideProps({ req }) {
-//   return {
-//     props: {
-//       // first time users will not have any cookies and you may not return
-//       // undefined here, hence ?? is necessary
-//       cookies: req.headers.cookie ?? "",
-//     },
-//   };
-// }
+  if (Component.getInitialProps) {
+    pageProps = await Component.getInitialProps(ctx);
+  }
+
+  return {
+    cookies: ctx.req.headers.cookie ?? "",
+    pageProps: {
+      ...pageProps,
+      session
+    }
+  };
+};
 
 export default App;

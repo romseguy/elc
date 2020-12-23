@@ -1,5 +1,5 @@
 import { description } from "package.json";
-import { Box, Flex, Heading, useColorModeValue } from "@chakra-ui/core";
+import { Box, Flex, Heading, useColorModeValue } from "@chakra-ui/react";
 import { Link } from "components";
 
 export const Header = (props) => {

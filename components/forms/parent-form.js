@@ -16,7 +16,7 @@ import {
   Stack,
   Spinner,
   FormErrorMessage
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { WarningIcon } from "@chakra-ui/icons";
 import { useStore } from "tree";
 import { handleError } from "utils/form";

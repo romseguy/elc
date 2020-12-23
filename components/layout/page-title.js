@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, IconButton, Spacer } from "@chakra-ui/core";
+import { Box, Flex, Heading, IconButton, Spacer } from "@chakra-ui/react";
 import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
 
 export const PageTitle = ({ children }) => {

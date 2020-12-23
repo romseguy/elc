@@ -7,7 +7,7 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "tree";
 import tw, { styled } from "twin.macro";
 import { isServer } from "utils/isServer";
-import { Button, Spinner, Text } from "@chakra-ui/core";
+import { Button, Spinner, Text } from "@chakra-ui/react";
 import {
   AccessDenied,
   Layout,

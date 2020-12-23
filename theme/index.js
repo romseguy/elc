@@ -1,4 +1,4 @@
-import { extendTheme } from "@chakra-ui/core";
+import { extendTheme } from "@chakra-ui/react";
 
 // Global style overrides
 import styles from "./styles.js";
@@ -10,12 +10,15 @@ import styles from "./styles.js";
 import { Button, Divider, Select } from "./components";
 
 const overrides = {
+  // config: {
+  // useSystemColorMode: true
+  // initialColorMode: "dark"
+  // },
   styles,
   // borders,
   // Other foundational style overrides go here
   components: {
     Button
-    // FIXME w/ chakra-ui 1.0 stable
     // Divider,
     // Select
     // Other components go here
@@ -23,39 +26,3 @@ const overrides = {
 };
 
 export default extendTheme(overrides);
-
-/*
-const mode = (light, dark) => (props) => dark;
-
-theme.breakpoints = ["30em", "48em", "62em", "80em"];
-
-theme.breakpoints = {
-  sm: "30em",
-  md: "48em",
-  lg: "62em",
-  xl: "80em",
-};
-
-const customTheme = {
-config: {
-  ...theme.config,
-  useSystemColorMode: false,
-  initialColorMode: "light",
-},
-colors: {
-  ...theme.colors,
-  black: "#16161D",
-  select: {
-    900: "#505C73",
-  },
-},
-fonts: {
-  ...theme.fonts,
-  body: "system-ui, sans-serif",
-  heading: "Georgia, serif",
-  mono: "Menlo, monospace",
-},
-};
-
-export default customTheme;
-*/

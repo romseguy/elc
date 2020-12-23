@@ -1,6 +1,6 @@
 import NextDocument, { Html, Head, Main, NextScript } from "next/document";
-import { ColorModeScript } from "@chakra-ui/core";
-import tw, { css } from "twin.macro";
+import { ColorModeScript } from "@chakra-ui/react";
+import customTheme from "theme";
 
 export default class Document extends NextDocument {
   static getInitialProps(ctx) {
@@ -14,7 +14,9 @@ export default class Document extends NextDocument {
           <meta charSet="utf-8" />
         </Head>
         <body>
-          <ColorModeScript /* initialColorMode="light" */ />
+          <ColorModeScript
+            initialColorMode={customTheme.config.initialColorMode}
+          />
           <Main />
           <NextScript />
         </body>

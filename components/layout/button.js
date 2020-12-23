@@ -1,5 +1,5 @@
 // 1. Import useStyleConfig
-import { useStyleConfig } from "@chakra-ui/core";
+import { useStyleConfig } from "@chakra-ui/react";
 
 export function Button(props) {
   const { size, variant, ...rest } = props;

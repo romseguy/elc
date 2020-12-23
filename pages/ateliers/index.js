@@ -13,7 +13,7 @@ import {
   Button,
   Spinner,
   Tag
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { AccessDenied, Layout, Link, PageTitle, StyledTable } from "components";
 
 export default observer((props) => {

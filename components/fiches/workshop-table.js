@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { values } from "mobx";
 import { format, isDate } from "date-fns";
-import { IconButton, Tag, Text } from "@chakra-ui/core";
+import { IconButton, Tag, Text } from "@chakra-ui/react";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { Table } from "components";
 

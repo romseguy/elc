@@ -5,7 +5,7 @@ import {
   IconButton,
   useColorModeValue,
   Flex
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import { Header } from "./header";
 import { Nav } from "./nav";

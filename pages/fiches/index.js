@@ -13,7 +13,7 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import {
   AccessDenied,
   Layout,

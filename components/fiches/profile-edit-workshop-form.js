@@ -20,7 +20,7 @@ import {
   FormLabel,
   Stack,
   useDisclosure
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { ArrowDownIcon, ArrowUpIcon, WarningIcon } from "@chakra-ui/icons";
 import { DatePicker, ErrorMessageText, WorkshopForm } from "components";
 

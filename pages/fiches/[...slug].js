@@ -14,7 +14,7 @@ import {
   Spinner,
   useColorModeValue,
   VStack
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
 import {
   Layout,

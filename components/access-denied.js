@@ -1,5 +1,5 @@
 import { signIn } from "next-auth/client";
-import { Text } from "@chakra-ui/core";
+import { Text } from "@chakra-ui/react";
 import { Link, PageTitle } from "components";
 
 export const AccessDenied = () => {

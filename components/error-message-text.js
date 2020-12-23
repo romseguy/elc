@@ -1,4 +1,4 @@
-import { Text } from "@chakra-ui/core";
+import { Text } from "@chakra-ui/react";
 import tw, { css } from "twin.macro";
 
 // const styles = {

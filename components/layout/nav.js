@@ -34,7 +34,7 @@ import {
   useDisclosure,
   Switch,
   FormErrorMessage
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 import { Link } from "components";
 import { ErrorMessageText } from "components";

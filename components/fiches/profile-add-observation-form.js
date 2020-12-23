@@ -15,7 +15,7 @@ import {
   Select,
   Stack,
   FormErrorMessage
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { WarningIcon } from "@chakra-ui/icons";
 import { DatePicker } from "components";
 import { handleError } from "utils/form";

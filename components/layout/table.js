@@ -1,4 +1,4 @@
-import { useColorModeValue } from "@chakra-ui/core";
+import { useColorModeValue } from "@chakra-ui/react";
 import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
 import { useSortBy, useTable, useFlexLayout  } from "react-table";
 import tw, { styled } from "twin.macro";

@@ -16,7 +16,7 @@ import {
   Input,
   Stack,
   useDisclosure
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { ArrowDownIcon, ArrowUpIcon, WarningIcon } from "@chakra-ui/icons";
 import { DatePicker, ObservationForm } from "components";
 import { format, subYears } from "date-fns";

@@ -1,6 +1,6 @@
 // https://raw.githubusercontent.com/chakra-ui/chakra-ui/develop/examples/nextjs-typescript/components/NextChakraLink.tsx
 import NextLink from "next/link";
-import { Link as ChakraLink } from "@chakra-ui/core";
+import { Link as ChakraLink } from "@chakra-ui/react";
 
 export const Link = ({
   href,

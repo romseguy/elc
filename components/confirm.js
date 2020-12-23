@@ -11,7 +11,7 @@ import {
   ModalCloseButton,
   Modal,
   useDisclosure
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 
 export const Confirm = observer(() => {
   const { confirmType } = useStore();

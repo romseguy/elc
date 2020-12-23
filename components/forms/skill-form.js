@@ -22,7 +22,7 @@ import {
   InputGroup,
   InputRightAddon,
   Spinner
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import {
   AddIcon,
   ArrowDownIcon,
