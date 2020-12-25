@@ -103,13 +103,3 @@ export default observer((props) => {
     </Layout>
   );
 });
-
-export async function getServerSideProps(context) {
-  const session = await getSession(context);
-
-  return {
-    props: {
-      session
-    }
-  };
-}

@@ -91,8 +91,14 @@ App.getInitialProps = async ({ Component, ctx }) => {
     pageProps = await Component.getInitialProps(ctx);
   }
 
+  let cookies = "";
+
+  if (ctx.req && ctx.req.headers) {
+    cookies = ctx.req.headers.cookie;
+  }
+
   return {
-    cookies: ctx.req.headers.cookie ?? "",
+    cookies,
     pageProps: {
       ...pageProps,
       session

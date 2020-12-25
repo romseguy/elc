@@ -480,13 +480,3 @@ export default observer(function ProfilePage(props) {
     </Layout>
   );
 });
-
-export async function getServerSideProps(context) {
-  const session = await getSession(context);
-
-  return {
-    props: {
-      session
-    }
-  };
-}

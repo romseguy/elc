@@ -105,13 +105,3 @@ export default observer(function ProfileListPage(props) {
     </Layout>
   );
 });
-
-export async function getServerSideProps(context) {
-  const session = await getSession(context);
-
-  return {
-    props: {
-      session
-    }
-  };
-}
