@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { getSession } from "next-auth/client";
 import { useSession } from "utils/useAuth";
 import { useRouter } from "next/router";
 import { values } from "mobx";
