@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useStore } from "tree";
 import { format } from "date-fns";
+import tw, { styled, css } from "twin.macro";
 import { isServer } from "utils/isServer";
 import {
   Box,
@@ -33,6 +34,13 @@ import {
   ProfileAddObservationForm,
   ProfileEditObservationForm
 } from "components";
+
+const RoundedBox = styled(Box)`
+  background: white;
+  margin: 0.5rem 1.25rem 1.25rem 1.25rem;
+  padding: 1rem;
+  border-radius: 1rem;
+`;
 
 export default observer(function ProfilePage(props) {
   const [session = props.session] = useSession();
@@ -230,6 +238,7 @@ export default observer(function ProfilePage(props) {
       <ProfileEditObservationForm
         currentObservationRef={currentObservationRef}
         profile={selectedProfile}
+        workshops={workshopType.store.workshops}
         onClose={() => setCurrentObservationRef()}
         onSubmit={() => setCurrentObservationRef()}
       />
@@ -332,13 +341,13 @@ export default observer(function ProfilePage(props) {
           </PageSubTitle>
 
           {showSkillForm && (
-            <Box ml={5}>
+            <RoundedBox>
               <ProfileAddSkillForm
                 profile={selectedProfile}
                 skills={skillType.store.skills}
                 onSubmit={toggleSkillForm}
               />
-            </Box>
+            </RoundedBox>
           )}
 
           {showSkills && selectedProfile.skills.length > 0 && (
@@ -401,7 +410,7 @@ export default observer(function ProfilePage(props) {
           </PageSubTitle>
 
           {showWorkshopForm && (
-            <Box ml={5}>
+            <RoundedBox>
               <ProfileAddWorkshopForm
                 profile={selectedProfile}
                 workshops={workshopType.store.workshops}
@@ -410,7 +419,7 @@ export default observer(function ProfilePage(props) {
                   setShowWorkshops(true);
                 }}
               />
-            </Box>
+            </RoundedBox>
           )}
 
           {showWorkshops && selectedProfile.workshops.length > 0 && (
@@ -450,16 +459,17 @@ export default observer(function ProfilePage(props) {
           </PageSubTitle>
 
           {showObservationForm && (
-            <Box ml={5}>
+            <RoundedBox>
               <ProfileAddObservationForm
                 profile={selectedProfile}
                 observations={observationType.store.observations}
+                workshops={workshopType.store.workshops}
                 onSubmit={() => {
                   setShowObservationForm(false);
                   setShowObservations(true);
                 }}
               />
-            </Box>
+            </RoundedBox>
           )}
 
           {showObservations && selectedProfile.observations.length > 0 && (

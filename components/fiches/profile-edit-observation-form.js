@@ -1,3 +1,4 @@
+import { values } from "mobx";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
@@ -14,6 +15,7 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  Select,
   Stack,
   useDisclosure
 } from "@chakra-ui/react";
@@ -121,6 +123,32 @@ export const ProfileEditObservationForm = ({
                 />
                 <FormErrorMessage>
                   <ErrorMessage errors={errors} name="date" />
+                </FormErrorMessage>
+              </FormControl>
+
+              <FormControl id="workshop" isInvalid={!!errors.workshop} mt={5}>
+                <FormLabel>Atelier :</FormLabel>
+                <Select
+                  name="workshop"
+                  placeholder="Sélectionner un atelier"
+                  ref={
+                    register(/* {
+                    required: "Veuillez sélectionner un atelier"
+                  } */)
+                  }
+                  defaultValue={currentObservationRef.workshop._id}
+                  color="gray.400"
+                >
+                  {values(props.workshops).map((workshop) => {
+                    return (
+                      <option key={workshop._id} value={workshop._id}>
+                        {workshop.name}
+                      </option>
+                    );
+                  })}
+                </Select>
+                <FormErrorMessage>
+                  <ErrorMessage errors={errors} name="workshop" />
                 </FormErrorMessage>
               </FormControl>
 

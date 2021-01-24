@@ -5,7 +5,11 @@ const ObservationRefSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  date: Date
+  date: Date,
+  workshop: {
+    type: String,
+    required: true
+  }
 });
 const SkillRefSchema = new mongoose.Schema({
   skill: {

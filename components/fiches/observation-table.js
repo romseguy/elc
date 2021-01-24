@@ -29,6 +29,12 @@ export const ObservationTable = ({
         disableSortBy
       },
       {
+        Header: "Atelier",
+        accessor: "workshop",
+        sortType: "basic",
+        disableSortBy
+      },
+      {
         Header: "Description",
         accessor: "description",
         disableSortBy
@@ -51,11 +57,12 @@ export const ObservationTable = ({
     /* useMemo(
     () => */
     values(profile.observations).map((observationRef) => {
-      const { _id, observation, date } = observationRef;
+      const { _id, observation, date, workshop } = observationRef;
 
       return {
         description: observation.description,
         date: isDate(date) && format(date, "dd/MM/yyyy"),
+        workshop: workshop.name,
         editButton: (
           <IconButton
             id="editObservation"

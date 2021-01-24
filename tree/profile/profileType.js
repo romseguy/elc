@@ -38,7 +38,8 @@ const mapProfiles = ({
 const ObservationRef = t
   .model("ObservationRef", {
     observation: t.reference(t.late(() => ObservationModel)),
-    date: t.Date
+    date: t.Date,
+    workshop: t.reference(t.late(() => WorkshopModel))
   })
   .actions((observationRef) => ({
     fromUi(data) {
@@ -139,9 +140,11 @@ export const ProfileModel = t
         return ref._id !== _id;
       });
     },
-    addObservationRef({ observation, date }) {
+    addObservationRef({ observation, date, workshop }) {
       const add = () =>
-        profile.observations.push(ObservationRef.create({ observation, date }));
+        profile.observations.push(
+          ObservationRef.create({ observation, date, workshop })
+        );
 
       if (!profile.observations.length) add();
       else {

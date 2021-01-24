@@ -7,6 +7,7 @@ import styles from "./styles.js";
 // import border from "./borders"
 
 // Component style overrides
+// https://chakra-ui.com/docs/theming/component-style
 import { Button, Divider, Select } from "./components";
 
 const overrides = {
@@ -18,9 +19,9 @@ const overrides = {
   // borders,
   // Other foundational style overrides go here
   components: {
-    Button
+    Button,
     // Divider,
-    // Select
+    Select
     // Other components go here
   }
 };

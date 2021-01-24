@@ -1,3 +1,4 @@
+import { values } from "mobx";
 import {
   types as t,
   flow,
@@ -59,6 +60,10 @@ const WorkshopStore = t
     }
   }))
   .actions((store) => ({
+    getById(id) {
+      for (const workshop of values(store.workshops))
+        if (workshop._id === id) return workshop;
+    },
     // API
     getWorkshops: flow(function* getWorkshops() {
       yield getRoot(store).skillType.store.getSkills();

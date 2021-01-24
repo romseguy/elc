@@ -23,7 +23,7 @@ import { ErrorMessageText } from "components";
 
 export const ProfileAddObservationForm = (props) => {
   const router = useRouter();
-  const { profileType, observationType } = useStore();
+  const { profileType, observationType, workshopType } = useStore();
   const [isLoading, setIsLoading] = useState();
   const {
     control,
@@ -41,11 +41,16 @@ export const ProfileAddObservationForm = (props) => {
     clearErrors("formErrorMessage");
   };
 
-  const onSubmit = async ({ observation, date }) => {
+  const onSubmit = async ({
+    observation: observationId,
+    date,
+    workshop: workshopId
+  }) => {
     setIsLoading(true);
     props.profile.addObservationRef({
-      observation: observationType.store.getById(observation),
-      date
+      observation: observationType.store.getById(observationId),
+      date,
+      workshop: workshopType.store.getById(workshopId)
     });
     const { data, error } = await profileType.store.updateProfile(
       props.profile
@@ -102,6 +107,32 @@ export const ProfileAddObservationForm = (props) => {
         />
         <FormErrorMessage>
           <ErrorMessage errors={errors} name="date" />
+        </FormErrorMessage>
+      </FormControl>
+
+      <FormControl
+        id="workshop"
+        //isRequired
+        isInvalid={!!errors.workshop}
+        mb={5}
+      >
+        <FormLabel>Atelier :</FormLabel>
+        <Select
+          name="workshop"
+          placeholder="Sélectionner un atelier"
+          ref={register(/* { required: "Veuillez sélectionner un atelier" } */)}
+          color="gray.400"
+        >
+          {values(props.workshops).map((workshop) => {
+            return (
+              <option key={workshop._id} value={workshop._id}>
+                {workshop.name}
+              </option>
+            );
+          })}
+        </Select>
+        <FormErrorMessage>
+          <ErrorMessage errors={errors} name="workshop" />
         </FormErrorMessage>
       </FormControl>
 
