@@ -62,7 +62,7 @@ export const ObservationTable = ({
       return {
         description: observation.description,
         date: isDate(date) && format(date, "dd/MM/yyyy"),
-        workshop: workshop.name,
+        workshop: workshop && workshop.name,
         editButton: (
           <IconButton
             id="editObservation"

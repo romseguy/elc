@@ -216,12 +216,12 @@ describe("CRUD", () => {
       cy.get("input#started").click();
       cy.get("select.react-datepicker__month-select").select("janvier");
       cy.findByRole("button", {
-        name: "Choose Wednesday, January 1st, 2020"
+        name: "Choose Friday, January 1st, 2021"
       }).click();
       cy.get("input#completed").click();
       cy.get("select.react-datepicker__month-select").select("janvier");
       cy.findByRole("button", {
-        name: "Choose Thursday, January 2nd, 2020"
+        name: "Choose Saturday, January 2nd, 2021"
       }).click();
       cy.findByRole("button", { name: "Terminer l'atelier" }).click();
       cy.findByRole("heading", {

@@ -11,23 +11,23 @@ handler.use(middleware);
 // configure multer for file upload
 // store uploaded image on temporary directory of serverless function
 // const upload = multer({ dest: "/tmp" });
-const upload = multer({ dest: "/tmp" }).single("file");
+// const upload = multer({ dest: "/tmp" }).single("file");
 // handler.use(upload.single("file"));
 
 handler.post(async function importData(req, res) {
-  upload(req, res, function (err) {
-    if (err instanceof multer.MulterError) {
-      // A Multer error occurred when uploading.
-      console.log("1");
-    } else if (err) {
-      // An unknown error occurred when uploading.
-      console.log("2");
-    }
+  // upload(req, res, function (err) {
+  //   if (err instanceof multer.MulterError) {
+  //     // A Multer error occurred when uploading.
+  //     console.log("1");
+  //   } else if (err) {
+  //     // An unknown error occurred when uploading.
+  //     console.log("2");
+  //   }
 
-    // Everything went fine.
-    console.log("3");
-    console.log(req.file);
-  });
+  //   // Everything went fine.
+  //   console.log("3");
+  //   console.log(req.file);
+  // });
 
   const session = await getSession({ req });
 
@@ -42,7 +42,20 @@ handler.post(async function importData(req, res) {
   // } else {
   try {
     // console.log(req.headers);
-    // console.log(req.body);
+    //console.log(req.body);
+    const keys = Object.keys(req.models);
+    for (const key of keys) {
+      const model = req.models[key];
+      model.collection.insertMany(
+        req.body[key],
+        { ordered: false },
+        (err, r) => {
+          console.log(err);
+          //assert.equal(null, err);
+          //assert.equal(3, r.insertedCount);
+        }
+      );
+    }
     res.status(200).json({ data: "yo" });
   } catch (error) {
     res.status(400).json(createServerError(error));
@@ -50,10 +63,10 @@ handler.post(async function importData(req, res) {
   // }
 });
 
-export const config = {
-  api: {
-    bodyParser: false
-  }
-};
+// export const config = {
+//   api: {
+//     bodyParser: false
+//   }
+// };
 
 export default handler;

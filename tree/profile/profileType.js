@@ -39,7 +39,7 @@ const ObservationRef = t
   .model("ObservationRef", {
     observation: t.reference(t.late(() => ObservationModel)),
     date: t.Date,
-    workshop: t.reference(t.late(() => WorkshopModel))
+    workshop: t.maybe(t.reference(t.late(() => WorkshopModel)))
   })
   .actions((observationRef) => ({
     fromUi(data) {
