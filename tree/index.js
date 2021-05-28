@@ -8,12 +8,13 @@ let clientStore;
 const initializeStore = (snapshot = null) => {
   const instance = makeInspectable(RootType.create({}));
   // if (!process.env.NEXT_PUBLIC_IS_TEST)
-  onSnapshot(
-    instance,
-    (snapshot) => console.log(snapshot)
-    //   //(snapshot) => !isServer() && console.log(snapshot)
-    //   //(snapshot) => console.log(JSON.stringify(snapshot, null, 2))
-  );
+  if (process.env.NEXT_PUBLIC_VERCEL_ENV !== "production")
+    onSnapshot(
+      instance,
+      (snapshot) => console.log(snapshot)
+      //   //(snapshot) => !isServer() && console.log(snapshot)
+      //   //(snapshot) => console.log(JSON.stringify(snapshot, null, 2))
+    );
   const store = clientStore ?? instance;
 
   // If your page has Next.js data fetching methods that use a Mobx store, it will

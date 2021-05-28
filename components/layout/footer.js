@@ -35,7 +35,10 @@ export const Footer = (props) => {
         <Link href="/admin">Administration</Link>
       </Menu>
       <MenuRight>
-        <Link href="https://github.com/romseguy/elc">{version}</Link>
+        <Link href="https://github.com/romseguy/elc">{version}</Link>@
+        {process.env.NEXT_PUBLIC_VERCEL_ENV === undefined
+          ? "local"
+          : process.env.NEXT_PUBLIC_VERCEL_ENV}
       </MenuRight>
     </Flex>
   );
