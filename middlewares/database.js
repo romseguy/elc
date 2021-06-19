@@ -7,21 +7,20 @@ import nextConnect from "next-connect";
 import mongoose from "mongoose";
 import * as Schemas from "utils/mongoose/schemas";
 
+let connection = null;
 const middleware = nextConnect();
-const connection = mongoose.createConnection(process.env.DATABASE_URL, {
-  useNewUrlParser: true,
-  // bufferCommands: false,
-  // bufferMaxEntries: 0,
-  useFindAndModify: false,
-  useUnifiedTopology: true
-});
-const client = connection.client;
 
 middleware.use(async (req, res, next) => {
-  if (!client.isConnected()) await client.connect();
+  if (!connection) {
+    connection = await mongoose.createConnection(process.env.DATABASE_URL, {
+      useNewUrlParser: true,
+      useFindAndModify: false,
+      useUnifiedTopology: true
+    });
+  }
 
-  req.dbClient = client;
-  req.db = client.db();
+  if (!connection.client.isConnected()) await connection.client.connect();
+
   const models = {};
   Object.keys(Schemas).forEach(
     (key) => (models[key] = connection.model(key, Schemas[key]))
