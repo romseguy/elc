@@ -75,7 +75,7 @@ const App = ({ Component, pageProps, cookies }) => {
       >
         <StateProvider value={store}>
           <Chakra cookies={cookies}>
-            <Root Component={Component} {...pageProps} />
+            <Component {...pageProps} />
           </Chakra>
         </StateProvider>
       </AuthProvider>
